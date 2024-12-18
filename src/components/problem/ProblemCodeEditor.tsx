@@ -20,7 +20,7 @@ const ProblemCodeEditor = ({ code, onChange }: ProblemCodeEditorProps) => {
 
   return (
     <div className="h-full flex flex-col">
-      <div className="p-4 border-b border-border flex justify-between items-center">
+      <div className="shrink-0 p-4 border-b border-border flex justify-between items-center">
         <div className="flex gap-4">
           <Button variant="secondary">JavaScript</Button>
         </div>
@@ -28,7 +28,7 @@ const ProblemCodeEditor = ({ code, onChange }: ProblemCodeEditorProps) => {
           Run Code
         </Button>
       </div>
-      <div className="flex-1">
+      <div className="flex-1 min-h-0">
         <CodeEditor code={code} onChange={onChange} />
       </div>
     </div>
