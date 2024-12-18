@@ -26,10 +26,10 @@ const Header = () => {
       <div className="container flex h-16 items-center justify-between">
         <Button
           variant="link"
-          className="text-lg font-semibold"
+          className="text-lg font-semibold no-underline hover:no-underline hover:bg-accent hover:text-accent-foreground rounded-md transition-colors px-2 py-1"
           onClick={() => navigate("/problems")}
         >
-          LeetClone
+          CodeVerse
         </Button>
         <div className="flex items-center gap-4">
           <Button
