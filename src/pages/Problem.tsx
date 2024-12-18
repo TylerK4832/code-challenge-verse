@@ -2,17 +2,19 @@ import { useParams } from 'react-router-dom';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import CodeEditor from '@/components/CodeEditor';
 import TestCases from '@/components/TestCases';
 import { useToast } from '@/components/ui/use-toast';
+import { useIsMobile } from '@/hooks/use-mobile';
 import ProblemDescription from '@/components/TwoSumDescription';
 import AddTwoNumbersDescription from '@/components/AddTwoNumbersDescription';
 import LongestSubstringDescription from '@/components/LongestSubstringDescription';
 import MedianSortedArraysDescription from '@/components/MedianSortedArraysDescription';
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 
 const Problem = () => {
   const { id } = useParams();
+  const isMobile = useIsMobile();
   const [code, setCode] = useState(() => {
     switch (id) {
       case 'two-sum':
@@ -62,6 +64,50 @@ const Problem = () => {
   };
 
   const problemDescription = getProblemDescription();
+
+  if (isMobile) {
+    return (
+      <div className="h-[calc(100vh-4rem)]">
+        <Tabs defaultValue="description" className="h-full">
+          <div className="border-b border-border">
+            <TabsList className="w-full justify-start">
+              <TabsTrigger value="description">Description</TabsTrigger>
+              <TabsTrigger value="code">Code</TabsTrigger>
+              <TabsTrigger value="testcases">Test Cases</TabsTrigger>
+            </TabsList>
+          </div>
+
+          <TabsContent value="description" className="h-[calc(100vh-8rem)] mt-0">
+            <ScrollArea className="h-full">
+              <div className="p-6">
+                {problemDescription}
+              </div>
+            </ScrollArea>
+          </TabsContent>
+
+          <TabsContent value="code" className="h-[calc(100vh-8rem)] mt-0">
+            <div className="h-full flex flex-col">
+              <div className="p-4 border-b border-border flex justify-between items-center">
+                <div className="flex gap-4">
+                  <Button variant="secondary">JavaScript</Button>
+                </div>
+                <Button onClick={handleRunCode} className="bg-[#00b8a3] hover:bg-[#00a092]">
+                  Run Code
+                </Button>
+              </div>
+              <div className="flex-1">
+                <CodeEditor code={code} onChange={setCode} />
+              </div>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="testcases" className="h-[calc(100vh-8rem)] mt-0">
+            <TestCases />
+          </TabsContent>
+        </Tabs>
+      </div>
+    );
+  }
 
   return (
     <div className="h-[calc(100vh-4rem)] flex">
