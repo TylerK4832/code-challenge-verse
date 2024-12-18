@@ -67,7 +67,7 @@ const Problem = () => {
 
   if (isMobile) {
     return (
-      <div className="h-[calc(100vh-4rem)]">
+      <div className="h-[100dvh] -mt-16 pt-16">
         <Tabs defaultValue="description" className="h-full">
           <div className="border-b border-border">
             <TabsList className="w-full justify-start">
@@ -76,7 +76,7 @@ const Problem = () => {
             </TabsList>
           </div>
 
-          <TabsContent value="description" className="h-[calc(100vh-8rem)] mt-0">
+          <TabsContent value="description" className="h-[calc(100%-49px)] mt-0">
             <ScrollArea className="h-full">
               <div className="p-6">
                 {problemDescription}
@@ -84,7 +84,7 @@ const Problem = () => {
             </ScrollArea>
           </TabsContent>
 
-          <TabsContent value="code" className="h-[calc(100vh-8rem)] mt-0">
+          <TabsContent value="code" className="h-[calc(100%-49px)] mt-0">
             <div className="h-full flex flex-col">
               <div className="p-4 border-b border-border flex justify-between items-center">
                 <div className="flex gap-4">
@@ -110,7 +110,7 @@ const Problem = () => {
   }
 
   return (
-    <div className="h-[calc(100vh-4rem)] flex">
+    <div className="h-[100dvh] -mt-16 pt-16 flex">
       {/* Description Section */}
       <div className="w-[35%] border-r border-border">
         <ScrollArea className="h-full">
