@@ -27,7 +27,7 @@ Explanation: merged array = [1,2,3] and median is 2.`}
         </pre>
 
         <h3>Example 2:</h3>
-        <pre className="bg-secondary p-4 rounded-md">
+        <pre className="bg-secondary p-4 rounded-md whitespace-pre-wrap break-words overflow-auto">
           <code>
 {`Input: nums1 = [1,2], nums2 = [3,4]
 Output: 2.50000
