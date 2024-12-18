@@ -1,21 +1,38 @@
 import { Auth } from "@supabase/auth-ui-react";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
 import { supabase } from "@/integrations/supabase/client";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import UsernameSetup from "@/components/UsernameSetup";
 
 const Login = () => {
   const navigate = useNavigate();
+  const [newUserId, setNewUserId] = useState<string | null>(null);
 
   useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (session) {
-        navigate('/problems');
+        // Check if user has a username
+        const { data: profile } = await supabase
+          .from("profiles")
+          .select("username")
+          .eq("id", session.user.id)
+          .single();
+
+        if (profile?.username) {
+          navigate("/problems");
+        } else {
+          setNewUserId(session.user.id);
+        }
       }
     });
 
     return () => subscription.unsubscribe();
   }, [navigate]);
+
+  if (newUserId) {
+    return <UsernameSetup userId={newUserId} />;
+  }
 
   return (
     <div className="container max-w-lg py-8">
