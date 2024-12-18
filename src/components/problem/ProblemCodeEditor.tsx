@@ -5,6 +5,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useState } from "react";
 import { useParams } from "react-router-dom";
+import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/components/ui/resizable";
 
 interface ProblemCodeEditorProps {
   code: string;
@@ -127,14 +128,21 @@ const ProblemCodeEditor = ({ code, onChange }: ProblemCodeEditorProps) => {
         </Button>
       </div>
       <div className="flex-1 min-h-0">
-        <CodeEditor code={code} onChange={onChange} />
-      </div>
-      <div className="h-[300px] border-t border-border">
-        <TestCases 
-          executionResult={executionResult} 
-          activeTab={activeTab}
-          onTabChange={setActiveTab}
-        />
+        <ResizablePanelGroup direction="vertical">
+          <ResizablePanel defaultSize={70} minSize={30}>
+            <CodeEditor code={code} onChange={onChange} />
+          </ResizablePanel>
+          
+          <ResizableHandle withHandle />
+          
+          <ResizablePanel defaultSize={30} minSize={20}>
+            <TestCases 
+              executionResult={executionResult} 
+              activeTab={activeTab}
+              onTabChange={setActiveTab}
+            />
+          </ResizablePanel>
+        </ResizablePanelGroup>
       </div>
     </div>
   );
