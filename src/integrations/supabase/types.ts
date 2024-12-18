@@ -36,6 +36,69 @@ export type Database = {
         }
         Relationships: []
       }
+      profiles: {
+        Row: {
+          created_at: string
+          id: string
+          username: string | null
+        }
+        Insert: {
+          created_at?: string
+          id: string
+          username?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          username?: string | null
+        }
+        Relationships: []
+      }
+      submissions: {
+        Row: {
+          code: string
+          id: string
+          language: string
+          problem_id: string
+          status: string
+          submitted_at: string
+          user_id: string
+        }
+        Insert: {
+          code: string
+          id?: string
+          language: string
+          problem_id: string
+          status: string
+          submitted_at?: string
+          user_id: string
+        }
+        Update: {
+          code?: string
+          id?: string
+          language?: string
+          problem_id?: string
+          status?: string
+          submitted_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "submissions_problem_id_fkey"
+            columns: ["problem_id"]
+            isOneToOne: false
+            referencedRelation: "problems"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "submissions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
