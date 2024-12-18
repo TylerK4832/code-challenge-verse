@@ -14,7 +14,7 @@ const LongestSubstringDescription = () => {
         </p>
 
         <h3>Example 1:</h3>
-        <pre className="bg-secondary p-4 rounded-md">
+        <pre className="bg-secondary p-4 rounded-md whitespace-pre-wrap break-words overflow-auto">
           <code>
 {`Input: s = "abcabcbb"
 Output: 3

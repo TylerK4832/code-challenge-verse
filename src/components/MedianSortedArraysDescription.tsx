@@ -18,7 +18,7 @@ const MedianSortedArraysDescription = () => {
         </p>
 
         <h3>Example 1:</h3>
-        <pre className="bg-secondary p-4 rounded-md">
+        <pre className="bg-secondary p-4 rounded-md whitespace-pre-wrap break-words overflow-auto">
           <code>
 {`Input: nums1 = [1,3], nums2 = [2]
 Output: 2.00000

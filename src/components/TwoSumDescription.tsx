@@ -20,7 +20,7 @@ const ProblemDescription = () => {
         <p>You can return the answer in any order.</p>
 
         <h3>Example 1:</h3>
-        <pre className="bg-secondary p-4 rounded-md">
+        <pre className="bg-secondary p-4 rounded-md whitespace-pre-wrap break-words overflow-auto">
           <code>
 {`Input: nums = [2,7,11,15], target = 9
 Output: [0,1]

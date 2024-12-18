@@ -3,7 +3,7 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import CodeEditor from '@/components/CodeEditor';
-import ProblemDescription from '@/components/ProblemDescription';
+import ProblemDescription from '@/components/TwoSumDescription';
 import TestCases from '@/components/TestCases';
 import { useToast } from '@/components/ui/use-toast';
 
