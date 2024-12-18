@@ -72,14 +72,18 @@ const Problem = () => {
         
         <ResizableHandle withHandle />
         
-        <ResizablePanel defaultSize={40} minSize={30}>
-          <ProblemCodeEditor code={code} onChange={setCode} />
-        </ResizablePanel>
-        
-        <ResizableHandle withHandle />
-        
-        <ResizablePanel defaultSize={25} minSize={20}>
-          <TestCases />
+        <ResizablePanel defaultSize={65} minSize={30}>
+          <ResizablePanelGroup direction="vertical">
+            <ResizablePanel defaultSize={70} minSize={40}>
+              <ProblemCodeEditor code={code} onChange={setCode} />
+            </ResizablePanel>
+            
+            <ResizableHandle withHandle />
+            
+            <ResizablePanel defaultSize={30} minSize={20}>
+              <TestCases />
+            </ResizablePanel>
+          </ResizablePanelGroup>
         </ResizablePanel>
       </ResizablePanelGroup>
     </div>
