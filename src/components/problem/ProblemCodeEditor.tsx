@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import CodeEditor from "@/components/CodeEditor";
+import TestCases from "@/components/TestCases";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useState } from "react";
