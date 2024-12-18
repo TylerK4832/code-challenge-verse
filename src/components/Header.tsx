@@ -1,8 +1,8 @@
-import { Menu, LogOut } from "lucide-react";
-import { Button } from "./ui/button";
+import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "./ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
+import { User } from "lucide-react";
 
 const Header = () => {
   const navigate = useNavigate();
@@ -17,32 +17,31 @@ const Header = () => {
         variant: "destructive",
       });
     } else {
-      navigate('/login');
+      navigate("/login");
     }
   };
 
   return (
-    <header className="border-b border-border">
-      <div className="container">
-        <div className="flex items-center justify-between h-16">
-          <div className="flex items-center">
-            <Button 
-              variant="ghost" 
-              className="text-xl font-bold"
-              onClick={() => navigate('/problems')}
-            >
-              CodeVerse
-            </Button>
-          </div>
-          
-          <div className="flex items-center gap-4">
-            <Button variant="ghost" size="icon" onClick={handleSignOut}>
-              <LogOut className="h-5 w-5" />
-            </Button>
-            <Button variant="ghost" size="icon">
-              <Menu className="h-5 w-5" />
-            </Button>
-          </div>
+    <header className="border-b">
+      <div className="container flex h-16 items-center justify-between">
+        <Button
+          variant="link"
+          className="text-lg font-semibold"
+          onClick={() => navigate("/problems")}
+        >
+          LeetClone
+        </Button>
+        <div className="flex items-center gap-4">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => navigate("/profile")}
+          >
+            <User className="h-5 w-5" />
+          </Button>
+          <Button variant="outline" onClick={handleSignOut}>
+            Sign Out
+          </Button>
         </div>
       </div>
     </header>

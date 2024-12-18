@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "./integrations/supabase/client";
 import Problems from "./pages/Problems";
 import Problem from "./pages/Problem";
+import Profile from "./pages/Profile";
 import Login from "./pages/Login";
 import Header from "./components/Header";
 
@@ -67,6 +68,14 @@ const App = () => (
                 element={
                   <ProtectedRoute>
                     <Problem />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/profile" 
+                element={
+                  <ProtectedRoute>
+                    <Profile />
                   </ProtectedRoute>
                 } 
               />
