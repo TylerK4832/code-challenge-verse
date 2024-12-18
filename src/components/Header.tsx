@@ -22,7 +22,7 @@ const Header = () => {
   };
 
   return (
-    <header className="border-b">
+    <header className="border-b relative z-50">
       <div className="container flex h-16 items-center justify-between">
         <Button
           variant="link"

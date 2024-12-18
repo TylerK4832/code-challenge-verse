@@ -65,7 +65,7 @@ const Problem = () => {
 
   return (
     <div className="h-[100dvh] -mt-16 pt-16 relative">
-      <div className="absolute inset-0 pt-16">
+      <div className="absolute inset-0 pt-16 z-0">
         <ResizablePanelGroup direction="horizontal" className="h-full">
           <ResizablePanel defaultSize={35} minSize={30}>
             <ProblemDescription problemId={id || ''} />
