@@ -4,7 +4,24 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { supabase } from "@/integrations/supabase/client";
 
-const TestCases = () => {
+interface ExecutionResult {
+  status?: {
+    id: number;
+    description: string;
+  };
+  stdout: string | null;
+  stderr: string | null;
+  compile_output: string | null;
+  message: string | null;
+}
+
+interface TestCasesProps {
+  executionResult?: ExecutionResult | null;
+  activeTab?: string;
+  onTabChange?: (value: string) => void;
+}
+
+const TestCases = ({ executionResult, activeTab, onTabChange }: TestCasesProps) => {
   const { id: problemId } = useParams();
   const [testCases, setTestCases] = useState<any[]>([]);
 
@@ -17,7 +34,6 @@ const TestCases = () => {
         .eq('is_hidden', false);
 
       if (!error && data) {
-        // Parse the input and output strings to handle newlines and formatting
         const formattedData = data.map(testCase => ({
           ...testCase,
           input: testCase.input.replace(/\\n/g, '\n'),
@@ -30,8 +46,17 @@ const TestCases = () => {
     fetchTestCases();
   }, [problemId]);
 
+  const getStatusColor = (status?: { id: number }) => {
+    if (!status) return 'text-gray-500';
+    switch (status.id) {
+      case 3: return 'text-[#00b8a3]'; // Accepted
+      case 4: return 'text-red-500'; // Wrong Answer
+      default: return 'text-gray-500';
+    }
+  };
+
   return (
-    <Tabs defaultValue="testcases" className="h-full">
+    <Tabs value={activeTab} onValueChange={onTabChange} className="h-full">
       <div className="p-4 border-b border-border">
         <TabsList className="bg-secondary">
           <TabsTrigger value="testcases">Test Cases</TabsTrigger>
@@ -59,10 +84,42 @@ const TestCases = () => {
 
       <TabsContent value="result" className="h-[calc(100%-4rem)]">
         <ScrollArea className="h-full">
-          <div className="p-4">
-            <div className="text-[#00b8a3]">
-              Run your code to see the results!
-            </div>
+          <div className="p-4 space-y-4">
+            {executionResult ? (
+              <>
+                <div className={getStatusColor(executionResult.status)}>
+                  Status: {executionResult.status?.description || 'Processing'}
+                </div>
+                {executionResult.stdout && (
+                  <div className="space-y-2">
+                    <h3 className="font-medium">Output:</h3>
+                    <pre className="bg-secondary p-2 rounded-md">
+                      <code>{executionResult.stdout}</code>
+                    </pre>
+                  </div>
+                )}
+                {executionResult.stderr && (
+                  <div className="space-y-2">
+                    <h3 className="font-medium text-red-500">Error Output:</h3>
+                    <pre className="bg-secondary p-2 rounded-md text-red-500">
+                      <code>{executionResult.stderr}</code>
+                    </pre>
+                  </div>
+                )}
+                {executionResult.compile_output && (
+                  <div className="space-y-2">
+                    <h3 className="font-medium">Compilation Output:</h3>
+                    <pre className="bg-secondary p-2 rounded-md">
+                      <code>{executionResult.compile_output}</code>
+                    </pre>
+                  </div>
+                )}
+              </>
+            ) : (
+              <div className="text-[#00b8a3]">
+                Run your code to see the results!
+              </div>
+            )}
           </div>
         </ScrollArea>
       </TabsContent>

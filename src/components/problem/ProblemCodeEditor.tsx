@@ -14,6 +14,8 @@ const ProblemCodeEditor = ({ code, onChange }: ProblemCodeEditorProps) => {
   const { toast } = useToast();
   const { id: problemId } = useParams();
   const [isRunning, setIsRunning] = useState(false);
+  const [executionResult, setExecutionResult] = useState(null);
+  const [activeTab, setActiveTab] = useState('testcases');
 
   const handleRunCode = async () => {
     setIsRunning(true);
@@ -63,6 +65,8 @@ const ProblemCodeEditor = ({ code, onChange }: ProblemCodeEditorProps) => {
 
         const result = response.data;
         console.log('Execution result:', result);
+        setExecutionResult(result);
+        setActiveTab('result');
 
         if (result.status?.id !== 3) { // 3 = Accepted
           allTestsPassed = false;
@@ -76,7 +80,7 @@ const ProblemCodeEditor = ({ code, onChange }: ProblemCodeEditorProps) => {
       }
 
       if (allTestsPassed) {
-        // Save successful submission with user_id
+        // Save successful submission
         const { error: submissionError } = await supabase
           .from('submissions')
           .insert({
@@ -123,6 +127,13 @@ const ProblemCodeEditor = ({ code, onChange }: ProblemCodeEditorProps) => {
       </div>
       <div className="flex-1 min-h-0">
         <CodeEditor code={code} onChange={onChange} />
+      </div>
+      <div className="h-[300px] border-t border-border">
+        <TestCases 
+          executionResult={executionResult} 
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
+        />
       </div>
     </div>
   );
