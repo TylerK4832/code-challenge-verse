@@ -1,6 +1,9 @@
 import { Button } from "@/components/ui/button";
 import CodeEditor from "@/components/CodeEditor";
 import { useToast } from "@/components/ui/use-toast";
+import { supabase } from "@/integrations/supabase/client";
+import { useState } from "react";
+import { useParams } from "react-router-dom";
 
 interface ProblemCodeEditorProps {
   code: string;
@@ -9,13 +12,87 @@ interface ProblemCodeEditorProps {
 
 const ProblemCodeEditor = ({ code, onChange }: ProblemCodeEditorProps) => {
   const { toast } = useToast();
+  const { id: problemId } = useParams();
+  const [isRunning, setIsRunning] = useState(false);
 
-  const handleRunCode = () => {
-    toast({
-      title: "Running test cases...",
-      description: "All test cases passed!",
-      className: "bg-[#00b8a3] text-white",
-    });
+  const handleRunCode = async () => {
+    setIsRunning(true);
+    try {
+      // Fetch test cases
+      const { data: testCases, error: testCasesError } = await supabase
+        .from('test_cases')
+        .select('*')
+        .eq('problem_id', problemId)
+        .eq('is_hidden', false);
+
+      if (testCasesError) throw testCasesError;
+
+      if (!testCases || testCases.length === 0) {
+        toast({
+          title: "No test cases found",
+          description: "Unable to run code without test cases",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // Run each test case
+      let allTestsPassed = true;
+      for (const testCase of testCases) {
+        const response = await supabase.functions.invoke('execute-code', {
+          body: {
+            source_code: code,
+            language_id: 63, // JavaScript
+            stdin: testCase.input,
+            expected_output: testCase.expected_output,
+          },
+        });
+
+        if (response.error) throw response.error;
+
+        const result = response.data;
+        console.log('Execution result:', result);
+
+        if (result.status?.id !== 3) { // 3 = Accepted
+          allTestsPassed = false;
+          toast({
+            title: "Test case failed",
+            description: result.compile_output || result.stderr || "Execution failed",
+            variant: "destructive",
+          });
+          break;
+        }
+      }
+
+      if (allTestsPassed) {
+        // Save successful submission
+        const { error: submissionError } = await supabase
+          .from('submissions')
+          .insert({
+            problem_id: problemId,
+            code,
+            language: 'javascript',
+            status: 'accepted',
+          });
+
+        if (submissionError) throw submissionError;
+
+        toast({
+          title: "Success!",
+          description: "All test cases passed!",
+          className: "bg-[#00b8a3] text-white",
+        });
+      }
+    } catch (error) {
+      console.error('Error running code:', error);
+      toast({
+        title: "Error",
+        description: "Failed to run code. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsRunning(false);
+    }
   };
 
   return (
@@ -24,8 +101,12 @@ const ProblemCodeEditor = ({ code, onChange }: ProblemCodeEditorProps) => {
         <div className="flex gap-4">
           <Button variant="secondary">JavaScript</Button>
         </div>
-        <Button onClick={handleRunCode} className="bg-[#00b8a3] hover:bg-[#00a092]">
-          Run Code
+        <Button 
+          onClick={handleRunCode} 
+          className="bg-[#00b8a3] hover:bg-[#00a092]"
+          disabled={isRunning}
+        >
+          {isRunning ? "Running..." : "Run Code"}
         </Button>
       </div>
       <div className="flex-1 min-h-0">
