@@ -2,7 +2,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { supabase } from "./integrations/supabase/client";
 import Problems from "./pages/Problems";
@@ -44,46 +44,55 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   return <>{children}</>;
 };
 
+const AppLayout = () => {
+  const location = useLocation();
+  const showFooter = !location.pathname.includes('/problem/');
+
+  return (
+    <div className="min-h-screen flex flex-col">
+      <Header />
+      <main className="flex-1">
+        <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route path="/" element={<Navigate to="/problems" replace />} />
+          <Route 
+            path="/problems" 
+            element={
+              <ProtectedRoute>
+                <Problems />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/problem/:id" 
+            element={
+              <ProtectedRoute>
+                <Problem />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/profile" 
+            element={
+              <ProtectedRoute>
+                <Profile />
+              </ProtectedRoute>
+            } 
+          />
+        </Routes>
+      </main>
+      {showFooter && <Footer />}
+    </div>
+  );
+};
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <Toaster />
       <Sonner />
       <BrowserRouter>
-        <div className="min-h-screen flex flex-col">
-          <Header />
-          <main className="flex-1">
-            <Routes>
-              <Route path="/login" element={<Login />} />
-              <Route path="/" element={<Navigate to="/problems" replace />} />
-              <Route 
-                path="/problems" 
-                element={
-                  <ProtectedRoute>
-                    <Problems />
-                  </ProtectedRoute>
-                } 
-              />
-              <Route 
-                path="/problem/:id" 
-                element={
-                  <ProtectedRoute>
-                    <Problem />
-                  </ProtectedRoute>
-                } 
-              />
-              <Route 
-                path="/profile" 
-                element={
-                  <ProtectedRoute>
-                    <Profile />
-                  </ProtectedRoute>
-                } 
-              />
-            </Routes>
-          </main>
-          <Footer />
-        </div>
+        <AppLayout />
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
