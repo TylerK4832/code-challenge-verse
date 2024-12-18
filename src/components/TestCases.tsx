@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 const TestCases = () => {
   return (
@@ -11,26 +12,34 @@ const TestCases = () => {
         </TabsList>
       </div>
 
-      <TabsContent value="testcases" className="p-4 space-y-4">
-        <div className="space-y-2">
-          <h3 className="font-medium">Test Case 1:</h3>
-          <pre className="bg-secondary p-2 rounded-md">
-            <code>nums = [2,7,11,15], target = 9</code>
-          </pre>
-        </div>
+      <TabsContent value="testcases" className="h-[calc(100%-4rem)]">
+        <ScrollArea className="h-full">
+          <div className="p-4 space-y-4">
+            <div className="space-y-2">
+              <h3 className="font-medium">Test Case 1:</h3>
+              <pre className="bg-secondary p-2 rounded-md">
+                <code>nums = [2,7,11,15], target = 9</code>
+              </pre>
+            </div>
 
-        <div className="space-y-2">
-          <h3 className="font-medium">Test Case 2:</h3>
-          <pre className="bg-secondary p-2 rounded-md">
-            <code>nums = [3,2,4], target = 6</code>
-          </pre>
-        </div>
+            <div className="space-y-2">
+              <h3 className="font-medium">Test Case 2:</h3>
+              <pre className="bg-secondary p-2 rounded-md">
+                <code>nums = [3,2,4], target = 6</code>
+              </pre>
+            </div>
+          </div>
+        </ScrollArea>
       </TabsContent>
 
-      <TabsContent value="result" className="p-4">
-        <div className="text-[#00b8a3]">
-          ✓ All test cases passed!
-        </div>
+      <TabsContent value="result" className="h-[calc(100%-4rem)]">
+        <ScrollArea className="h-full">
+          <div className="p-4">
+            <div className="text-[#00b8a3]">
+              ✓ All test cases passed!
+            </div>
+          </div>
+        </ScrollArea>
       </TabsContent>
     </Tabs>
   );
