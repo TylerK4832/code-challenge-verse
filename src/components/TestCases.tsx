@@ -17,7 +17,13 @@ const TestCases = () => {
         .eq('is_hidden', false);
 
       if (!error && data) {
-        setTestCases(data);
+        // Parse the input and output strings to handle newlines and formatting
+        const formattedData = data.map(testCase => ({
+          ...testCase,
+          input: testCase.input.replace(/\\n/g, '\n'),
+          expected_output: testCase.expected_output.replace(/\\n/g, '\n')
+        }));
+        setTestCases(formattedData);
       }
     };
 
