@@ -10,6 +10,7 @@ import Problem from "./pages/Problem";
 import Profile from "./pages/Profile";
 import Login from "./pages/Login";
 import Header from "./components/Header";
+import Footer from "./components/Footer";
 
 const queryClient = new QueryClient();
 
@@ -81,6 +82,7 @@ const App = () => (
               />
             </Routes>
           </main>
+          <Footer />
         </div>
       </BrowserRouter>
     </TooltipProvider>
