@@ -18,6 +18,17 @@ const ProblemCodeEditor = ({ code, onChange }: ProblemCodeEditorProps) => {
   const handleRunCode = async () => {
     setIsRunning(true);
     try {
+      // Get current user
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        toast({
+          title: "Authentication required",
+          description: "Please sign in to submit your solution",
+          variant: "destructive",
+        });
+        return;
+      }
+
       // Fetch test cases
       const { data: testCases, error: testCasesError } = await supabase
         .from('test_cases')
@@ -65,7 +76,7 @@ const ProblemCodeEditor = ({ code, onChange }: ProblemCodeEditorProps) => {
       }
 
       if (allTestsPassed) {
-        // Save successful submission
+        // Save successful submission with user_id
         const { error: submissionError } = await supabase
           .from('submissions')
           .insert({
@@ -73,6 +84,7 @@ const ProblemCodeEditor = ({ code, onChange }: ProblemCodeEditorProps) => {
             code,
             language: 'javascript',
             status: 'accepted',
+            user_id: user.id
           });
 
         if (submissionError) throw submissionError;
