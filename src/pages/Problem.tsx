@@ -73,7 +73,6 @@ const Problem = () => {
             <TabsList className="w-full justify-start">
               <TabsTrigger value="description">Description</TabsTrigger>
               <TabsTrigger value="code">Code</TabsTrigger>
-              <TabsTrigger value="testcases">Test Cases</TabsTrigger>
             </TabsList>
           </div>
 
@@ -95,14 +94,15 @@ const Problem = () => {
                   Run Code
                 </Button>
               </div>
-              <div className="flex-1">
-                <CodeEditor code={code} onChange={setCode} />
+              <div className="flex-1 flex flex-col">
+                <div className="flex-1">
+                  <CodeEditor code={code} onChange={setCode} />
+                </div>
+                <div className="h-[200px] border-t border-border">
+                  <TestCases />
+                </div>
               </div>
             </div>
-          </TabsContent>
-
-          <TabsContent value="testcases" className="h-[calc(100vh-8rem)] mt-0">
-            <TestCases />
           </TabsContent>
         </Tabs>
       </div>
