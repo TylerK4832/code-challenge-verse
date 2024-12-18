@@ -64,28 +64,30 @@ const Problem = () => {
   }
 
   return (
-    <div className="h-[100dvh] -mt-16 pt-16">
-      <ResizablePanelGroup direction="horizontal" className="h-full">
-        <ResizablePanel defaultSize={35} minSize={30}>
-          <ProblemDescription problemId={id || ''} />
-        </ResizablePanel>
-        
-        <ResizableHandle withHandle />
-        
-        <ResizablePanel defaultSize={65} minSize={30}>
-          <ResizablePanelGroup direction="vertical">
-            <ResizablePanel defaultSize={70} minSize={40}>
-              <ProblemCodeEditor code={code} onChange={setCode} />
-            </ResizablePanel>
-            
-            <ResizableHandle withHandle />
-            
-            <ResizablePanel defaultSize={30} minSize={20}>
-              <TestCases />
-            </ResizablePanel>
-          </ResizablePanelGroup>
-        </ResizablePanel>
-      </ResizablePanelGroup>
+    <div className="h-[100dvh] -mt-16 pt-16 relative">
+      <div className="absolute inset-0 pt-16">
+        <ResizablePanelGroup direction="horizontal" className="h-full">
+          <ResizablePanel defaultSize={35} minSize={30}>
+            <ProblemDescription problemId={id || ''} />
+          </ResizablePanel>
+          
+          <ResizableHandle withHandle />
+          
+          <ResizablePanel defaultSize={65} minSize={30}>
+            <ResizablePanelGroup direction="vertical">
+              <ResizablePanel defaultSize={70} minSize={40}>
+                <ProblemCodeEditor code={code} onChange={setCode} />
+              </ResizablePanel>
+              
+              <ResizableHandle withHandle />
+              
+              <ResizablePanel defaultSize={30} minSize={20}>
+                <TestCases />
+              </ResizablePanel>
+            </ResizablePanelGroup>
+          </ResizablePanel>
+        </ResizablePanelGroup>
+      </div>
     </div>
   );
 };
