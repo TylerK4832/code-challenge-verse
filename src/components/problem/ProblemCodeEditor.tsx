@@ -67,7 +67,15 @@ const ProblemCodeEditor = ({ code, onChange }: ProblemCodeEditorProps) => {
 
         const result = response.data;
         console.log('Execution result:', result);
-        setExecutionResult(result);
+        
+        // Add expected and actual output to the result
+        const enrichedResult = {
+          ...result,
+          expected_output: testCase.expected_output,
+          actual_output: result.stdout
+        };
+        
+        setExecutionResult(enrichedResult);
         setActiveTab('result');
 
         if (result.status?.id !== 3) { // 3 = Accepted

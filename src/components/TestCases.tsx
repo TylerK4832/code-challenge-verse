@@ -13,6 +13,8 @@ interface ExecutionResult {
   stderr: string | null;
   compile_output: string | null;
   message: string | null;
+  expected_output?: string;
+  actual_output?: string;
 }
 
 interface TestCasesProps {
@@ -61,6 +63,7 @@ const TestCases = ({ executionResult, activeTab, onTabChange }: TestCasesProps) 
         <TabsList className="bg-secondary">
           <TabsTrigger value="testcases">Test Cases</TabsTrigger>
           <TabsTrigger value="result">Result</TabsTrigger>
+          <TabsTrigger value="console">Console</TabsTrigger>
         </TabsList>
       </div>
 
@@ -98,6 +101,37 @@ const TestCases = ({ executionResult, activeTab, onTabChange }: TestCasesProps) 
                     </pre>
                   </div>
                 )}
+                {executionResult.status?.id === 4 && ( // Wrong Answer
+                  <>
+                    <div className="space-y-2">
+                      <h3 className="font-medium text-red-500">Expected Output:</h3>
+                      <pre className="bg-secondary p-2 rounded-md">
+                        <code>{executionResult.expected_output}</code>
+                      </pre>
+                    </div>
+                    <div className="space-y-2">
+                      <h3 className="font-medium text-red-500">Your Output:</h3>
+                      <pre className="bg-secondary p-2 rounded-md">
+                        <code>{executionResult.actual_output || executionResult.stdout}</code>
+                      </pre>
+                    </div>
+                  </>
+                )}
+              </>
+            ) : (
+              <div className="text-[#00b8a3]">
+                Run your code to see the results!
+              </div>
+            )}
+          </div>
+        </ScrollArea>
+      </TabsContent>
+
+      <TabsContent value="console" className="h-[calc(100%-4rem)]">
+        <ScrollArea className="h-full">
+          <div className="p-4 space-y-4">
+            {executionResult ? (
+              <>
                 {executionResult.stderr && (
                   <div className="space-y-2">
                     <h3 className="font-medium text-red-500">Error Output:</h3>
@@ -114,10 +148,18 @@ const TestCases = ({ executionResult, activeTab, onTabChange }: TestCasesProps) 
                     </pre>
                   </div>
                 )}
+                {executionResult.message && (
+                  <div className="space-y-2">
+                    <h3 className="font-medium">Additional Information:</h3>
+                    <pre className="bg-secondary p-2 rounded-md">
+                      <code>{executionResult.message}</code>
+                    </pre>
+                  </div>
+                )}
               </>
             ) : (
-              <div className="text-[#00b8a3]">
-                Run your code to see the results!
+              <div className="text-gray-500">
+                No console output available. Run your code to see debug information.
               </div>
             )}
           </div>
