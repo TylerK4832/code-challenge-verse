@@ -5,7 +5,6 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/components/ui/resizable";
 import ProblemDescription from '@/components/problem/ProblemDescription';
 import ProblemCodeEditor from '@/components/problem/ProblemCodeEditor';
-import TestCases from '@/components/TestCases';
 
 const Problem = () => {
   const { id } = useParams();
@@ -49,14 +48,7 @@ const Problem = () => {
           </TabsContent>
 
           <TabsContent value="code" className="h-[calc(100%-49px)] mt-0">
-            <div className="h-full flex flex-col">
-              <div className="flex-1">
-                <ProblemCodeEditor code={code} onChange={setCode} />
-              </div>
-              <div className="h-[200px] border-t border-border">
-                <TestCases />
-              </div>
-            </div>
+            <ProblemCodeEditor code={code} onChange={setCode} />
           </TabsContent>
         </Tabs>
       </div>
@@ -74,17 +66,7 @@ const Problem = () => {
           <ResizableHandle withHandle />
           
           <ResizablePanel defaultSize={65} minSize={30}>
-            <ResizablePanelGroup direction="vertical">
-              <ResizablePanel defaultSize={70} minSize={40}>
-                <ProblemCodeEditor code={code} onChange={setCode} />
-              </ResizablePanel>
-              
-              <ResizableHandle withHandle />
-              
-              <ResizablePanel defaultSize={30} minSize={20}>
-                <TestCases />
-              </ResizablePanel>
-            </ResizablePanelGroup>
+            <ProblemCodeEditor code={code} onChange={setCode} />
           </ResizablePanel>
         </ResizablePanelGroup>
       </div>
