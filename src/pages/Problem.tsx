@@ -60,8 +60,8 @@ const Problem = () => {
   };
 
   return (
-    <div className="min-h-screen flex">
-      <div className="w-[45%] p-6 border-r border-border">
+    <div className="h-[calc(100vh-64px)] flex">
+      <div className="w-[45%] p-6 border-r border-border overflow-y-auto">
         {getProblemDescription()}
       </div>
 
