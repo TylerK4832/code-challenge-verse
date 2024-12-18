@@ -1,16 +1,11 @@
 import { useParams } from 'react-router-dom';
 import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-import CodeEditor from '@/components/CodeEditor';
-import TestCases from '@/components/TestCases';
-import { useToast } from '@/components/ui/use-toast';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useIsMobile } from '@/hooks/use-mobile';
-import ProblemDescription from '@/components/TwoSumDescription';
-import AddTwoNumbersDescription from '@/components/AddTwoNumbersDescription';
-import LongestSubstringDescription from '@/components/LongestSubstringDescription';
-import MedianSortedArraysDescription from '@/components/MedianSortedArraysDescription';
+import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/components/ui/resizable";
+import ProblemDescription from '@/components/problem/ProblemDescription';
+import ProblemCodeEditor from '@/components/problem/ProblemCodeEditor';
+import TestCases from '@/components/TestCases';
 
 const Problem = () => {
   const { id } = useParams();
@@ -38,33 +33,6 @@ const Problem = () => {
     }
   });
 
-  const { toast } = useToast();
-
-  const handleRunCode = () => {
-    toast({
-      title: "Running test cases...",
-      description: "All test cases passed!",
-      className: "bg-[#00b8a3] text-white",
-    });
-  };
-
-  const getProblemDescription = () => {
-    switch (id) {
-      case 'two-sum':
-        return <ProblemDescription />;
-      case 'add-two-numbers':
-        return <AddTwoNumbersDescription />;
-      case 'longest-substring':
-        return <LongestSubstringDescription />;
-      case 'median-sorted-arrays':
-        return <MedianSortedArraysDescription />;
-      default:
-        return <div>Problem not found</div>;
-    }
-  };
-
-  const problemDescription = getProblemDescription();
-
   if (isMobile) {
     return (
       <div className="h-[100dvh] -mt-16 pt-16">
@@ -77,30 +45,16 @@ const Problem = () => {
           </div>
 
           <TabsContent value="description" className="h-[calc(100%-49px)] mt-0">
-            <ScrollArea className="h-full">
-              <div className="p-6">
-                {problemDescription}
-              </div>
-            </ScrollArea>
+            <ProblemDescription problemId={id || ''} />
           </TabsContent>
 
           <TabsContent value="code" className="h-[calc(100%-49px)] mt-0">
             <div className="h-full flex flex-col">
-              <div className="p-4 border-b border-border flex justify-between items-center">
-                <div className="flex gap-4">
-                  <Button variant="secondary">JavaScript</Button>
-                </div>
-                <Button onClick={handleRunCode} className="bg-[#00b8a3] hover:bg-[#00a092]">
-                  Run Code
-                </Button>
+              <div className="flex-1">
+                <ProblemCodeEditor code={code} onChange={setCode} />
               </div>
-              <div className="flex-1 flex flex-col">
-                <div className="flex-1">
-                  <CodeEditor code={code} onChange={setCode} />
-                </div>
-                <div className="h-[200px] border-t border-border">
-                  <TestCases />
-                </div>
+              <div className="h-[200px] border-t border-border">
+                <TestCases />
               </div>
             </div>
           </TabsContent>
@@ -110,38 +64,24 @@ const Problem = () => {
   }
 
   return (
-    <div className="h-[100dvh] -mt-16 pt-16 flex">
-      {/* Description Section */}
-      <div className="w-[35%] border-r border-border">
-        <ScrollArea className="h-full">
-          <div className="p-6">
-            {problemDescription}
-          </div>
-        </ScrollArea>
-      </div>
-
-      {/* Editor and Test Cases Section */}
-      <div className="flex-1 flex flex-col">
-        {/* Editor Controls */}
-        <div className="p-4 border-b border-border flex justify-between items-center">
-          <div className="flex gap-4">
-            <Button variant="secondary">JavaScript</Button>
-          </div>
-          <Button onClick={handleRunCode} className="bg-[#00b8a3] hover:bg-[#00a092]">
-            Run Code
-          </Button>
-        </div>
-
-        {/* Editor */}
-        <div className="flex-1">
-          <CodeEditor code={code} onChange={setCode} />
-        </div>
-
-        {/* Test Cases */}
-        <div className="h-[200px] border-t border-border">
+    <div className="h-[100dvh] -mt-16 pt-16">
+      <ResizablePanelGroup direction="horizontal" className="h-full">
+        <ResizablePanel defaultSize={35} minSize={30}>
+          <ProblemDescription problemId={id || ''} />
+        </ResizablePanel>
+        
+        <ResizableHandle withHandle />
+        
+        <ResizablePanel defaultSize={40} minSize={30}>
+          <ProblemCodeEditor code={code} onChange={setCode} />
+        </ResizablePanel>
+        
+        <ResizableHandle withHandle />
+        
+        <ResizablePanel defaultSize={25} minSize={20}>
           <TestCases />
-        </div>
-      </div>
+        </ResizablePanel>
+      </ResizablePanelGroup>
     </div>
   );
 };
