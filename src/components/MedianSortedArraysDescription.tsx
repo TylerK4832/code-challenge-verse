@@ -37,12 +37,12 @@ Explanation: merged array = [1,2,3,4] and median is (2 + 3) / 2 = 2.5.`}
 
         <h3>Constraints:</h3>
         <ul>
-          <li><code>nums1.length == m</code></li>
-          <li><code>nums2.length == n</code></li>
-          <li><code>0 <= m <= 1000</code></li>
-          <li><code>0 <= n <= 1000</code></li>
-          <li><code>1 <= m + n <= 2000</code></li>
-          <li><code>-106 <= nums1[i], nums2[i] <= 106</code></li>
+          <li><code>{`nums1.length == m`}</code></li>
+          <li><code>{`nums2.length == n`}</code></li>
+          <li><code>{`0 <= m <= 1000`}</code></li>
+          <li><code>{`0 <= n <= 1000`}</code></li>
+          <li><code>{`1 <= m + n <= 2000`}</code></li>
+          <li><code>{`-106 <= nums1[i], nums2[i] <= 106`}</code></li>
         </ul>
       </div>
     </div>
