@@ -24,13 +24,22 @@ const Header = () => {
   return (
     <header className="border-b relative z-50">
       <div className="container flex h-16 items-center justify-between">
-        <Button
-          variant="link"
-          className="text-lg font-semibold no-underline hover:no-underline hover:bg-accent hover:text-accent-foreground rounded-md transition-colors px-2 py-1"
-          onClick={() => navigate("/problems")}
-        >
-          CodeVerse
-        </Button>
+        <div className="flex items-center gap-4">
+          <Button
+            variant="link"
+            className="text-lg font-semibold no-underline hover:no-underline hover:bg-accent hover:text-accent-foreground rounded-md transition-colors px-2 py-1"
+            onClick={() => navigate("/")}
+          >
+            CodeVerse
+          </Button>
+          <Button
+            variant="link"
+            className="no-underline hover:no-underline hover:bg-accent hover:text-accent-foreground rounded-md transition-colors px-2 py-1"
+            onClick={() => navigate("/problems")}
+          >
+            Problems
+          </Button>
+        </div>
         <div className="flex items-center gap-4">
           <Button
             variant="ghost"
