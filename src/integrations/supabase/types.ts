@@ -99,6 +99,48 @@ export type Database = {
           },
         ]
       }
+      test_cases: {
+        Row: {
+          created_at: string
+          expected_output: string
+          id: string
+          input: string
+          is_hidden: boolean | null
+          problem_id: string
+        }
+        Insert: {
+          created_at?: string
+          expected_output: string
+          id?: string
+          input: string
+          is_hidden?: boolean | null
+          problem_id: string
+        }
+        Update: {
+          created_at?: string
+          expected_output?: string
+          id?: string
+          input?: string
+          is_hidden?: boolean | null
+          problem_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_problem"
+            columns: ["problem_id"]
+            isOneToOne: false
+            referencedRelation: "problems"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "test_cases_problem_id_fkey"
+            columns: ["problem_id"]
+            isOneToOne: false
+            referencedRelation: "problems"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
