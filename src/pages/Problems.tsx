@@ -1,10 +1,12 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Search } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { supabase } from "@/integrations/supabase/client";
+import { useQuery } from '@tanstack/react-query';
 
 interface Problem {
   id: string;
@@ -14,41 +16,48 @@ interface Problem {
   acceptance: string;
 }
 
-const problems: Problem[] = [
-  {
-    id: "two-sum",
-    title: "1. Two Sum",
-    difficulty: "Easy",
-    category: "Array",
-    acceptance: "49.2%"
-  },
-  {
-    id: "add-two-numbers",
-    title: "2. Add Two Numbers",
-    difficulty: "Medium",
-    category: "Linked List",
-    acceptance: "39.8%"
-  },
-  {
-    id: "longest-substring",
-    title: "3. Longest Substring Without Repeating Characters",
-    difficulty: "Medium",
-    category: "String",
-    acceptance: "33.5%"
-  },
-  {
-    id: "median-sorted-arrays",
-    title: "4. Median of Two Sorted Arrays",
-    difficulty: "Hard",
-    category: "Array",
-    acceptance: "35.1%"
-  }
-];
+const fetchProblems = async () => {
+  const { data, error } = await supabase
+    .from('problems')
+    .select('*')
+    .order('title');
+    
+  if (error) throw error;
+  return data as Problem[];
+};
 
 const Problems = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const navigate = useNavigate();
+
+  const { data: problems = [], isLoading } = useQuery({
+    queryKey: ['problems'],
+    queryFn: fetchProblems,
+  });
+
+  // Set up real-time subscription
+  useEffect(() => {
+    const channel = supabase
+      .channel('schema-db-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'problems'
+        },
+        () => {
+          // Invalidate and refetch problems when there's a change
+          void fetchProblems();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, []);
 
   const categories = Array.from(new Set(problems.map(p => p.category)));
 
@@ -70,6 +79,16 @@ const Problems = () => {
         return '';
     }
   };
+
+  if (isLoading) {
+    return (
+      <div className="container py-8">
+        <div className="flex justify-center items-center h-64">
+          <div className="animate-pulse text-muted-foreground">Loading problems...</div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="container py-8">
