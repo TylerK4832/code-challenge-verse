@@ -7,6 +7,7 @@ import { useToast } from '@/components/ui/use-toast';
 import ProblemDescription from '@/components/ProblemDescription';
 import AddTwoNumbersDescription from '@/components/AddTwoNumbersDescription';
 import LongestSubstringDescription from '@/components/LongestSubstringDescription';
+import MedianSortedArraysDescription from '@/components/MedianSortedArraysDescription';
 
 const Problem = () => {
   const { id } = useParams();
@@ -22,6 +23,10 @@ const Problem = () => {
 }`;
       case 'longest-substring':
         return `function lengthOfLongestSubstring(s) {
+  // Write your solution here
+}`;
+      case 'median-sorted-arrays':
+        return `function findMedianSortedArrays(nums1, nums2) {
   // Write your solution here
 }`;
       default:
@@ -47,6 +52,8 @@ const Problem = () => {
         return <AddTwoNumbersDescription />;
       case 'longest-substring':
         return <LongestSubstringDescription />;
+      case 'median-sorted-arrays':
+        return <MedianSortedArraysDescription />;
       default:
         return <div>Problem not found</div>;
     }
