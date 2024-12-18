@@ -63,8 +63,7 @@ const Problem = () => {
   const problemDescription = getProblemDescription();
 
   return (
-    <div className="h-[calc(100vh-64px)] max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
-
+    <div className="flex-1 max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 pb-6">
       {/* Mobile layout: Tabs */}
       <div className="block sm:hidden">
         <Tabs defaultValue="description">
@@ -89,7 +88,6 @@ const Problem = () => {
               </Button>
             </div>
 
-            {/* Give the editor a fixed height so it won't shrink */}
             <div className="h-[50vh] border border-border rounded-md overflow-hidden">
               <CodeEditor code={code} onChange={setCode} />
             </div>
@@ -102,7 +100,7 @@ const Problem = () => {
       </div>
 
       {/* Desktop layout: Side-by-side */}
-      <div className="hidden sm:flex h-full">
+      <div className="hidden sm:flex h-[calc(100vh-8rem)]">
         <div className="flex-shrink-0 w-full sm:w-[40%] lg:w-[35%] py-6 pr-6 border-r border-border overflow-y-auto min-w-[280px]">
           {problemDescription}
         </div>
