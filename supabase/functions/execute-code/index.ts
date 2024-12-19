@@ -22,7 +22,24 @@ serve(async (req) => {
   try {
     const { source_code, language_id, stdin, expected_output } = await req.json() as SubmissionRequest;
 
-    console.log('Creating submission:', { language_id, stdin });
+    // Wrap the code to handle input properly
+    const wrappedCode = `
+      const input = \`${stdin}\`;
+      const lines = input.trim().split('\\n');
+      const nums = JSON.parse(lines[0]);
+      const target = parseInt(lines[1]);
+      
+      ${source_code}
+      
+      const result = twoSum(nums, target);
+      console.log(JSON.stringify(result));
+    `;
+
+    console.log('Submitting code to Judge0:', {
+      wrappedCode,
+      stdin,
+      expected_output,
+    });
 
     // Create submission
     const createResponse = await fetch(`${JUDGE0_API_URL}/submissions`, {
@@ -33,12 +50,18 @@ serve(async (req) => {
         'X-RapidAPI-Key': Deno.env.get('JUDGE0_API_KEY') || '',
       },
       body: JSON.stringify({
-        source_code,
+        source_code: wrappedCode,
         language_id,
-        stdin,
+        stdin: '', // We're now handling input in the wrapped code
         expected_output,
       }),
     });
+
+    if (!createResponse.ok) {
+      const errorText = await createResponse.text();
+      console.error('Judge0 submission creation failed:', errorText);
+      throw new Error(`Failed to create submission: ${errorText}`);
+    }
 
     const { token } = await createResponse.json();
     console.log('Submission created with token:', token);
@@ -59,15 +82,33 @@ serve(async (req) => {
         }
       );
 
-      result = await getResponse.json();
-      console.log('Submission status:', result.status?.description);
+      if (!getResponse.ok) {
+        const errorText = await getResponse.text();
+        console.error('Judge0 submission retrieval failed:', errorText);
+        throw new Error(`Failed to get submission result: ${errorText}`);
+      }
 
-      if (result.status_id >= 3) { // Status is completed
+      result = await getResponse.json();
+      console.log('Submission status:', result);
+
+      if (result.status?.id >= 3) { // Status is completed
         break;
       }
 
       attempts++;
       await new Promise(resolve => setTimeout(resolve, 1000));
+    }
+
+    // Compare the output with expected output
+    if (result.stdout) {
+      const actualOutput = result.stdout.trim();
+      const expectedOutput = expected_output.trim();
+      
+      if (actualOutput === expectedOutput) {
+        result.status = { id: 3, description: 'Accepted' };
+      } else {
+        result.status = { id: 4, description: 'Wrong Answer' };
+      }
     }
 
     return new Response(
@@ -77,7 +118,12 @@ serve(async (req) => {
   } catch (error) {
     console.error('Error executing code:', error);
     return new Response(
-      JSON.stringify({ error: 'Failed to execute code' }),
+      JSON.stringify({ 
+        error: 'Failed to execute code',
+        message: error.message,
+        status: { id: 0, description: 'Error' },
+        stderr: error.message,
+      }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 },
     );
   }
