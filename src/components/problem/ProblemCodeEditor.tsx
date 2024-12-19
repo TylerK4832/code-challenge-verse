@@ -21,6 +21,8 @@ const ProblemCodeEditor = ({ code, onChange }: ProblemCodeEditorProps) => {
 
   const handleRunCode = async () => {
     setIsRunning(true);
+    setExecutionResult(null); // Reset previous results
+    
     try {
       // Get current user
       const { data: { user } } = await supabase.auth.getUser();
@@ -51,9 +53,13 @@ const ProblemCodeEditor = ({ code, onChange }: ProblemCodeEditorProps) => {
         return;
       }
 
+      console.log('Starting code execution with test cases:', testCases);
+
       // Run each test case
       let allTestsPassed = true;
       for (const testCase of testCases) {
+        console.log('Running test case:', testCase);
+        
         const response = await supabase.functions.invoke('execute-code', {
           body: {
             source_code: code,
@@ -63,23 +69,37 @@ const ProblemCodeEditor = ({ code, onChange }: ProblemCodeEditorProps) => {
           },
         });
 
-        if (response.error) throw response.error;
+        if (response.error) {
+          console.error('Edge function error:', response.error);
+          throw response.error;
+        }
 
         const result = response.data;
-        console.log('Execution result:', result);
+        console.log('Raw execution result:', result);
         
-        // Add expected and actual output to the result
+        // Enrich the result with test case information
         const enrichedResult = {
           ...result,
           expected_output: testCase.expected_output,
-          actual_output: result.stdout
+          actual_output: result.stdout,
+          stderr: result.stderr,
+          compile_output: result.compile_output,
+          message: result.message,
+          status: result.status
         };
         
+        console.log('Enriched result:', enrichedResult);
         setExecutionResult(enrichedResult);
         setActiveTab('result');
 
         if (result.status?.id !== 3) { // 3 = Accepted
           allTestsPassed = false;
+          console.log('Test case failed:', {
+            status: result.status,
+            expected: testCase.expected_output,
+            actual: result.stdout
+          });
+          
           toast({
             title: "Test case failed",
             description: result.compile_output || result.stderr || "Execution failed",
@@ -111,6 +131,15 @@ const ProblemCodeEditor = ({ code, onChange }: ProblemCodeEditorProps) => {
       }
     } catch (error) {
       console.error('Error running code:', error);
+      setExecutionResult({
+        status: { id: 0, description: 'Error' },
+        stderr: error.message,
+        stdout: null,
+        compile_output: null,
+        message: 'Failed to execute code'
+      });
+      setActiveTab('console');
+      
       toast({
         title: "Error",
         description: "Failed to run code. Please try again.",
