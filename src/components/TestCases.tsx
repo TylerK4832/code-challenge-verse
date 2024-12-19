@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 interface ExecutionResult {
@@ -15,15 +16,22 @@ interface ExecutionResult {
   message: string | null;
   expected_output?: string;
   actual_output?: string;
+  test_results?: Array<{
+    passed: boolean;
+    input: string;
+    expected_output: string;
+    actual_output: string;
+  }>;
 }
 
 interface TestCasesProps {
   executionResult?: ExecutionResult | null;
   activeTab?: string;
   onTabChange?: (value: string) => void;
+  isLoading?: boolean;
 }
 
-const TestCases = ({ executionResult, activeTab, onTabChange }: TestCasesProps) => {
+const TestCases = ({ executionResult, activeTab, onTabChange, isLoading }: TestCasesProps) => {
   const { id: problemId } = useParams();
   const [testCases, setTestCases] = useState<any[]>([]);
 
@@ -51,11 +59,17 @@ const TestCases = ({ executionResult, activeTab, onTabChange }: TestCasesProps) 
   const getStatusColor = (status?: { id: number }) => {
     if (!status) return 'text-gray-500';
     switch (status.id) {
-      case 3: return 'text-[#00b8a3]'; // Accepted
-      case 4: return 'text-red-500'; // Wrong Answer
+      case 3: return 'text-[#00b8a3]';
+      case 4: return 'text-red-500';
       default: return 'text-gray-500';
     }
   };
+
+  const hasConsoleOutput = executionResult && (
+    executionResult.stderr || 
+    executionResult.compile_output || 
+    executionResult.message
+  );
 
   return (
     <Tabs value={activeTab} onValueChange={onTabChange} className="h-full">
@@ -88,35 +102,35 @@ const TestCases = ({ executionResult, activeTab, onTabChange }: TestCasesProps) 
       <TabsContent value="result" className="h-[calc(100%-4rem)]">
         <ScrollArea className="h-full">
           <div className="p-4 space-y-4">
-            {executionResult ? (
+            {isLoading ? (
+              <div className="flex items-center justify-center h-32">
+                <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+              </div>
+            ) : executionResult ? (
               <>
                 <div className={getStatusColor(executionResult.status)}>
                   Status: {executionResult.status?.description || 'Processing'}
                 </div>
-                {executionResult.stdout && (
-                  <div className="space-y-2">
-                    <h3 className="font-medium">Output:</h3>
-                    <pre className="bg-secondary p-2 rounded-md">
-                      <code>{executionResult.stdout}</code>
-                    </pre>
+                {executionResult.test_results?.map((result, index) => (
+                  <div key={index} className="space-y-2 border-b border-border pb-4 last:border-0">
+                    <h3 className={`font-medium ${result.passed ? 'text-[#00b8a3]' : 'text-red-500'}`}>
+                      Test Case {index + 1}: {result.passed ? 'Passed' : 'Failed'}
+                    </h3>
+                    <div className="space-y-2">
+                      <pre className="bg-secondary p-2 rounded-md">
+                        <code>Input: {result.input}</code>
+                      </pre>
+                      <pre className="bg-secondary p-2 rounded-md">
+                        <code>Expected Output: {result.expected_output}</code>
+                      </pre>
+                      {!result.passed && (
+                        <pre className="bg-secondary p-2 rounded-md">
+                          <code>Your Output: {result.actual_output}</code>
+                        </pre>
+                      )}
+                    </div>
                   </div>
-                )}
-                {executionResult.status?.id === 4 && ( // Wrong Answer
-                  <>
-                    <div className="space-y-2">
-                      <h3 className="font-medium text-red-500">Expected Output:</h3>
-                      <pre className="bg-secondary p-2 rounded-md">
-                        <code>{executionResult.expected_output}</code>
-                      </pre>
-                    </div>
-                    <div className="space-y-2">
-                      <h3 className="font-medium text-red-500">Your Output:</h3>
-                      <pre className="bg-secondary p-2 rounded-md">
-                        <code>{executionResult.actual_output || executionResult.stdout}</code>
-                      </pre>
-                    </div>
-                  </>
-                )}
+                ))}
               </>
             ) : (
               <div className="text-[#00b8a3]">
@@ -130,7 +144,11 @@ const TestCases = ({ executionResult, activeTab, onTabChange }: TestCasesProps) 
       <TabsContent value="console" className="h-[calc(100%-4rem)]">
         <ScrollArea className="h-full">
           <div className="p-4 space-y-4">
-            {executionResult ? (
+            {isLoading ? (
+              <div className="flex items-center justify-center h-32">
+                <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+              </div>
+            ) : hasConsoleOutput ? (
               <>
                 {executionResult.stderr && (
                   <div className="space-y-2">
@@ -159,7 +177,7 @@ const TestCases = ({ executionResult, activeTab, onTabChange }: TestCasesProps) 
               </>
             ) : (
               <div className="text-gray-500">
-                No console output available. Run your code to see debug information.
+                No console output available.
               </div>
             )}
           </div>

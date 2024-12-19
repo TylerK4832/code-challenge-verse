@@ -1,28 +1,30 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
-import { corsHeaders, SubmissionRequest } from './types.ts';
+import { corsHeaders } from './types.ts';
 import { getProblemWrapper } from './problemRegistry.ts';
 
 const JUDGE0_API_URL = "https://judge0-ce.p.rapidapi.com";
 
 serve(async (req) => {
-  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    const { source_code, language_id, stdin, expected_output, problem_id } = await req.json() as SubmissionRequest;
-
+    const { source_code, language_id, problem_id, test_cases } = await req.json();
     const problemWrapper = getProblemWrapper(problem_id);
-    const wrappedCode = problemWrapper.wrapCode(source_code, stdin);
 
-    console.log('Submitting code to Judge0:', {
-      problem_id,
-      stdin,
-      expected_output,
-    });
+    console.log('Processing test cases:', test_cases);
 
-    // Create submission
+    // Create a single submission with all test cases
+    const allTestCases = test_cases.map(testCase => ({
+      input: testCase.input,
+      expected: testCase.expected_output
+    }));
+
+    const wrappedCode = problemWrapper.wrapCode(source_code, JSON.stringify(allTestCases));
+
+    console.log('Submitting wrapped code to Judge0');
+
     const createResponse = await fetch(`${JUDGE0_API_URL}/submissions`, {
       method: 'POST',
       headers: {
@@ -33,8 +35,7 @@ serve(async (req) => {
       body: JSON.stringify({
         source_code: wrappedCode,
         language_id,
-        stdin: '', // We're now handling input in the wrapped code
-        expected_output,
+        stdin: '',
       }),
     });
 
@@ -47,7 +48,6 @@ serve(async (req) => {
     const { token } = await createResponse.json();
     console.log('Submission created with token:', token);
 
-    // Wait for the result
     let result;
     let attempts = 0;
     const maxAttempts = 10;
@@ -72,7 +72,7 @@ serve(async (req) => {
       result = await getResponse.json();
       console.log('Submission status:', result);
 
-      if (result.status?.id >= 3) { // Status is completed
+      if (result.status?.id >= 3) {
         break;
       }
 
@@ -80,15 +80,32 @@ serve(async (req) => {
       await new Promise(resolve => setTimeout(resolve, 1000));
     }
 
-    // Compare the output with expected output
+    // Parse the results for each test case
     if (result.stdout) {
-      const actualOutput = result.stdout.trim();
-      const expectedOutput = expected_output.trim();
-      
-      if (actualOutput === expectedOutput) {
-        result.status = { id: 3, description: 'Accepted' };
-      } else {
-        result.status = { id: 4, description: 'Wrong Answer' };
+      try {
+        const outputs = result.stdout.trim().split('\n');
+        const testResults = test_cases.map((testCase, index) => {
+          const output = outputs[index];
+          const passed = output === testCase.expected_output;
+          return {
+            passed,
+            input: testCase.input,
+            expected_output: testCase.expected_output,
+            actual_output: output
+          };
+        });
+
+        // Set overall status based on all test results
+        const allPassed = testResults.every(result => result.passed);
+        result.status = {
+          id: allPassed ? 3 : 4,
+          description: allPassed ? 'Accepted' : 'Wrong Answer'
+        };
+        result.test_results = testResults;
+      } catch (error) {
+        console.error('Error parsing test results:', error);
+        result.status = { id: 0, description: 'Error' };
+        result.stderr = 'Error parsing test results: ' + error.message;
       }
     }
 
