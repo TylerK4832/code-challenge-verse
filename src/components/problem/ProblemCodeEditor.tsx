@@ -66,6 +66,7 @@ const ProblemCodeEditor = ({ code, onChange }: ProblemCodeEditorProps) => {
             language_id: 63, // JavaScript
             stdin: testCase.input,
             expected_output: testCase.expected_output,
+            problem_id: problemId,
           },
         });
 

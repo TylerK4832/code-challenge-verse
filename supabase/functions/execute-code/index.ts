@@ -8,9 +8,10 @@ const corsHeaders = {
 
 interface SubmissionRequest {
   source_code: string;
-  language_id: number; // 63 for JavaScript
+  language_id: number;
   stdin: string;
   expected_output: string;
+  problem_id: string;
 }
 
 serve(async (req) => {
@@ -20,23 +21,115 @@ serve(async (req) => {
   }
 
   try {
-    const { source_code, language_id, stdin, expected_output } = await req.json() as SubmissionRequest;
+    const { source_code, language_id, stdin, expected_output, problem_id } = await req.json() as SubmissionRequest;
 
-    // Wrap the code to handle input properly
-    const wrappedCode = `
-      const input = \`${stdin}\`;
-      const lines = input.trim().split('\\n');
-      const nums = JSON.parse(lines[0]);
-      const target = parseInt(lines[1]);
-      
-      ${source_code}
-      
-      const result = twoSum(nums, target);
-      console.log(JSON.stringify(result));
-    `;
+    // Get the function name based on the problem ID
+    const getFunctionName = (problemId: string) => {
+      switch (problemId) {
+        case 'two-sum':
+          return 'twoSum';
+        case 'add-two-numbers':
+          return 'addTwoNumbers';
+        case 'longest-substring':
+          return 'lengthOfLongestSubstring';
+        case 'median-sorted-arrays':
+          return 'findMedianSortedArrays';
+        default:
+          throw new Error(`Unknown problem ID: ${problemId}`);
+      }
+    };
+
+    const functionName = getFunctionName(problem_id);
+
+    // Wrap the code to handle input properly based on the problem type
+    const getWrappedCode = (code: string, problemId: string) => {
+      switch (problemId) {
+        case 'two-sum':
+          return `
+            const input = \`${stdin}\`;
+            const lines = input.trim().split('\\n');
+            const nums = JSON.parse(lines[0]);
+            const target = parseInt(lines[1]);
+            
+            ${code}
+            
+            const result = ${functionName}(nums, target);
+            console.log(JSON.stringify(result));
+          `;
+        case 'add-two-numbers':
+          return `
+            const input = \`${stdin}\`;
+            const lines = input.trim().split('\\n');
+            const l1 = JSON.parse(lines[0]);
+            const l2 = JSON.parse(lines[1]);
+            
+            class ListNode {
+              val: number;
+              next: ListNode | null;
+              constructor(val?: number, next?: ListNode | null) {
+                this.val = val === undefined ? 0 : val;
+                this.next = next === undefined ? null : next;
+              }
+            }
+
+            function arrayToList(arr: number[]): ListNode | null {
+              if (!arr.length) return null;
+              const head = new ListNode(arr[0]);
+              let current = head;
+              for (let i = 1; i < arr.length; i++) {
+                current.next = new ListNode(arr[i]);
+                current = current.next;
+              }
+              return head;
+            }
+
+            function listToArray(head: ListNode | null): number[] {
+              const result = [];
+              let current = head;
+              while (current) {
+                result.push(current.val);
+                current = current.next;
+              }
+              return result;
+            }
+
+            ${code}
+            
+            const result = ${functionName}(arrayToList(l1), arrayToList(l2));
+            console.log(JSON.stringify(listToArray(result)));
+          `;
+        case 'longest-substring':
+          return `
+            const input = \`${stdin}\`;
+            const s = input.trim();
+            
+            ${code}
+            
+            const result = ${functionName}(s);
+            console.log(JSON.stringify(result));
+          `;
+        case 'median-sorted-arrays':
+          return `
+            const input = \`${stdin}\`;
+            const lines = input.trim().split('\\n');
+            const nums1 = JSON.parse(lines[0]);
+            const nums2 = JSON.parse(lines[1]);
+            
+            ${code}
+            
+            const result = ${functionName}(nums1, nums2);
+            console.log(JSON.stringify(result));
+          `;
+        default:
+          throw new Error(`Unknown problem ID: ${problemId}`);
+      }
+    };
+
+    const wrappedCode = getWrappedCode(source_code, problem_id);
 
     console.log('Submitting code to Judge0:', {
-      wrappedCode,
+      problem_id,
+      functionName,
       stdin,
       expected_output,
     });
