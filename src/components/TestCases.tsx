@@ -4,6 +4,16 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { useNavigate } from 'react-router-dom';
 
 interface ExecutionResult {
   status?: {
@@ -34,6 +44,8 @@ interface TestCasesProps {
 const TestCases = ({ executionResult, activeTab, onTabChange, isLoading }: TestCasesProps) => {
   const { id: problemId } = useParams();
   const [testCases, setTestCases] = useState<any[]>([]);
+  const [showSuccessDialog, setShowSuccessDialog] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchTestCases = async () => {
@@ -44,17 +56,18 @@ const TestCases = ({ executionResult, activeTab, onTabChange, isLoading }: TestC
         .eq('is_hidden', false);
 
       if (!error && data) {
-        const formattedData = data.map(testCase => ({
-          ...testCase,
-          input: testCase.input.replace(/\\n/g, '\n'),
-          expected_output: testCase.expected_output.replace(/\\n/g, '\n')
-        }));
-        setTestCases(formattedData);
+        setTestCases(data);
       }
     };
 
     fetchTestCases();
   }, [problemId]);
+
+  useEffect(() => {
+    if (executionResult?.status?.id === 3) {
+      setShowSuccessDialog(true);
+    }
+  }, [executionResult]);
 
   const getStatusColor = (status?: { id: number }) => {
     if (!status) return 'text-gray-500';
@@ -65,6 +78,10 @@ const TestCases = ({ executionResult, activeTab, onTabChange, isLoading }: TestC
     }
   };
 
+  const formatInput = (input: string) => {
+    return input.split('\\n').join('\n');
+  };
+
   const hasConsoleOutput = executionResult && (
     executionResult.stderr || 
     executionResult.compile_output || 
@@ -72,32 +89,52 @@ const TestCases = ({ executionResult, activeTab, onTabChange, isLoading }: TestC
   );
 
   return (
-    <Tabs value={activeTab} onValueChange={onTabChange} className="h-full">
-      <div className="p-4 border-b border-border">
-        <TabsList className="bg-secondary">
-          <TabsTrigger value="testcases">Test Cases</TabsTrigger>
-          <TabsTrigger value="result">Result</TabsTrigger>
-          <TabsTrigger value="console">Console</TabsTrigger>
-        </TabsList>
-      </div>
+    <>
+      <Dialog open={showSuccessDialog} onOpenChange={setShowSuccessDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Congratulations! 🎉</DialogTitle>
+            <DialogDescription>
+              You've successfully solved this problem! Would you like to continue working on it or try another problem?
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="flex gap-2">
+            <Button variant="outline" onClick={() => setShowSuccessDialog(false)}>
+              Keep Working
+            </Button>
+            <Button onClick={() => navigate('/problems')}>
+              More Problems
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
-      <TabsContent value="testcases" className="h-[calc(100%-4rem)]">
-        <ScrollArea className="h-full">
-          <div className="p-4 space-y-4">
-            {testCases.map((testCase, index) => (
-              <div key={testCase.id} className="space-y-2">
-                <h3 className="font-medium">Test Case {index + 1}:</h3>
-                <pre className="bg-secondary p-2 rounded-md">
-                  <code>Input: {testCase.input}</code>
-                </pre>
-                <pre className="bg-secondary p-2 rounded-md">
-                  <code>Expected Output: {testCase.expected_output}</code>
-                </pre>
-              </div>
-            ))}
-          </div>
-        </ScrollArea>
-      </TabsContent>
+      <Tabs value={activeTab} onValueChange={onTabChange} className="h-full">
+        <div className="p-4 border-b border-border">
+          <TabsList className="bg-secondary">
+            <TabsTrigger value="testcases">Test Cases</TabsTrigger>
+            <TabsTrigger value="result">Result</TabsTrigger>
+            <TabsTrigger value="console">Console</TabsTrigger>
+          </TabsList>
+        </div>
+
+        <TabsContent value="testcases" className="h-[calc(100%-4rem)]">
+          <ScrollArea className="h-full">
+            <div className="p-4 space-y-4">
+              {testCases.map((testCase, index) => (
+                <div key={testCase.id} className="space-y-2">
+                  <h3 className="font-medium">Test Case {index + 1}:</h3>
+                  <pre className="bg-secondary p-2 rounded-md whitespace-pre-wrap">
+                    <code>Input: {formatInput(testCase.input)}</code>
+                  </pre>
+                  <pre className="bg-secondary p-2 rounded-md whitespace-pre-wrap">
+                    <code>Expected Output: {testCase.expected_output}</code>
+                  </pre>
+                </div>
+              ))}
+            </div>
+          </ScrollArea>
+        </TabsContent>
 
       <TabsContent value="result" className="h-[calc(100%-4rem)]">
         <ScrollArea className="h-full">
@@ -183,7 +220,8 @@ const TestCases = ({ executionResult, activeTab, onTabChange, isLoading }: TestC
           </div>
         </ScrollArea>
       </TabsContent>
-    </Tabs>
+      </Tabs>
+    </>
   );
 };
 

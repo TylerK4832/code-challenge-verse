@@ -11,12 +11,21 @@ export const longestSubstringWrapper: ProblemWrapper = {
       try {
         const s = testCase.input.trim();
         const result = lengthOfLongestSubstring(s);
-        results.push(JSON.stringify(result));
+        const expected = JSON.parse(testCase.expected);
+        
+        results.push({
+          passed: result === expected,
+          output: result
+        });
       } catch (error) {
-        results.push(JSON.stringify(null));
+        results.push({
+          passed: false,
+          output: null,
+          error: error.message
+        });
       }
     }
     
-    console.log(results.join('\\n'));
+    console.log(JSON.stringify(results));
   `,
 };
