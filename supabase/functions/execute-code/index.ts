@@ -15,8 +15,7 @@ serve(async (req) => {
 
     console.log('Processing test cases:', test_cases);
 
-    // Format test cases for the wrapper:
-    // Convert `expected_output` to `expected` for the wrapper to consume.
+    // Format test cases for the wrapper
     const formattedTestCases = test_cases.map((testCase: any) => ({
       input: testCase.input,
       expected: testCase.expected_output
@@ -91,7 +90,10 @@ serve(async (req) => {
           stderr: result.stderr || result.compile_output,
           test_results: []
         }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
+        { 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          status: 200 // Ensure we return 200 even for execution errors
+        },
       );
     }
 
@@ -99,6 +101,7 @@ serve(async (req) => {
       try {
         // Parse the test results from stdout
         const testResults = JSON.parse(result.stdout);
+        console.log('Parsed test results:', testResults);
 
         // Calculate overall status based on test results
         const allPassed = Array.isArray(testResults) && testResults.every((r: any) => r.passed);
@@ -116,7 +119,10 @@ serve(async (req) => {
               actual_output: JSON.stringify(r.output)
             }))
           }),
-          { headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
+          { 
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+            status: 200
+          },
         );
       } catch (error) {
         console.error('Error processing test results:', error);
@@ -126,7 +132,10 @@ serve(async (req) => {
             stderr: `Error processing test results: ${error.message}`,
             test_results: []
           }),
-          { headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
+          { 
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+            status: 200
+          },
         );
       }
     }
@@ -137,18 +146,23 @@ serve(async (req) => {
         stderr: 'No output received from code execution',
         test_results: []
       }),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
+      { 
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 200
+      },
     );
   } catch (error) {
     console.error('Error executing code:', error);
     return new Response(
       JSON.stringify({ 
-        error: 'Failed to execute code',
-        message: error.message,
         status: { id: 0, description: 'Error' },
         stderr: error.message,
+        test_results: []
       }),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 },
+      { 
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 200 // Always return 200 to prevent the frontend from seeing it as a network error
+      },
     );
   }
 });
