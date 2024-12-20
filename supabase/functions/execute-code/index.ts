@@ -12,16 +12,17 @@ serve(async (req) => {
   try {
     const { source_code, language_id, problem_id, test_cases } = await req.json();
     const problemWrapper = getProblemWrapper(problem_id);
-    
+
     console.log('Processing test cases:', test_cases);
 
-    // Format test cases for the wrapper
-    const formattedTestCases = test_cases.map(testCase => ({
+    // Format test cases for the wrapper:
+    // Convert `expected_output` to `expected` for the wrapper to consume.
+    const formattedTestCases = test_cases.map((testCase: any) => ({
       input: testCase.input,
       expected: testCase.expected_output
     }));
 
-    // Wrap the user's code with our test execution logic
+    // Wrap the user's code with the test execution logic
     const wrappedCode = problemWrapper.wrapCode(
       source_code,
       JSON.stringify(formattedTestCases)
@@ -29,7 +30,6 @@ serve(async (req) => {
 
     console.log('Submitting wrapped code to Judge0');
 
-    // Submit to Judge0
     const createResponse = await fetch(`${JUDGE0_API_URL}/submissions`, {
       method: 'POST',
       headers: {
@@ -58,7 +58,7 @@ serve(async (req) => {
 
     while (attempts < maxAttempts) {
       const getResponse = await fetch(
-        `${JUDGE0_API_URL}/submissions/${token}?fields=status_id,stdout,stderr,compile_output,message,status`, 
+        `${JUDGE0_API_URL}/submissions/${token}?fields=status_id,stdout,stderr,compile_output,message,status`,
         {
           headers: {
             'X-RapidAPI-Host': 'judge0-ce.p.rapidapi.com',
@@ -99,21 +99,21 @@ serve(async (req) => {
       try {
         // Parse the test results from stdout
         const testResults = JSON.parse(result.stdout);
-        
+
         // Calculate overall status based on test results
-        const allPassed = testResults.every((result: any) => result.passed);
-        
+        const allPassed = Array.isArray(testResults) && testResults.every((r: any) => r.passed);
+
         return new Response(
           JSON.stringify({
             status: {
               id: allPassed ? 3 : 4,
               description: allPassed ? 'Accepted' : 'Wrong Answer'
             },
-            test_results: testResults.map((result: any, index: number) => ({
-              passed: result.passed,
-              input: test_cases[index].input,
-              expected_output: test_cases[index].expected_output,
-              actual_output: JSON.stringify(result.output)
+            test_results: testResults.map((r: any, index: number) => ({
+              passed: r.passed,
+              input: test_cases[index]?.input,
+              expected_output: test_cases[index]?.expected_output,
+              actual_output: JSON.stringify(r.output)
             }))
           }),
           { headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
