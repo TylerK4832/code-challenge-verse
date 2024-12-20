@@ -14,7 +14,7 @@ export const twoSumWrapper: ProblemWrapper = {
         const [numsStr, targetStr] = input.split('\\n');
         
         // Clean and parse the nums array
-        const cleanNumsStr = numsStr.replace(/\\/g, '');
+        const cleanNumsStr = numsStr.replace(/\\\\/g, '');
         const nums = JSON.parse(cleanNumsStr);
         const target = parseInt(targetStr);
         
