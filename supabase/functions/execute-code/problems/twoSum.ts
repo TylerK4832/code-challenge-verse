@@ -5,23 +5,60 @@ export const twoSumWrapper: ProblemWrapper = {
     ${code}
 
     try {
-      // Split the input string by newlines
-      const lines = testCasesStr.trim().split('\\n');
-      
-      // First line should be a JSON array of nums
-      const nums = JSON.parse(lines[0]);
-      // Second line should be a target integer
-      const target = parseInt(lines[1], 10);
+      // Parse the test cases array from the given string
+      const testCases = JSON.parse(\`${testCasesStr}\`);
 
-      // Run the user's twoSum solution
-      const result = twoSum(nums, target);
+      const results = [];
 
-      // Print the result as a JSON string
-      console.log(JSON.stringify(result));
+      for (const testCase of testCases) {
+        try {
+          // Split the input string by newline, for example:
+          // input might look like:
+          // "[2,7,11,15]"
+          // "9"
+          //
+          // So we split by \\n and parse accordingly
+          const lines = testCase.input.trim().split('\\n');
+          
+          // The first line is the array of numbers
+          const nums = JSON.parse(lines[0]);
+          // The second line is the target
+          const target = parseInt(lines[1], 10);
+
+          // Run the user's solution
+          const output = twoSum(nums, target);
+
+          // Compare with expected output
+          // The expected might be a JSON array string, so parse it:
+          const expected = JSON.parse(testCase.expected);
+
+          const passed = JSON.stringify(output) === JSON.stringify(expected);
+
+          // Store result for this test case
+          results.push({
+            input: testCase.input,
+            expected: expected,
+            output: output,
+            passed: passed
+          });
+        } catch (error) {
+          // In case of any error during parsing or execution
+          results.push({
+            input: testCase.input,
+            expected: testCase.expected,
+            output: null,
+            passed: false,
+            error: error.toString()
+          });
+        }
+      }
+
+      // Log all results as JSON
+      console.log(JSON.stringify(results));
     } catch (error) {
-      // If there's any error, print null
-      console.error('Error:', error);
+      console.error('Error parsing testCasesStr:', error);
       console.log('null');
     }
-  `,
+  `
 };
+
