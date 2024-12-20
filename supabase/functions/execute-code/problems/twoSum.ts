@@ -11,11 +11,13 @@ export const twoSumWrapper: ProblemWrapper = {
       try {
         // Parse input string to get array and target
         const [numsStr, targetStr] = testCase.input.split('\\n');
-        const nums = numsStr.replace(/[\\[\\]]/g, '').split(',').map(Number);
+        const nums = JSON.parse(numsStr);
         const target = parseInt(targetStr);
         
-        // Run the solution
+        // Run the solution and get result
         const result = twoSum(nums, target);
+        
+        // Convert result to string for comparison
         results.push(JSON.stringify(result));
       } catch (error) {
         results.push(JSON.stringify(null));

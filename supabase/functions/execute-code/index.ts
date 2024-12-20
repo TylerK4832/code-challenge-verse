@@ -72,7 +72,7 @@ serve(async (req) => {
       }
 
       result = await getResponse.json();
-      console.log('Submission status:', result);
+      console.log('Raw submission result:', result);
 
       if (result.status?.id >= 3) {
         break;
@@ -84,7 +84,6 @@ serve(async (req) => {
 
     // Process results
     if (result.stderr || result.compile_output) {
-      // If there's an error, return it directly
       return new Response(
         JSON.stringify({
           status: { id: 4, description: 'Error' },
@@ -99,37 +98,36 @@ serve(async (req) => {
       try {
         // Split output into individual test case results
         const outputs = result.stdout.trim().split('\n');
+        console.log('Parsed outputs:', outputs);
         
         // Match results with test cases
         const testResults = test_cases.map((testCase, index) => {
-          const output = outputs[index];
+          const actualOutput = outputs[index];
           let passed = false;
           
           try {
             // Parse expected and actual outputs
             const expectedOutput = JSON.parse(testCase.expected_output);
-            const actualOutput = output === 'null' ? null : JSON.parse(output);
+            const actualResult = JSON.parse(actualOutput);
             
-            if (actualOutput === null) {
-              passed = false;
-            } else if (Array.isArray(expectedOutput) && Array.isArray(actualOutput)) {
-              // For array outputs (like Two Sum), sort before comparing
-              passed = JSON.stringify(expectedOutput.sort()) === JSON.stringify(actualOutput.sort());
-            } else {
-              // For other types of outputs, direct comparison
-              passed = expectedOutput === actualOutput;
-            }
+            // Compare arrays by converting to strings (order matters for this problem)
+            passed = JSON.stringify(expectedOutput) === JSON.stringify(actualResult);
+            
+            return {
+              passed,
+              input: testCase.input,
+              expected_output: testCase.expected_output,
+              actual_output: actualOutput
+            };
           } catch (error) {
             console.error('Error comparing outputs:', error);
-            passed = false;
+            return {
+              passed: false,
+              input: testCase.input,
+              expected_output: testCase.expected_output,
+              actual_output: 'Error: Invalid output format'
+            };
           }
-
-          return {
-            passed,
-            input: testCase.input,
-            expected_output: testCase.expected_output,
-            actual_output: output
-          };
         });
 
         // Set overall status based on all test results
