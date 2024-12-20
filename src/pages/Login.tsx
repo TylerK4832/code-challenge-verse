@@ -8,27 +8,51 @@ import UsernameSetup from "@/components/UsernameSetup";
 const Login = () => {
   const navigate = useNavigate();
   const [newUserId, setNewUserId] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+    // Check current session on mount
+    supabase.auth.getSession().then(({ data: { session } }) => {
       if (session) {
-        // Check if user has a username
-        const { data: profile } = await supabase
-          .from("profiles")
-          .select("username")
-          .eq("id", session.user.id)
-          .single();
+        handleAuthenticatedUser(session.user.id);
+      }
+      setIsLoading(false);
+    });
 
-        if (profile?.username) {
-          navigate("/problems");
-        } else {
-          setNewUserId(session.user.id);
-        }
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (event === 'SIGNED_IN' && session) {
+        handleAuthenticatedUser(session.user.id);
+      } else if (event === 'SIGNED_OUT') {
+        setNewUserId(null);
       }
     });
 
     return () => subscription.unsubscribe();
   }, [navigate]);
+
+  const handleAuthenticatedUser = async (userId: string) => {
+    // Check if user has a username
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("username")
+      .eq("id", userId)
+      .single();
+
+    if (profile?.username) {
+      navigate("/problems");
+    } else {
+      setNewUserId(userId);
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <div className="animate-pulse text-muted-foreground">Loading...</div>
+      </div>
+    );
+  }
 
   if (newUserId) {
     return <UsernameSetup userId={newUserId} />;
