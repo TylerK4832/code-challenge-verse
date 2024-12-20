@@ -12,19 +12,24 @@ serve(async (req) => {
   try {
     const { source_code, language_id, problem_id, test_cases } = await req.json();
     const problemWrapper = getProblemWrapper(problem_id);
-
+    
     console.log('Processing test cases:', test_cases);
 
-    // Create a single submission with all test cases
-    const allTestCases = test_cases.map(testCase => ({
+    // Format test cases for the wrapper
+    const formattedTestCases = test_cases.map(testCase => ({
       input: testCase.input,
       expected: testCase.expected_output
     }));
 
-    const wrappedCode = problemWrapper.wrapCode(source_code, JSON.stringify(allTestCases));
+    // Wrap the user's code with our test execution logic
+    const wrappedCode = problemWrapper.wrapCode(
+      source_code,
+      JSON.stringify(formattedTestCases)
+    );
 
     console.log('Submitting wrapped code to Judge0');
 
+    // Submit to Judge0
     const createResponse = await fetch(`${JUDGE0_API_URL}/submissions`, {
       method: 'POST',
       headers: {
@@ -40,14 +45,13 @@ serve(async (req) => {
     });
 
     if (!createResponse.ok) {
-      const errorText = await createResponse.text();
-      console.error('Judge0 submission creation failed:', errorText);
-      throw new Error(`Failed to create submission: ${errorText}`);
+      throw new Error(`Judge0 submission failed: ${await createResponse.text()}`);
     }
 
     const { token } = await createResponse.json();
     console.log('Submission created with token:', token);
 
+    // Poll for results
     let result;
     let attempts = 0;
     const maxAttempts = 10;
@@ -64,9 +68,7 @@ serve(async (req) => {
       );
 
       if (!getResponse.ok) {
-        const errorText = await getResponse.text();
-        console.error('Judge0 submission retrieval failed:', errorText);
-        throw new Error(`Failed to get submission result: ${errorText}`);
+        throw new Error(`Failed to get submission result: ${await getResponse.text()}`);
       }
 
       result = await getResponse.json();
@@ -80,13 +82,28 @@ serve(async (req) => {
       await new Promise(resolve => setTimeout(resolve, 1000));
     }
 
-    // Parse the results for each test case
+    // Process results
     if (result.stdout) {
       try {
+        // Split output into individual test case results
         const outputs = result.stdout.trim().split('\n');
+        
+        // Match results with test cases
         const testResults = test_cases.map((testCase, index) => {
           const output = outputs[index];
-          const passed = output === testCase.expected_output;
+          let passed = false;
+          
+          try {
+            // Parse both expected and actual output as JSON for comparison
+            const expectedOutput = JSON.parse(testCase.expected_output);
+            const actualOutput = JSON.parse(output);
+            
+            // Compare arrays (for two sum problem)
+            passed = JSON.stringify(expectedOutput.sort()) === JSON.stringify(actualOutput.sort());
+          } catch (error) {
+            console.error('Error comparing outputs:', error);
+          }
+
           return {
             passed,
             input: testCase.input,
@@ -103,9 +120,9 @@ serve(async (req) => {
         };
         result.test_results = testResults;
       } catch (error) {
-        console.error('Error parsing test results:', error);
+        console.error('Error processing test results:', error);
         result.status = { id: 0, description: 'Error' };
-        result.stderr = 'Error parsing test results: ' + error.message;
+        result.stderr = 'Error processing test results: ' + error.message;
       }
     }
 
