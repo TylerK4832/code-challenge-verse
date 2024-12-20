@@ -5,6 +5,7 @@ import { getProblemWrapper } from './problemRegistry.ts';
 const JUDGE0_API_URL = "https://judge0-ce.p.rapidapi.com";
 
 serve(async (req) => {
+  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
@@ -88,12 +89,13 @@ serve(async (req) => {
         JSON.stringify({
           status: { id: 4, description: 'Error' },
           stderr: result.stderr || result.compile_output,
+          stdout: null,
           test_results: []
         }),
         { 
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
           status: 200
-        },
+        }
       );
     }
 
@@ -108,44 +110,61 @@ serve(async (req) => {
         // All previous lines are user console output
         const userOutput = outputLines.join('\n');
         
-        // Parse the test results from the last line
-        const testResults = JSON.parse(testResultsLine);
-        console.log('Parsed test results:', testResults);
+        try {
+          // Parse the test results from the last line
+          const testResults = JSON.parse(testResultsLine);
+          console.log('Parsed test results:', testResults);
 
-        // Calculate overall status based on test results
-        const allPassed = Array.isArray(testResults) && testResults.every((r: any) => r.passed);
+          // Calculate overall status based on test results
+          const allPassed = Array.isArray(testResults) && testResults.every((r: any) => r.passed);
 
-        return new Response(
-          JSON.stringify({
-            status: {
-              id: allPassed ? 3 : 4,
-              description: allPassed ? 'Accepted' : 'Wrong Answer'
-            },
-            stdout: userOutput || null,  // Include user console output if any
-            test_results: testResults.map((r: any, index: number) => ({
-              passed: r.passed,
-              input: test_cases[index]?.input,
-              expected_output: test_cases[index]?.expected_output,
-              actual_output: JSON.stringify(r.output)
-            }))
-          }),
-          { 
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-            status: 200
-          },
-        );
+          return new Response(
+            JSON.stringify({
+              status: {
+                id: allPassed ? 3 : 4,
+                description: allPassed ? 'Accepted' : 'Wrong Answer'
+              },
+              stdout: userOutput || null,
+              test_results: testResults.map((r: any, index: number) => ({
+                passed: r.passed,
+                input: test_cases[index]?.input,
+                expected_output: test_cases[index]?.expected_output,
+                actual_output: JSON.stringify(r.output)
+              }))
+            }),
+            { 
+              headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+              status: 200
+            }
+          );
+        } catch (parseError) {
+          console.error('Error parsing test results:', parseError);
+          return new Response(
+            JSON.stringify({
+              status: { id: 4, description: 'Error' },
+              stderr: `Error parsing test results: ${parseError.message}`,
+              stdout: userOutput || null,
+              test_results: []
+            }),
+            { 
+              headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+              status: 200
+            }
+          );
+        }
       } catch (error) {
-        console.error('Error processing test results:', error);
+        console.error('Error processing output:', error);
         return new Response(
           JSON.stringify({
             status: { id: 4, description: 'Error' },
-            stderr: `Error processing test results: ${error.message}`,
+            stderr: `Error processing output: ${error.message}`,
+            stdout: null,
             test_results: []
           }),
           { 
             headers: { ...corsHeaders, 'Content-Type': 'application/json' },
             status: 200
-          },
+          }
         );
       }
     }
@@ -154,12 +173,13 @@ serve(async (req) => {
       JSON.stringify({
         status: { id: 4, description: 'Error' },
         stderr: 'No output received from code execution',
+        stdout: null,
         test_results: []
       }),
       { 
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 200
-      },
+      }
     );
   } catch (error) {
     console.error('Error executing code:', error);
@@ -167,12 +187,13 @@ serve(async (req) => {
       JSON.stringify({ 
         status: { id: 0, description: 'Error' },
         stderr: error.message,
+        stdout: null,
         test_results: []
       }),
       { 
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 200
-      },
+      }
     );
   }
 });
