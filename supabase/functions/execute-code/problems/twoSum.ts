@@ -10,12 +10,16 @@ export const twoSumWrapper: ProblemWrapper = {
     for (const testCase of testCases) {
       try {
         // Parse input string, removing any escaped characters
-        const input = testCase.input.replace(/\\n/g, '');
-        const [numsStr, targetStr] = input.split('\\n');
+        const input = testCase.input.replace(/\\n/g, '\n');
+        const [numsStr, targetStr] = input.split('\n');
         
-        // Clean and parse the nums array
-        const cleanNumsStr = numsStr.replace(/\\\\/g, '');
-        const nums = JSON.parse(cleanNumsStr);
+        // Extract just the array part before trying to parse
+        const arrayMatch = numsStr.match(/\\[.*\\]/);
+        if (!arrayMatch) {
+          throw new Error('Invalid input format: array not found');
+        }
+        
+        const nums = JSON.parse(arrayMatch[0]);
         const target = parseInt(targetStr);
         
         console.log('Processing test case:', { nums, target });
