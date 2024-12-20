@@ -74,6 +74,7 @@ serve(async (req) => {
       result = await getResponse.json();
       console.log('Raw submission result:', result);
 
+      // Check if execution is complete
       if (result.status?.id >= 3) {
         break;
       }
@@ -96,58 +97,46 @@ serve(async (req) => {
 
     if (result.stdout) {
       try {
-        // Split output into individual test case results
-        const outputs = result.stdout.trim().split('\n');
-        console.log('Parsed outputs:', outputs);
+        // Parse the test results from stdout
+        const testResults = JSON.parse(result.stdout);
         
-        // Match results with test cases
-        const testResults = test_cases.map((testCase, index) => {
-          const actualOutput = outputs[index];
-          let passed = false;
-          
-          try {
-            // Parse expected and actual outputs, handling null values
-            const expectedOutput = JSON.parse(testCase.expected_output);
-            const actualResult = actualOutput === 'null' ? null : JSON.parse(actualOutput);
-            
-            // Compare arrays by converting to strings
-            passed = JSON.stringify(expectedOutput) === JSON.stringify(actualResult);
-            
-            return {
-              passed,
-              input: testCase.input,
-              expected_output: testCase.expected_output,
-              actual_output: actualOutput
-            };
-          } catch (error) {
-            console.error('Error comparing outputs:', error);
-            console.error('Expected output:', testCase.expected_output);
-            console.error('Actual output:', actualOutput);
-            return {
-              passed: false,
-              input: testCase.input,
-              expected_output: testCase.expected_output,
-              actual_output: 'Error: Invalid output format'
-            };
-          }
-        });
-
-        // Set overall status based on all test results
-        const allPassed = testResults.every(result => result.passed);
-        result.status = {
-          id: allPassed ? 3 : 4,
-          description: allPassed ? 'Accepted' : 'Wrong Answer'
-        };
-        result.test_results = testResults;
+        // Calculate overall status based on test results
+        const allPassed = testResults.every((result: any) => result.passed);
+        
+        return new Response(
+          JSON.stringify({
+            status: {
+              id: allPassed ? 3 : 4,
+              description: allPassed ? 'Accepted' : 'Wrong Answer'
+            },
+            test_results: testResults.map((result: any, index: number) => ({
+              passed: result.passed,
+              input: test_cases[index].input,
+              expected_output: test_cases[index].expected_output,
+              actual_output: JSON.stringify(result.output)
+            }))
+          }),
+          { headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
+        );
       } catch (error) {
         console.error('Error processing test results:', error);
-        result.status = { id: 0, description: 'Error' };
-        result.stderr = 'Error processing test results: ' + error.message;
+        return new Response(
+          JSON.stringify({
+            status: { id: 4, description: 'Error' },
+            stderr: `Error processing test results: ${error.message}`,
+            test_results: []
+          }),
+          { headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
+        );
       }
     }
 
     return new Response(
-      JSON.stringify(result),
+      JSON.stringify({
+        status: { id: 4, description: 'Error' },
+        stderr: 'No output received from code execution',
+        test_results: []
+      }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
     );
   } catch (error) {
