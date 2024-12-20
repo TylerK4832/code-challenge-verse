@@ -14,16 +14,21 @@ export const twoSumWrapper: ProblemWrapper = {
         const nums = JSON.parse(numsStr);
         const target = parseInt(targetStr);
         
+        console.log('Processing test case:', { nums, target });
+        
         // Run the solution and get result
         const result = twoSum(nums, target);
+        console.log('Solution returned:', result);
         
-        // Convert result to string for comparison
-        results.push(JSON.stringify(result));
+        // Ensure result is properly stringified
+        results.push(result ? JSON.stringify(result) : 'null');
       } catch (error) {
-        results.push(JSON.stringify(null));
+        console.error('Error processing test case:', error);
+        results.push('null');
       }
     }
     
+    console.log('All results:', results);
     console.log(results.join('\\n'));
   `,
 };

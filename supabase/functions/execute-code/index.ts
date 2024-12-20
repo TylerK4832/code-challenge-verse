@@ -106,11 +106,11 @@ serve(async (req) => {
           let passed = false;
           
           try {
-            // Parse expected and actual outputs
+            // Parse expected and actual outputs, handling null values
             const expectedOutput = JSON.parse(testCase.expected_output);
-            const actualResult = JSON.parse(actualOutput);
+            const actualResult = actualOutput === 'null' ? null : JSON.parse(actualOutput);
             
-            // Compare arrays by converting to strings (order matters for this problem)
+            // Compare arrays by converting to strings
             passed = JSON.stringify(expectedOutput) === JSON.stringify(actualResult);
             
             return {
