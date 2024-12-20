@@ -2,6 +2,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Loader2 } from "lucide-react";
 
 interface ExecutionResult {
+  stdout: string | null;
   stderr: string | null;
   compile_output: string | null;
   message: string | null;
@@ -14,6 +15,7 @@ interface ConsoleOutputProps {
 
 export const ConsoleOutput = ({ executionResult, isLoading }: ConsoleOutputProps) => {
   const hasConsoleOutput = executionResult && (
+    executionResult.stdout || 
     executionResult.stderr || 
     executionResult.compile_output || 
     executionResult.message
@@ -28,6 +30,14 @@ export const ConsoleOutput = ({ executionResult, isLoading }: ConsoleOutputProps
           </div>
         ) : hasConsoleOutput ? (
           <>
+            {executionResult.stdout && (
+              <div className="space-y-2">
+                <h3 className="font-medium">Console Output:</h3>
+                <pre className="bg-secondary p-2 rounded-md">
+                  <code>{executionResult.stdout}</code>
+                </pre>
+              </div>
+            )}
             {executionResult.stderr && (
               <div className="space-y-2">
                 <h3 className="font-medium text-red-500">Error Output:</h3>

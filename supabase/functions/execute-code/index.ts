@@ -92,15 +92,24 @@ serve(async (req) => {
         }),
         { 
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-          status: 200 // Ensure we return 200 even for execution errors
+          status: 200
         },
       );
     }
 
     if (result.stdout) {
       try {
-        // Parse the test results from stdout
-        const testResults = JSON.parse(result.stdout);
+        // Split stdout into lines
+        const outputLines = result.stdout.trim().split('\n');
+        
+        // The last line contains the test results
+        const testResultsLine = outputLines.pop() || '[]';
+        
+        // All previous lines are user console output
+        const userOutput = outputLines.join('\n');
+        
+        // Parse the test results from the last line
+        const testResults = JSON.parse(testResultsLine);
         console.log('Parsed test results:', testResults);
 
         // Calculate overall status based on test results
@@ -112,6 +121,7 @@ serve(async (req) => {
               id: allPassed ? 3 : 4,
               description: allPassed ? 'Accepted' : 'Wrong Answer'
             },
+            stdout: userOutput || null,  // Include user console output if any
             test_results: testResults.map((r: any, index: number) => ({
               passed: r.passed,
               input: test_cases[index]?.input,
@@ -161,7 +171,7 @@ serve(async (req) => {
       }),
       { 
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        status: 200 // Always return 200 to prevent the frontend from seeing it as a network error
+        status: 200
       },
     );
   }
