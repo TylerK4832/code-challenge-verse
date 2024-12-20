@@ -121,6 +121,8 @@ serve(async (req) => {
             };
           } catch (error) {
             console.error('Error comparing outputs:', error);
+            console.error('Expected output:', testCase.expected_output);
+            console.error('Actual output:', actualOutput);
             return {
               passed: false,
               input: testCase.input,
