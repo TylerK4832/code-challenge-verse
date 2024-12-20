@@ -9,20 +9,14 @@ export const longestSubstringWrapper: ProblemWrapper = {
     
     for (const testCase of testCases) {
       try {
-        // Get input string
         const s = testCase.input.trim();
-        
-        // Run the solution
         const result = lengthOfLongestSubstring(s);
-        console.log('Input:', s);
-        console.log('Output:', result);
-        results.push(result.toString());
+        results.push(JSON.stringify(result));
       } catch (error) {
-        console.error('Error processing test case:', error);
-        results.push('null');
+        results.push(JSON.stringify(null));
       }
     }
     
-    console.log('Final results:', results.join('\\n'));
+    console.log(results.join('\\n'));
   `,
 };

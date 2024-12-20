@@ -83,47 +83,54 @@ serve(async (req) => {
     }
 
     // Process results
+    if (result.stderr || result.compile_output) {
+      // If there's an error, return it directly
+      return new Response(
+        JSON.stringify({
+          status: { id: 4, description: 'Error' },
+          stderr: result.stderr || result.compile_output,
+          test_results: []
+        }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
+      );
+    }
+
     if (result.stdout) {
       try {
         // Split output into individual test case results
         const outputs = result.stdout.trim().split('\n');
-        const testResults = [];
-        let currentTestCase = null;
         
-        // Process the output lines
-        for (const line of outputs) {
-          if (line.startsWith('Input:')) {
-            currentTestCase = {
-              input: line.substring(6).trim(),
-              actual_output: null,
-              expected_output: null,
-              passed: false
-            };
-          } else if (line.startsWith('Output:')) {
-            if (currentTestCase) {
-              currentTestCase.actual_output = line.substring(7).trim();
-            }
-          } else if (line.startsWith('Final results:')) {
-            // Skip the "Final results:" line
-            continue;
-          } else {
-            // This must be a result from the final results line
-            const actualResults = line.split('\n').filter(Boolean);
+        // Match results with test cases
+        const testResults = test_cases.map((testCase, index) => {
+          const output = outputs[index];
+          let passed = false;
+          
+          try {
+            // Parse expected and actual outputs
+            const expectedOutput = JSON.parse(testCase.expected_output);
+            const actualOutput = output === 'null' ? null : JSON.parse(output);
             
-            test_cases.forEach((testCase, index) => {
-              const actual = actualResults[index];
-              const expected = testCase.expected_output;
-              const passed = actual === expected;
-              
-              testResults.push({
-                input: testCase.input,
-                actual_output: actual,
-                expected_output: expected,
-                passed
-              });
-            });
+            if (actualOutput === null) {
+              passed = false;
+            } else if (Array.isArray(expectedOutput) && Array.isArray(actualOutput)) {
+              // For array outputs (like Two Sum), sort before comparing
+              passed = JSON.stringify(expectedOutput.sort()) === JSON.stringify(actualOutput.sort());
+            } else {
+              // For other types of outputs, direct comparison
+              passed = expectedOutput === actualOutput;
+            }
+          } catch (error) {
+            console.error('Error comparing outputs:', error);
+            passed = false;
           }
-        }
+
+          return {
+            passed,
+            input: testCase.input,
+            expected_output: testCase.expected_output,
+            actual_output: output
+          };
+        });
 
         // Set overall status based on all test results
         const allPassed = testResults.every(result => result.passed);
