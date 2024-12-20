@@ -4,29 +4,29 @@ export const twoSumWrapper: ProblemWrapper = {
   wrapCode: (code: string, testCasesStr: string) => `
     ${code}
     
-    // Parse test cases
     const testCases = ${testCasesStr};
     const results = [];
     
-    // Run each test case
     for (const testCase of testCases) {
       try {
-        // Parse input - expecting array and target number
-        const [arrayStr, targetStr] = testCase.input.trim().split('\\n');
-        const nums = JSON.parse(arrayStr);
-        const target = parseInt(targetStr);
+        // Parse input string to get array and target
+        const [nums, target] = testCase.input.split('\\n').map((line, index) => {
+          if (index === 0) {
+            // Parse array, removing any brackets and splitting by comma
+            return line.replace(/[\\[\\]]/g, '').split(',').map(Number);
+          }
+          return Number(line);
+        });
         
         // Run the solution
         const result = twoSum(nums, target);
-        
-        // Format and store the result
         results.push(JSON.stringify(result));
       } catch (error) {
-        results.push('Error: ' + error.message);
+        console.error('Error processing test case:', error);
+        results.push(JSON.stringify(null));
       }
     }
     
-    // Output all results
     console.log(results.join('\\n'));
   `,
 };

@@ -94,14 +94,19 @@ serve(async (req) => {
           let passed = false;
           
           try {
-            // Parse both expected and actual output as JSON for comparison
+            // For Two Sum problem, we need to compare arrays
             const expectedOutput = JSON.parse(testCase.expected_output);
-            const actualOutput = JSON.parse(output);
+            const actualOutput = output === 'null' ? null : JSON.parse(output);
             
-            // Compare arrays (for two sum problem)
-            passed = JSON.stringify(expectedOutput.sort()) === JSON.stringify(actualOutput.sort());
+            if (actualOutput === null) {
+              passed = false;
+            } else {
+              // Sort both arrays before comparing to allow for different orderings
+              passed = JSON.stringify(expectedOutput.sort()) === JSON.stringify(actualOutput.sort());
+            }
           } catch (error) {
             console.error('Error comparing outputs:', error);
+            passed = false;
           }
 
           return {
