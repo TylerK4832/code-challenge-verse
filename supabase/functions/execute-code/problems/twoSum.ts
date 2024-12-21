@@ -23,14 +23,14 @@ export const twoSumWrapper: ProblemWrapper = {
       });
     };
     
-    // Array to store test results
+    // Declare results array in the outer scope
     let results = [];
     
     try {
-      // Inject the user's code safely using eval
-      eval(\`${code}\`);
+      // Inject user code
+      ${code}
       
-      // Function to execute all test cases
+      // Execute the tests
       (async function runTests() {
         const testCases = ${testCasesStr};
         
@@ -41,28 +41,28 @@ export const twoSumWrapper: ProblemWrapper = {
           const { input, expected } = testCases[i];
           
           try {
-            // Replace any literal "\\n" with actual newlines
+            // Step 1: Replace any escaped "\\n" with actual newlines
             const replacedInput = input.replace(/\\\\n/g, '\\n');
             
-            // Split the input string on newlines to get individual arguments
+            // Step 2: Split the input string on newlines to get individual arguments
             const lines = replacedInput.split('\\n');
             
-            // Parse each line as JSON to get the correct argument types
+            // Step 3: Parse each line as JSON to get the correct argument types
             const args = lines.map(line => JSON.parse(line));
             
-            // Invoke the user's function with the parsed arguments
+            // Step 4: Call the user's function with the parsed arguments
             const actual = ${userFunctionName}(...args);
             
-            // Parse the expected output if it's a JSON string
+            // Step 5: Parse the expected output if it's a JSON string
             let parsedExpected = expected;
             if (typeof parsedExpected === 'string') {
               parsedExpected = JSON.parse(parsedExpected);
             }
             
-            // Compare the actual result with the expected result
+            // Step 6: Compare the actual result with the expected result
             const passed = JSON.stringify(actual) === JSON.stringify(parsedExpected);
             
-            // Push the result of this test case
+            // Step 7: Record the result
             results.push({
               input,
               expected: parsedExpected,
