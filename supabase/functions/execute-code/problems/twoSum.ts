@@ -28,7 +28,8 @@ export const twoSumWrapper = {
         try {
           // Change this call if user's function differs
           const actual = twoSum(...input);
-          const passed = JSON.stringify(actual) === JSON.stringify(expected);
+          const parsedExpected = JSON.parse(expected);
+          const passed = JSON.stringify(actual) === JSON.stringify(parsedExpected);
           results.push({ input, expected, actual, passed });
         } catch (error) {
           results.push({
