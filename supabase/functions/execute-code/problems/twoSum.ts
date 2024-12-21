@@ -39,8 +39,8 @@ export const twoSumWrapper = {
         }
       }
 
-      console.log("WRAPPER_RESULTS", JSON.stringify(results));
-      console.log("WRAPPER_LOGS", JSON.stringify(logs));
+      originalLog("WRAPPER_RESULTS", JSON.stringify(results));
+      originalLog("WRAPPER_LOGS", JSON.stringify(logs));
     })();
   })();
   `
