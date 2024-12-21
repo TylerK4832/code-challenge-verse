@@ -2,63 +2,54 @@ import { ProblemWrapper } from '../types.ts';
 
 export const twoSumWrapper: ProblemWrapper = {
   wrapCode: (code: string, testCasesStr: string) => `
+  (function() {
+    // Store original console.log
+    const originalLog = console.log;
+    // Array to capture all logs
+    let logs: string[] = [];
+
+    // Override console.log to capture logs
+    console.log = function(...args: any[]) {
+      // Convert any objects to string for consistent logging
+      const stringified = args.map((item) => 
+        typeof item === 'object' ? JSON.stringify(item) : String(item)
+      );
+      logs.push(stringified.join(' '));
+      // Also print them normally so you can see them in Judge0 output
+      originalLog.apply(console, args);
+    };
+
+    // Inject user code
     ${code}
 
-    try {
-      // Parse the test cases array from the given string
-      const testCases = JSON.parse(\`${testCasesStr}\`);
+    // Test runner
+    (async function runTests() {
+      const testCases = ${testCasesStr};
 
-      const results = [];
-
-      for (const testCase of testCases) {
+      let results = [];
+      for (let i = 0; i < testCases.length; i++) {
+        const { input, expected } = testCases[i];
         try {
-          // Split the input string by newline, for example:
-          // input might look like:
-          // "[2,7,11,15]"
-          // "9"
-          //
-          // So we split by \\n and parse accordingly
-          const lines = testCase.input.trim().split('\\n');
-          
-          // The first line is the array of numbers
-          const nums = JSON.parse(lines[0]);
-          // The second line is the target
-          const target = parseInt(lines[1], 10);
-
-          // Run the user's solution
-          const output = twoSum(nums, target);
-
-          // Compare with expected output
-          // The expected might be a JSON array string, so parse it:
-          const expected = JSON.parse(testCase.expected);
-
-          const passed = JSON.stringify(output) === JSON.stringify(expected);
-
-          // Store result for this test case
-          results.push({
-            input: testCase.input,
-            expected: expected,
-            output: output,
-            passed: passed
-          });
+          // Adjust this call if your user's function signature differs
+          const actual = twoSum(...input);
+          const passed = JSON.stringify(actual) === JSON.stringify(expected);
+          results.push({ input, expected, actual, passed });
         } catch (error) {
-          // In case of any error during parsing or execution
+          // If the user's code fails, capture the error message
           results.push({
-            input: testCase.input,
-            expected: testCase.expected,
-            output: null,
-            passed: false,
-            error: error.toString()
+            input,
+            expected,
+            error: error.message || String(error)
           });
         }
       }
 
-      // Log all results as JSON
-      console.log(JSON.stringify(results));
-    } catch (error) {
-      console.error('Error parsing testCasesStr:', error);
-      console.log('null');
-    }
+      // Print results in a structured way.
+      // "WRAPPER_RESULTS" prefix can be used to locate the JSON in logs.
+      console.log("WRAPPER_RESULTS", JSON.stringify(results));
+      // Likewise for logs
+      console.log("WRAPPER_LOGS", JSON.stringify(logs));
+    })();
+  })();
   `
 };
-
