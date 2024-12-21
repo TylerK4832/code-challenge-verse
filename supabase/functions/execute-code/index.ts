@@ -82,7 +82,7 @@ serve(async (req) => {
       await new Promise(resolve => setTimeout(resolve, 1000));
     }
 
-    // Process results
+    // If there's any error output, return it
     if (result.stderr || result.compile_output) {
       return new Response(
         JSON.stringify({
@@ -97,40 +97,50 @@ serve(async (req) => {
       );
     }
 
+    // Now handle the stdout
     if (result.stdout) {
-      try {
-        const testResults = JSON.parse(result.stdout);
-        console.log('Parsed test results:', testResults);
+      // The wrapper script should output at least two lines:
+      // 1) "WRAPPER_RESULTS <JSON>"
+      // 2) "WRAPPER_LOGS <JSON>" (optional for your usage, but included in our wrapper)
+      const lines = result.stdout.split('\n').filter((line) => line.trim() !== '');
 
-        // Calculate overall status based on test results
-        const allPassed = Array.isArray(testResults) && testResults.every((r: any) => r.passed);
+      // We'll store parsed results/logs here
+      let wrapperResults = null;
+      let wrapperLogs = null;
 
-        return new Response(
-          JSON.stringify({
-            status: {
-              id: allPassed ? 3 : 4,
-              description: allPassed ? 'Accepted' : 'Wrong Answer'
-            },
-            stdout: null,
-            stderr: null,
-            compile_output: null,
-            message: null,
-            test_results: testResults.map((r: any, index: number) => ({
-              passed: r.passed,
-              input: test_cases[index]?.input,
-              expected_output: test_cases[index]?.expected_output,
-              actual_output: JSON.stringify(r.output)
-            }))
-          }),
-          { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        );
-      } catch (error) {
-        console.error('Error processing test results:', error);
+      // Regex to match lines: WRAPPER_RESULTS <json>, WRAPPER_LOGS <json>
+      const resultsRegex = /^WRAPPER_RESULTS\s+(.*)$/;
+      const logsRegex = /^WRAPPER_LOGS\s+(.*)$/;
+
+      for (const line of lines) {
+        if (resultsRegex.test(line)) {
+          const match = line.match(resultsRegex);
+          if (match && match[1]) {
+            try {
+              wrapperResults = JSON.parse(match[1]);
+            } catch (err) {
+              console.error('Error parsing WRAPPER_RESULTS JSON:', err);
+            }
+          }
+        } else if (logsRegex.test(line)) {
+          const match = line.match(logsRegex);
+          if (match && match[1]) {
+            try {
+              wrapperLogs = JSON.parse(match[1]);
+            } catch (err) {
+              console.error('Error parsing WRAPPER_LOGS JSON:', err);
+            }
+          }
+        }
+      }
+
+      // If we didn't find WRAPPER_RESULTS or it wasn't valid JSON, that's an error
+      if (!wrapperResults) {
         return new Response(
           JSON.stringify({
             status: { id: 4, description: 'Error' },
-            stderr: `Error processing test results: ${error.message}`,
-            stdout: null,
+            stderr: 'No valid WRAPPER_RESULTS found in stdout',
+            stdout: result.stdout,
             compile_output: null,
             message: null,
             test_results: []
@@ -138,8 +148,56 @@ serve(async (req) => {
           { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
       }
+
+      // If valid, let's interpret them as an array of test outcomes
+      // e.g. [ { input, expected, actual, passed }, ... ]
+      if (!Array.isArray(wrapperResults)) {
+        return new Response(
+          JSON.stringify({
+            status: { id: 4, description: 'Error' },
+            stderr: 'WRAPPER_RESULTS is not an array',
+            stdout: result.stdout,
+            compile_output: null,
+            message: null,
+            test_results: []
+          }),
+          { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
+      // Determine if all test cases passed
+      const allPassed = wrapperResults.every((r: any) => r.passed === true);
+
+      // Build final test_results array
+      // We'll keep an index correlation to your "test_cases" from the request
+      const finalTestResults = wrapperResults.map((r: any, index: number) => ({
+        passed: r.passed,
+        input: test_cases[index]?.input,
+        expected_output: test_cases[index]?.expected_output,
+        // Some wrappers store the actual in r.actual, or r.output, etc.
+        actual_output: JSON.stringify(r.actual ?? r.output),
+        error: r.error || null
+      }));
+
+      // Return the final response
+      return new Response(
+        JSON.stringify({
+          status: {
+            id: allPassed ? 3 : 4,
+            description: allPassed ? 'Accepted' : 'Wrong Answer'
+          },
+          stdout: null, // Or store the original stdout if you prefer
+          stderr: null,
+          compile_output: null,
+          message: null,
+          logs: wrapperLogs || [],      // Expose logs if you want
+          test_results: finalTestResults
+        }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
     }
 
+    // If we got here, no stdout or stderr means something went wrong
     return new Response(
       JSON.stringify({
         status: { id: 4, description: 'Error' },
@@ -151,10 +209,11 @@ serve(async (req) => {
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
+
   } catch (error) {
     console.error('Error executing code:', error);
     return new Response(
-      JSON.stringify({ 
+      JSON.stringify({
         status: { id: 0, description: 'Error' },
         stderr: error.message,
         stdout: null,
