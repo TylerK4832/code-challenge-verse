@@ -66,10 +66,10 @@ export const twoSumWrapper: ProblemWrapper = {
       }
 
       // Print final test results
-      console.log("WRAPPER_RESULTS", JSON.stringify(results));
+      originalLog("WRAPPER_RESULTS", JSON.stringify(results));
 
       // Print any logs captured during execution
-      console.log("WRAPPER_LOGS", JSON.stringify(logs));
+      originalLog("WRAPPER_LOGS", JSON.stringify(logs));
     })();
   })();
   `
