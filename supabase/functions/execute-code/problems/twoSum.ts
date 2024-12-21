@@ -1,5 +1,7 @@
-export const twoSumWrapper = {
-  wrapCode: (code, testCasesStr) => `
+import { ProblemWrapper } from '../types.ts';
+
+export const twoSumWrapper: ProblemWrapper = {
+  wrapCode: (code, testCasesStr, userFunctionName = 'twoSum') => `
   (function() {
     // Store original console.log
     const originalLog = console.log;
@@ -12,25 +14,48 @@ export const twoSumWrapper = {
         typeof item === 'object' ? JSON.stringify(item) : String(item)
       );
       logs.push(stringified.join(' '));
-      // Also print them normally for Judge0
+      // You can comment this out if you don't want logs
+      // to appear in stdout multiple times
+      originalLog.apply(console, args);
     };
 
     // Inject user code
     ${code}
 
-    // Test runner
     (async function runTests() {
       const testCases = ${testCasesStr};
-
       let results = [];
+
       for (let i = 0; i < testCases.length; i++) {
         const { input, expected } = testCases[i];
         try {
-          // Change this call if user's function differs
-          const actual = twoSum(...input);
-          const parsedExpected = JSON.parse(expected);
+          // Split the input string on newlines:
+          // For example, "[2,7,11,15]\\n9\\n5" => ["[2,7,11,15]", "9", "5"]
+          const lines = input.split('\\n');
+
+          // Parse each line as JSON to get the correct argument type
+          // e.g. ["[2,7,11,15]", "9", "5"] => [[2,7,11,15], 9, 5]
+          const args = lines.map(line => JSON.parse(line));
+
+          // Spread the arguments into the user's function
+          // If userFunctionName is "twoSum", it calls twoSum(...args)
+          const actual = ${userFunctionName}(...args);
+
+          // Parse expected if it's a JSON string (e.g. "[0,1]" => [0,1])
+          let parsedExpected = expected;
+          if (typeof parsedExpected === 'string') {
+            parsedExpected = JSON.parse(parsedExpected);
+          }
+
+          // Compare results
           const passed = JSON.stringify(actual) === JSON.stringify(parsedExpected);
-          results.push({ input, expected, actual, passed });
+
+          results.push({
+            input,
+            expected: parsedExpected,
+            actual,
+            passed
+          });
         } catch (error) {
           results.push({
             input,
@@ -40,8 +65,11 @@ export const twoSumWrapper = {
         }
       }
 
-      originalLog("WRAPPER_RESULTS", JSON.stringify(results));
-      originalLog("WRAPPER_LOGS", JSON.stringify(logs));
+      // Print final test results
+      console.log("WRAPPER_RESULTS", JSON.stringify(results));
+
+      // Print any logs captured during execution
+      console.log("WRAPPER_LOGS", JSON.stringify(logs));
     })();
   })();
   `
