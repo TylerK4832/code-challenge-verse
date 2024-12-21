@@ -3,16 +3,16 @@ import { ProblemWrapper } from '../types.ts';
 export const twoSumWrapper: ProblemWrapper = {
   wrapCode: (code, testCasesStr, userFunctionName = 'twoSum') => `
   (function() {
-    // Store original console.log
+    // Store the original console.log
     const originalLog = console.log;
     
-    // We'll keep a single global array of all logs,
-    // but with metadata (testIndex) so we know which test they came from.
+    // Array to capture all logs with associated test indices
     let logs = [];
-    // We'll keep track of which test is currently running
+    
+    // Variable to keep track of the current test index
     let currentTestIndex = -1;
     
-    // Override console.log to capture logs with their test index
+    // Override console.log to capture logs along with the test index
     console.log = function(...args) {
       const stringified = args.map(item => 
         typeof item === 'object' ? JSON.stringify(item) : String(item)
@@ -22,93 +22,101 @@ export const twoSumWrapper: ProblemWrapper = {
         message: stringified.join(' ')
       });
     };
-
-    // Attempt to parse user code in a new Function
-    let userFunction;
+    
+    // Array to store test results
+    let results = [];
+    
     try {
-      userFunction = new Function(\`
-        "use strict";
-        // Insert user code
-        ${code};
-        // Return the user’s named function
-        return ${userFunctionName};
-      \`)();
-    } catch (parseError) {
-      // If there's a syntax error or reference error at parse time,
-      // we won't even attempt the test loop.
+      // Inject the user's code safely using eval
+      eval(\`${code}\`);
       
-      // Restore original console.log so we can print final lines normally
-      console.log = originalLog;
-
-      const errorMsg = parseError && parseError.message ? parseError.message : String(parseError);
-
-      // We can produce a single test-like result indicating the parse failure
-      const results = [{
-        input: null,
-        expected: null,
-        error: errorMsg
-      }];
-
-      console.log("WRAPPER_RESULTS", JSON.stringify(results));
-      console.log("WRAPPER_LOGS", JSON.stringify(logs));
-      return;
-    }
-
-    (async function runTests() {
-      const testCases = ${testCasesStr};
-      let results = [];
-
-      for (let i = 0; i < testCases.length; i++) {
-        currentTestIndex = i;
-
-        const { input, expected } = testCases[i];
-        try {
-          // Split the input string on newlines:
-          const lines = input.split('\\n');
-
-          // Parse each line as JSON to get the correct argument type.
-          // e.g. ["[2,7,11,15]", "9", "5"] => [[2,7,11,15], 9, 5]
-          const args = lines.map(line => JSON.parse(line));
-
-          // Call the parsed userFunction with the arguments
-          const actual = userFunction(...args);
-
-          // Parse expected if it's a JSON string (e.g. "[0,1]" => [0,1])
-          let parsedExpected = expected;
-          if (typeof parsedExpected === 'string') {
-            parsedExpected = JSON.parse(parsedExpected);
+      // Function to execute all test cases
+      (async function runTests() {
+        const testCases = ${testCasesStr};
+        
+        for (let i = 0; i < testCases.length; i++) {
+          // Set the current test index before running each test
+          currentTestIndex = i;
+          
+          const { input, expected } = testCases[i];
+          
+          try {
+            // Replace any literal "\\n" with actual newlines
+            const replacedInput = input.replace(/\\\\n/g, '\\n');
+            
+            // Split the input string on newlines to get individual arguments
+            const lines = replacedInput.split('\\n');
+            
+            // Parse each line as JSON to get the correct argument types
+            const args = lines.map(line => JSON.parse(line));
+            
+            // Invoke the user's function with the parsed arguments
+            const actual = ${userFunctionName}(...args);
+            
+            // Parse the expected output if it's a JSON string
+            let parsedExpected = expected;
+            if (typeof parsedExpected === 'string') {
+              parsedExpected = JSON.parse(parsedExpected);
+            }
+            
+            // Compare the actual result with the expected result
+            const passed = JSON.stringify(actual) === JSON.stringify(parsedExpected);
+            
+            // Push the result of this test case
+            results.push({
+              input,
+              expected: parsedExpected,
+              actual,
+              passed
+            });
+          } catch (error) {
+            // If an error occurs during the test case execution, capture it
+            results.push({
+              input,
+              expected,
+              actual: null,
+              passed: false,
+              error: error && error.message ? error.message : String(error)
+            });
           }
-
-          // Compare results
-          const passed = JSON.stringify(actual) === JSON.stringify(parsedExpected);
-
-          results.push({
-            input,
-            expected: parsedExpected,
-            actual,
-            passed
-          });
-        } catch (error) {
-          results.push({
-            input,
-            expected,
-            error: error && error.message ? error.message : String(error)
-          });
         }
-      }
-
-      // All tests done, reset currentTestIndex
-      currentTestIndex = -1;
-
-      // Restore original console.log so we can print final lines normally
+        
+        // Reset the current test index after all tests
+        currentTestIndex = -1;
+        
+        // Restore the original console.log
+        console.log = originalLog;
+        
+        // Output the test results
+        console.log("WRAPPER_RESULTS", JSON.stringify(results));
+        
+        // Output the captured logs with associated test indices
+        console.log("WRAPPER_LOGS", JSON.stringify(logs));
+      })();
+    } catch (e) {
+      // If an error occurs during code injection (e.g., syntax error), handle it here
+      
+      // Retrieve the test cases to associate the error with each test
+      const testCases = ${testCasesStr};
+      
+      // Populate results with the injection error for all test cases
+      results = testCases.map(test => ({
+        input: test.input,
+        expected: typeof test.expected === 'string' ? JSON.parse(test.expected) : test.expected,
+        actual: null,
+        passed: false,
+        error: e.message || String(e)
+      }));
+      
+      // Restore the original console.log
       console.log = originalLog;
-
-      // Print final test results
+      
+      // Output the error results
       console.log("WRAPPER_RESULTS", JSON.stringify(results));
-
-      // Print logs with info about which test produced them
+      
+      // Output any logs captured before the error occurred
       console.log("WRAPPER_LOGS", JSON.stringify(logs));
-    })();
+    }
   })();
   `
 };
