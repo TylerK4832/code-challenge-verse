@@ -30,12 +30,12 @@ export const twoSumWrapper: ProblemWrapper = {
         eval(\`${code}\`);
       } catch (error) {
         // If there's an error during code injection, record it for all test cases
-        const testCases = ${testCasesStr};
-        results = testCases.map(tc => ({
-          input: tc.input,
-          expected: tc.expected,
+
+        results.push({
+          input,
+          expected,
           error: error && error.message ? error.message : String(error)
-        }));
+        });
   
         // Restore the original console.log
         console.log = originalLog;
