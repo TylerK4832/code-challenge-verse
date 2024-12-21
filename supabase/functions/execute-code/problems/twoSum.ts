@@ -13,7 +13,6 @@ export const twoSumWrapper = {
       );
       logs.push(stringified.join(' '));
       // Also print them normally for Judge0
-      originalLog.apply(console, args);
     };
 
     // Inject user code
