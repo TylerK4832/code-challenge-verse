@@ -23,17 +23,44 @@ export const twoSumWrapper: ProblemWrapper = {
       });
     };
 
-    // Inject user code
-    ${code}
+    // Attempt to parse user code in a new Function
+    let userFunction;
+    try {
+      userFunction = new Function(\`
+        "use strict";
+        // Insert user code
+        ${code};
+        // Return the user’s named function
+        return ${userFunctionName};
+      \`)();
+    } catch (parseError) {
+      // If there's a syntax error or reference error at parse time,
+      // we won't even attempt the test loop.
+      
+      // Restore original console.log so we can print final lines normally
+      console.log = originalLog;
+
+      const errorMsg = parseError && parseError.message ? parseError.message : String(parseError);
+
+      // We can produce a single test-like result indicating the parse failure
+      const results = [{
+        input: null,
+        expected: null,
+        error: errorMsg
+      }];
+
+      console.log("WRAPPER_RESULTS", JSON.stringify(results));
+      console.log("WRAPPER_LOGS", JSON.stringify(logs));
+      return;
+    }
 
     (async function runTests() {
       const testCases = ${testCasesStr};
       let results = [];
 
       for (let i = 0; i < testCases.length; i++) {
-        // Before running each test, set currentTestIndex
         currentTestIndex = i;
-        
+
         const { input, expected } = testCases[i];
         try {
           // Split the input string on newlines:
@@ -43,8 +70,8 @@ export const twoSumWrapper: ProblemWrapper = {
           // e.g. ["[2,7,11,15]", "9", "5"] => [[2,7,11,15], 9, 5]
           const args = lines.map(line => JSON.parse(line));
 
-          // Call user function with the arguments
-          const actual = ${userFunctionName}(...args);
+          // Call the parsed userFunction with the arguments
+          const actual = userFunction(...args);
 
           // Parse expected if it's a JSON string (e.g. "[0,1]" => [0,1])
           let parsedExpected = expected;
