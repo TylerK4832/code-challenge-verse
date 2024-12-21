@@ -16,7 +16,7 @@ export const twoSumWrapper: ProblemWrapper = {
       logs.push(stringified.join(' '));
       // You can comment this out if you don't want logs
       // to appear in stdout multiple times
-      originalLog.apply(console, args);
+      // originalLog.apply(console, args);
     };
 
     // Inject user code
