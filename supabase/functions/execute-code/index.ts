@@ -99,7 +99,16 @@ serve(async (req) => {
 
     if (result.stdout) {
       try {
-        const testResults = JSON.parse(result.stdout);
+        // Split the stdout into lines
+        const outputLines = result.stdout.trim().split('\n');
+        
+        // The last line contains the test results JSON
+        const testResultsJson = outputLines[outputLines.length - 1];
+        
+        // All previous lines are user console output
+        const userConsoleOutput = outputLines.slice(0, -1).join('\n');
+        
+        const testResults = JSON.parse(testResultsJson);
         console.log('Parsed test results:', testResults);
 
         // Calculate overall status based on test results
@@ -111,7 +120,7 @@ serve(async (req) => {
               id: allPassed ? 3 : 4,
               description: allPassed ? 'Accepted' : 'Wrong Answer'
             },
-            stdout: null,
+            stdout: userConsoleOutput || null,
             stderr: null,
             compile_output: null,
             message: null,
@@ -130,7 +139,7 @@ serve(async (req) => {
           JSON.stringify({
             status: { id: 4, description: 'Error' },
             stderr: `Error processing test results: ${error.message}`,
-            stdout: null,
+            stdout: result.stdout || null,
             compile_output: null,
             message: null,
             test_results: []
