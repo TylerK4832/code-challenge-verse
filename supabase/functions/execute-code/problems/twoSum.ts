@@ -31,7 +31,7 @@ export const twoSumWrapper: ProblemWrapper = {
         try {
           // Split the input string on newlines:
           // For example, "[2,7,11,15]\\n9\\n5" => ["[2,7,11,15]", "9", "5"]
-          const lines = input.split('\n');
+          const lines = input.split('\\n');
 
           // Parse each line as JSON to get the correct argument type
           // e.g. ["[2,7,11,15]", "9", "5"] => [[2,7,11,15], 9, 5]
