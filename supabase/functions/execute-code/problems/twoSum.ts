@@ -1,21 +1,18 @@
-import { ProblemWrapper } from '../types.ts';
-
-export const twoSumWrapper: ProblemWrapper = {
-  wrapCode: (code: string, testCasesStr: string) => `
+export const twoSumWrapper = {
+  wrapCode: (code, testCasesStr) => `
   (function() {
     // Store original console.log
     const originalLog = console.log;
     // Array to capture all logs
-    let logs: string[] = [];
+    let logs = [];
 
     // Override console.log to capture logs
-    console.log = function(...args: any[]) {
-      // Convert any objects to string for consistent logging
-      const stringified = args.map((item) => 
+    console.log = function(...args) {
+      const stringified = args.map(item => 
         typeof item === 'object' ? JSON.stringify(item) : String(item)
       );
       logs.push(stringified.join(' '));
-      // Also print them normally so you can see them in Judge0 output
+      // Also print them normally for Judge0
       originalLog.apply(console, args);
     };
 
@@ -30,24 +27,20 @@ export const twoSumWrapper: ProblemWrapper = {
       for (let i = 0; i < testCases.length; i++) {
         const { input, expected } = testCases[i];
         try {
-          // Adjust this call if your user's function signature differs
+          // Change this call if user's function differs
           const actual = twoSum(...input);
           const passed = JSON.stringify(actual) === JSON.stringify(expected);
           results.push({ input, expected, actual, passed });
         } catch (error) {
-          // If the user's code fails, capture the error message
           results.push({
             input,
             expected,
-            error: error.message || String(error)
+            error: error && error.message ? error.message : String(error)
           });
         }
       }
 
-      // Print results in a structured way.
-      // "WRAPPER_RESULTS" prefix can be used to locate the JSON in logs.
       console.log("WRAPPER_RESULTS", JSON.stringify(results));
-      // Likewise for logs
       console.log("WRAPPER_LOGS", JSON.stringify(logs));
     })();
   })();
