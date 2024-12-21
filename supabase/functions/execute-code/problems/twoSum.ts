@@ -5,18 +5,22 @@ export const twoSumWrapper: ProblemWrapper = {
   (function() {
     // Store original console.log
     const originalLog = console.log;
-    // Array to capture all logs
+    
+    // We'll keep a single global array of all logs,
+    // but with metadata (testIndex) so we know which test they came from.
     let logs = [];
-
-    // Override console.log to capture logs
+    // We'll keep track of which test is currently running
+    let currentTestIndex = -1;
+    
+    // Override console.log to capture logs with their test index
     console.log = function(...args) {
       const stringified = args.map(item => 
         typeof item === 'object' ? JSON.stringify(item) : String(item)
       );
-      logs.push(stringified.join(' '));
-      // You can comment this out if you don't want logs
-      // to appear in stdout multiple times
-      // originalLog.apply(console, args);
+      logs.push({
+        testIndex: currentTestIndex,
+        message: stringified.join(' ')
+      });
     };
 
     // Inject user code
@@ -27,18 +31,19 @@ export const twoSumWrapper: ProblemWrapper = {
       let results = [];
 
       for (let i = 0; i < testCases.length; i++) {
+        // Before running each test, set currentTestIndex
+        currentTestIndex = i;
+        
         const { input, expected } = testCases[i];
         try {
           // Split the input string on newlines:
-          // For example, "[2,7,11,15]\\n9\\n5" => ["[2,7,11,15]", "9", "5"]
           const lines = input.split('\\n');
 
-          // Parse each line as JSON to get the correct argument type
+          // Parse each line as JSON to get the correct argument type.
           // e.g. ["[2,7,11,15]", "9", "5"] => [[2,7,11,15], 9, 5]
           const args = lines.map(line => JSON.parse(line));
 
-          // Spread the arguments into the user's function
-          // If userFunctionName is "twoSum", it calls twoSum(...args)
+          // Call user function with the arguments
           const actual = ${userFunctionName}(...args);
 
           // Parse expected if it's a JSON string (e.g. "[0,1]" => [0,1])
@@ -65,11 +70,17 @@ export const twoSumWrapper: ProblemWrapper = {
         }
       }
 
-      // Print final test results
-      originalLog("WRAPPER_RESULTS", JSON.stringify(results));
+      // All tests done, reset currentTestIndex
+      currentTestIndex = -1;
 
-      // Print any logs captured during execution
-      originalLog("WRAPPER_LOGS", JSON.stringify(logs));
+      // Restore original console.log so we can print final lines normally
+      console.log = originalLog;
+
+      // Print final test results
+      console.log("WRAPPER_RESULTS", JSON.stringify(results));
+
+      // Print logs with info about which test produced them
+      console.log("WRAPPER_LOGS", JSON.stringify(logs));
     })();
   })();
   `
