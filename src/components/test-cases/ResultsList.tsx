@@ -6,6 +6,7 @@ interface TestResult {
   input: string;
   expected_output: string;
   actual_output: string;
+  stdout?: string;
 }
 
 interface ExecutionResult {
@@ -62,6 +63,11 @@ export const ResultsList = ({ executionResult, isLoading }: ResultsListProps) =>
                   {!result.passed && (
                     <pre className="bg-secondary p-2 rounded-md whitespace-pre">
                       <code>Your Output: {result.actual_output}</code>
+                    </pre>
+                  )}
+                  {result.stdout && (
+                    <pre className="bg-secondary p-2 rounded-md whitespace-pre">
+                      <code>Console Output: {result.stdout}</code>
                     </pre>
                   )}
                 </div>
