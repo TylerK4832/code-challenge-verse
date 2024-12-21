@@ -15,6 +15,9 @@ interface ExecutionResult {
     description: string;
   };
   test_results?: TestResult[];
+  stderr?: string | null;
+  compile_output?: string | null;
+  message?: string | null;
 }
 
 interface ResultsListProps {
@@ -48,6 +51,34 @@ export const ResultsList = ({ executionResult, isLoading }: ResultsListProps) =>
             <div className={getStatusColor(executionResult.status)}>
               Status: {executionResult.status?.description || 'Processing'}
             </div>
+
+            {/* Error outputs */}
+            {executionResult.stderr && (
+              <div className="space-y-2">
+                <h3 className="font-medium text-red-500">Error Output:</h3>
+                <pre className="bg-secondary p-2 rounded-md text-red-500">
+                  <code>{executionResult.stderr}</code>
+                </pre>
+              </div>
+            )}
+            {executionResult.compile_output && (
+              <div className="space-y-2">
+                <h3 className="font-medium">Compilation Output:</h3>
+                <pre className="bg-secondary p-2 rounded-md">
+                  <code>{executionResult.compile_output}</code>
+                </pre>
+              </div>
+            )}
+            {executionResult.message && (
+              <div className="space-y-2">
+                <h3 className="font-medium">Additional Information:</h3>
+                <pre className="bg-secondary p-2 rounded-md">
+                  <code>{executionResult.message}</code>
+                </pre>
+              </div>
+            )}
+
+            {/* Test results */}
             {executionResult.test_results?.map((result, index) => (
               <div key={index} className="space-y-2 border-b border-border pb-4 last:border-0">
                 <h3 className={`font-medium ${result.passed ? 'text-[#00b8a3]' : 'text-red-500'}`}>

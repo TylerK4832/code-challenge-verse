@@ -4,7 +4,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { supabase } from "@/integrations/supabase/client";
 import { TestCasesList } from './test-cases/TestCasesList';
 import { ResultsList } from './test-cases/ResultsList';
-import { ConsoleOutput } from './test-cases/ConsoleOutput';
 import { SuccessDialog } from './test-cases/SuccessDialog';
 
 interface ExecutionResult {
@@ -70,7 +69,6 @@ const TestCases = ({ executionResult, activeTab, onTabChange, isLoading }: TestC
           <TabsList className="bg-secondary">
             <TabsTrigger value="testcases">Test Cases</TabsTrigger>
             <TabsTrigger value="result">Result</TabsTrigger>
-            <TabsTrigger value="console">Console</TabsTrigger>
           </TabsList>
         </div>
 
@@ -80,13 +78,6 @@ const TestCases = ({ executionResult, activeTab, onTabChange, isLoading }: TestC
 
         <TabsContent value="result" className="h-[calc(100%-4rem)]">
           <ResultsList 
-            executionResult={executionResult} 
-            isLoading={isLoading || false} 
-          />
-        </TabsContent>
-
-        <TabsContent value="console" className="h-[calc(100%-4rem)]">
-          <ConsoleOutput 
             executionResult={executionResult} 
             isLoading={isLoading || false} 
           />

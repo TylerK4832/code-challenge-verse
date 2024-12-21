@@ -63,12 +63,8 @@ const ProblemCodeEditor = ({ code, onChange }: ProblemCodeEditorProps) => {
       
       setExecutionResult(result);
       
-      // Switch to console tab if there's an error, otherwise to result tab
-      if (result.stderr || result.compile_output) {
-        setActiveTab('console');
-      } else {
-        setActiveTab('result');
-      }
+      // Always switch to result tab if there's any output
+      setActiveTab('result');
 
       // Save successful submission if all tests passed
       if (result.status?.id === 3) {
@@ -93,7 +89,7 @@ const ProblemCodeEditor = ({ code, onChange }: ProblemCodeEditorProps) => {
         compile_output: null,
         message: 'Failed to execute code'
       });
-      setActiveTab('console');
+      setActiveTab('result');
     } finally {
       setIsRunning(false);
     }
