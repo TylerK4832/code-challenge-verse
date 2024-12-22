@@ -8,18 +8,30 @@ import { useNavigate } from 'react-router-dom';
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from '@tanstack/react-query';
 
+type Difficulty = 'Easy' | 'Medium' | 'Hard';
+
 interface Problem {
   id: string;
   title: string;
-  difficulty: 'Easy' | 'Medium' | 'Hard';
+  difficulty: string;
   category: string;
   acceptance: string;
   created_at: string;
 }
 
-interface ProblemWithStatus extends Problem {
+interface ProblemWithStatus {
+  id: string;
+  title: string;
+  difficulty: Difficulty;
+  category: string;
+  acceptance: string;
+  created_at: string;
   completed: boolean;
 }
+
+const isValidDifficulty = (difficulty: string): difficulty is Difficulty => {
+  return ['Easy', 'Medium', 'Hard'].includes(difficulty);
+};
 
 const fetchProblems = async (): Promise<ProblemWithStatus[]> => {
   const { data: problems, error: problemsError } = await supabase
@@ -31,7 +43,13 @@ const fetchProblems = async (): Promise<ProblemWithStatus[]> => {
 
   const { data: { user } } = await supabase.auth.getUser();
   
-  if (!user) return problems.map(problem => ({ ...problem, completed: false }));
+  if (!user) {
+    return problems.map(problem => ({
+      ...problem,
+      difficulty: isValidDifficulty(problem.difficulty) ? problem.difficulty : 'Medium',
+      completed: false
+    }));
+  }
 
   const { data: submissions } = await supabase
     .from('submissions')
@@ -43,6 +61,7 @@ const fetchProblems = async (): Promise<ProblemWithStatus[]> => {
 
   return problems.map(problem => ({
     ...problem,
+    difficulty: isValidDifficulty(problem.difficulty) ? problem.difficulty : 'Medium',
     completed: completedProblems.has(problem.id)
   }));
 };
