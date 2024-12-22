@@ -3,7 +3,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
-import { Search } from 'lucide-react';
+import { Search, Check } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from '@tanstack/react-query';
@@ -14,16 +14,37 @@ interface Problem {
   difficulty: 'Easy' | 'Medium' | 'Hard';
   category: string;
   acceptance: string;
+  completed?: boolean;
 }
 
 const fetchProblems = async () => {
-  const { data, error } = await supabase
+  // Fetch problems
+  const { data: problems, error: problemsError } = await supabase
     .from('problems')
     .select('*')
     .order('title');
     
-  if (error) throw error;
-  return data as Problem[];
+  if (problemsError) throw problemsError;
+
+  // Fetch user's successful submissions
+  const { data: { user } } = await supabase.auth.getUser();
+  
+  if (!user) return problems;
+
+  const { data: submissions } = await supabase
+    .from('submissions')
+    .select('problem_id')
+    .eq('user_id', user.id)
+    .eq('status', 'accepted');
+
+  // Create a set of completed problem IDs
+  const completedProblems = new Set(submissions?.map(s => s.problem_id) || []);
+
+  // Mark problems as completed
+  return problems.map(problem => ({
+    ...problem,
+    completed: completedProblems.has(problem.id)
+  }));
 };
 
 const Problems = () => {
@@ -130,6 +151,7 @@ const Problems = () => {
           <Table>
             <TableHeader>
               <TableRow>
+                <TableHead className="w-[40px]"></TableHead>
                 <TableHead>Title</TableHead>
                 <TableHead>Difficulty</TableHead>
                 <TableHead className="hidden sm:table-cell">Category</TableHead>
@@ -143,6 +165,11 @@ const Problems = () => {
                   className="cursor-pointer hover:bg-muted/50"
                   onClick={() => navigate(`/problem/${problem.id}`)}
                 >
+                  <TableCell className="w-[40px]">
+                    {problem.completed && (
+                      <Check className="h-4 w-4 text-green-500" />
+                    )}
+                  </TableCell>
                   <TableCell className="font-medium">{problem.title}</TableCell>
                   <TableCell>
                     <Badge className={getDifficultyColor(problem.difficulty)}>
