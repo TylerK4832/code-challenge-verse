@@ -8,48 +8,34 @@ import { useNavigate } from 'react-router-dom';
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from '@tanstack/react-query';
 
-type Difficulty = 'Easy' | 'Medium' | 'Hard';
-
 interface Problem {
   id: string;
   title: string;
-  difficulty: string;
+  difficulty: 'Easy' | 'Medium' | 'Hard';
   category: string;
   acceptance: string;
   created_at: string;
 }
 
-interface ProblemWithStatus {
-  id: string;
-  title: string;
-  difficulty: Difficulty;
-  category: string;
-  acceptance: string;
-  created_at: string;
+// Extend the base Problem type to include completion status
+interface ProblemWithStatus extends Problem {
   completed: boolean;
 }
 
-const isValidDifficulty = (difficulty: string): difficulty is Difficulty => {
-  return ['Easy', 'Medium', 'Hard'].includes(difficulty);
-};
-
 const fetchProblems = async (): Promise<ProblemWithStatus[]> => {
+  // Fetch problems
   const { data: problems, error: problemsError } = await supabase
     .from('problems')
     .select('*')
-    .order('title');
+    .order('title')
+    .returns<Problem[]>();
     
   if (problemsError) throw problemsError;
 
+  // Fetch user's successful submissions
   const { data: { user } } = await supabase.auth.getUser();
   
-  if (!user) {
-    return problems.map(problem => ({
-      ...problem,
-      difficulty: isValidDifficulty(problem.difficulty) ? problem.difficulty : 'Medium',
-      completed: false
-    }));
-  }
+  if (!user) return problems.map(problem => ({ ...problem, completed: false }));
 
   const { data: submissions } = await supabase
     .from('submissions')
@@ -57,11 +43,12 @@ const fetchProblems = async (): Promise<ProblemWithStatus[]> => {
     .eq('user_id', user.id)
     .eq('status', 'accepted');
 
+  // Create a set of completed problem IDs
   const completedProblems = new Set(submissions?.map(s => s.problem_id) || []);
 
+  // Mark problems as completed
   return problems.map(problem => ({
     ...problem,
-    difficulty: isValidDifficulty(problem.difficulty) ? problem.difficulty : 'Medium',
     completed: completedProblems.has(problem.id)
   }));
 };
@@ -76,6 +63,7 @@ const Problems = () => {
     queryFn: fetchProblems,
   });
 
+  // Set up real-time subscription
   useEffect(() => {
     const channel = supabase
       .channel('schema-db-changes')
@@ -109,11 +97,11 @@ const Problems = () => {
   const getDifficultyColor = (difficulty: string) => {
     switch (difficulty) {
       case 'Easy':
-        return 'difficulty-easy pointer-events-none';
+        return 'bg-green-500/10 text-green-500';
       case 'Medium':
-        return 'difficulty-medium pointer-events-none';
+        return 'bg-[#ffc01e]/10 text-[#ffc01e]';
       case 'Hard':
-        return 'difficulty-hard pointer-events-none';
+        return 'bg-red-500/10 text-red-500';
       default:
         return '';
     }
@@ -168,7 +156,7 @@ const Problems = () => {
         <div className="rounded-lg border">
           <Table>
             <TableHeader>
-              <TableRow className="pointer-events-none">
+              <TableRow>
                 <TableHead className="w-[40px]"></TableHead>
                 <TableHead>Title</TableHead>
                 <TableHead>Difficulty</TableHead>
