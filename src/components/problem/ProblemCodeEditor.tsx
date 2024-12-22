@@ -19,15 +19,17 @@ const ProblemCodeEditor = ({ code, onChange, lastSaved }: ProblemCodeEditorProps
   const [isRunning, setIsRunning] = useState(false);
   const [executionResult, setExecutionResult] = useState(null);
   const [activeTab, setActiveTab] = useState('testcases');
-  const [localLastSaved, setLocalLastSaved] = useState<Date | null>(lastSaved);
+  const [isModified, setIsModified] = useState(false);
+  const [restoredTime, setRestoredTime] = useState<Date | null>(lastSaved);
 
   useEffect(() => {
-    setLocalLastSaved(lastSaved);
+    setRestoredTime(lastSaved);
+    setIsModified(false);
   }, [lastSaved]);
 
   const handleCodeChange = (newCode: string) => {
     onChange(newCode);
-    setLocalLastSaved(new Date());
+    setIsModified(true);
   };
 
   const handleRunCode = async () => {
@@ -112,10 +114,10 @@ const ProblemCodeEditor = ({ code, onChange, lastSaved }: ProblemCodeEditorProps
       <div className="shrink-0 p-4 border-b border-border flex justify-between items-center">
         <div className="flex items-center gap-4">
           <Button variant="secondary">JavaScript</Button>
-          {localLastSaved && (
+          {restoredTime && !isModified && (
             <div className="text-sm text-muted-foreground flex items-center gap-2">
               <Clock className="h-4 w-4" />
-              <span>Restored from {format(localLastSaved, 'MMM d, yyyy h:mm a')}</span>
+              <span>Restored from {format(restoredTime, 'MMM d, yyyy h:mm a')}</span>
             </div>
           )}
         </div>
