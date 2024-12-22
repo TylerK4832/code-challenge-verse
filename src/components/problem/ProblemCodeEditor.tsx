@@ -10,9 +10,10 @@ import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/componen
 interface ProblemCodeEditorProps {
   code: string;
   onChange: (value: string) => void;
+  lastSaved?: Date | null;
 }
 
-const ProblemCodeEditor = ({ code, onChange }: ProblemCodeEditorProps) => {
+const ProblemCodeEditor = ({ code, onChange, lastSaved }: ProblemCodeEditorProps) => {
   const { id: problemId } = useParams();
   const [isRunning, setIsRunning] = useState(false);
   const [executionResult, setExecutionResult] = useState(null);
@@ -119,7 +120,7 @@ const ProblemCodeEditor = ({ code, onChange }: ProblemCodeEditorProps) => {
       <div className="flex-1 min-h-0">
         <ResizablePanelGroup direction="vertical">
           <ResizablePanel defaultSize={70} minSize={30}>
-            <CodeEditor code={code} onChange={onChange} />
+            <CodeEditor code={code} onChange={onChange} lastSaved={lastSaved} />
           </ResizablePanel>
           
           <ResizableHandle withHandle />
