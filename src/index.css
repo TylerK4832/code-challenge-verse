@@ -50,13 +50,13 @@
 }
 
 .difficulty-easy {
-  @apply text-[#00b8a3];
+  @apply text-[#00b8a3] pointer-events-none !important;
 }
 
 .difficulty-medium {
-  @apply text-[#ffc01e];
+  @apply text-[#ffc01e] pointer-events-none !important;
 }
 
 .difficulty-hard {
-  @apply text-[#ff375f];
+  @apply text-[#ff375f] pointer-events-none !important;
 }

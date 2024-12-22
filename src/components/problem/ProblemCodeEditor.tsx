@@ -20,11 +20,13 @@ const ProblemCodeEditor = ({ code, onChange, lastSaved }: ProblemCodeEditorProps
   const [executionResult, setExecutionResult] = useState(null);
   const [activeTab, setActiveTab] = useState('testcases');
   const [isModified, setIsModified] = useState(false);
-  const [restoredTime, setRestoredTime] = useState<Date | null>(lastSaved);
+  const [restoredTime, setRestoredTime] = useState<Date | null>(null);
 
   useEffect(() => {
-    setRestoredTime(lastSaved);
-    setIsModified(false);
+    if (lastSaved) {
+      setRestoredTime(lastSaved);
+      setIsModified(false);
+    }
   }, [lastSaved]);
 
   const handleCodeChange = (newCode: string) => {
@@ -114,7 +116,7 @@ const ProblemCodeEditor = ({ code, onChange, lastSaved }: ProblemCodeEditorProps
       <div className="shrink-0 p-4 border-b border-border flex justify-between items-center">
         <div className="flex items-center gap-4">
           <Button variant="secondary">JavaScript</Button>
-          {restoredTime && !isModified && (
+          {!isModified && restoredTime && (
             <div className="text-sm text-muted-foreground flex items-center gap-2">
               <Clock className="h-4 w-4" />
               <span>Restored from {format(restoredTime, 'MMM d, yyyy h:mm a')}</span>
