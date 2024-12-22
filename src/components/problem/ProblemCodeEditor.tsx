@@ -1,11 +1,12 @@
 import { Button } from "@/components/ui/button";
 import CodeEditor from "@/components/CodeEditor";
 import TestCases from "@/components/TestCases";
-import { Loader2 } from "lucide-react";
+import { Clock, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useState } from "react";
 import { useParams } from "react-router-dom";
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/components/ui/resizable";
+import { format } from 'date-fns';
 
 interface ProblemCodeEditorProps {
   code: string;
@@ -99,8 +100,14 @@ const ProblemCodeEditor = ({ code, onChange, lastSaved }: ProblemCodeEditorProps
   return (
     <div className="h-full flex flex-col">
       <div className="shrink-0 p-4 border-b border-border flex justify-between items-center">
-        <div className="flex gap-4">
+        <div className="flex items-center gap-4">
           <Button variant="secondary">JavaScript</Button>
+          {lastSaved && (
+            <div className="text-sm text-muted-foreground flex items-center gap-2">
+              <Clock className="h-4 w-4" />
+              <span>Restored from {format(lastSaved, 'MMM d, yyyy h:mm a')}</span>
+            </div>
+          )}
         </div>
         <Button 
           onClick={handleRunCode} 
@@ -120,7 +127,7 @@ const ProblemCodeEditor = ({ code, onChange, lastSaved }: ProblemCodeEditorProps
       <div className="flex-1 min-h-0">
         <ResizablePanelGroup direction="vertical">
           <ResizablePanel defaultSize={70} minSize={30}>
-            <CodeEditor code={code} onChange={onChange} lastSaved={lastSaved} />
+            <CodeEditor code={code} onChange={onChange} />
           </ResizablePanel>
           
           <ResizableHandle withHandle />
