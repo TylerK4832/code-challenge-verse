@@ -1,166 +1,122 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
-import { corsHeaders } from './types.ts';
-import { getProblemWrapper } from './problemRegistry.ts';
-import { parseExecutionOutput } from './utils/outputParser.ts';
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { corsHeaders } from "../_shared/cors.ts";
+import { twoSumWrapper } from "./problems/twoSum.ts";
 
-const JUDGE0_API_URL = "https://judge0-ce.p.rapidapi.com";
+const JUDGE0_API_KEY = Deno.env.get('JUDGE0_API_KEY');
 
 serve(async (req) => {
+  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
     const { source_code, language_id, problem_id, test_cases } = await req.json();
-    const problemWrapper = getProblemWrapper(problem_id);
+    console.log('Received request:', { problem_id, language_id, test_cases });
 
-    console.log('Processing test cases:', test_cases);
+    // Get the appropriate wrapper based on the problem ID
+    let wrapper;
+    switch (problem_id) {
+      case 'two-sum':
+        wrapper = twoSumWrapper;
+        break;
+      // Add other problem cases here
+      default:
+        throw new Error(`Unknown problem ID: ${problem_id}`);
+    }
 
-    // Format test cases for the wrapper
-    const formattedTestCases = test_cases.map((testCase: any) => ({
-      input: testCase.input,
-      expected: testCase.expected_output
-    }));
+    if (!wrapper) {
+      throw new Error('Problem wrapper not found');
+    }
 
-    // Wrap the user's code with the test execution logic
-    const wrappedCode = problemWrapper.wrapCode(
+    // Wrap the code with the test runner
+    const wrappedCode = wrapper.wrapCode(
       source_code,
-      JSON.stringify(formattedTestCases)
+      JSON.stringify(test_cases)
     );
 
-    console.log('Submitting wrapped code to Judge0');
+    console.log('Wrapped code:', wrappedCode);
 
-    const createResponse = await fetch(`${JUDGE0_API_URL}/submissions`, {
+    // Execute the code
+    const response = await fetch('https://judge0-ce.p.rapidapi.com/submissions', {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
+        'content-type': 'application/json',
+        'X-RapidAPI-Key': JUDGE0_API_KEY || '',
         'X-RapidAPI-Host': 'judge0-ce.p.rapidapi.com',
-        'X-RapidAPI-Key': Deno.env.get('JUDGE0_API_KEY') || '',
       },
       body: JSON.stringify({
+        language_id: language_id,
         source_code: wrappedCode,
-        language_id,
         stdin: '',
       }),
     });
 
-    if (!createResponse.ok) {
-      throw new Error(`Judge0 submission failed: ${await createResponse.text()}`);
+    if (!response.ok) {
+      throw new Error(`Judge0 API error: ${response.statusText}`);
     }
 
-    const { token } = await createResponse.json();
-    console.log('Submission created with token:', token);
+    const { token } = await response.json();
+    
+    // Wait for the result
+    await new Promise(resolve => setTimeout(resolve, 2000));
 
-    // Poll for results
-    let result;
-    let attempts = 0;
-    const maxAttempts = 10;
-
-    while (attempts < maxAttempts) {
-      const getResponse = await fetch(
-        `${JUDGE0_API_URL}/submissions/${token}?fields=status_id,stdout,stderr,compile_output,message,status`,
-        {
-          headers: {
-            'X-RapidAPI-Host': 'judge0-ce.p.rapidapi.com',
-            'X-RapidAPI-Key': Deno.env.get('JUDGE0_API_KEY') || '',
-          },
-        }
-      );
-
-      if (!getResponse.ok) {
-        throw new Error(`Failed to get submission result: ${await getResponse.text()}`);
-      }
-
-      result = await getResponse.json();
-      console.log('Raw submission result:', result);
-
-      // Check if execution is complete
-      if (result.status?.id >= 3) {
-        break;
-      }
-
-      attempts++;
-      await new Promise(resolve => setTimeout(resolve, 1000));
-    }
-
-    // If there's any error output, return it
-    if (result.stderr || result.compile_output) {
-      return new Response(
-        JSON.stringify({
-          status: { id: 4, description: 'Error' },
-          stderr: result.stderr || result.compile_output,
-          stdout: null,
-          compile_output: null,
-          message: null,
-          test_results: []
-        }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
-    }
-
-    // Parse the execution output
-    const { testResults, logs } = parseExecutionOutput(result.stdout);
-
-    // If we didn't find valid test results, return an error
-    if (!testResults) {
-      return new Response(
-        JSON.stringify({
-          status: { id: 4, description: 'Error' },
-          stderr: 'No valid test results found in output',
-          stdout: result.stdout,
-          compile_output: null,
-          message: null,
-          test_results: []
-        }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
-    }
-
-    // Associate logs with test results
-    const finalTestResults = testResults.map((result: any, index: number) => {
-      // Filter logs for this test index and extract just the messages
-      const testLogs = logs
-        .filter(log => log.testIndex === index)
-        .map(log => log.message);
-
-      return {
-        ...result,
-        input: test_cases[index]?.input,
-        expected_output: test_cases[index]?.expected_output,
-        actual_output: JSON.stringify(result.actual ?? result.output),
-        stdout: testLogs.length > 0 ? testLogs.join('\n') : undefined
-      };
+    // Get the execution result
+    const resultResponse = await fetch(`https://judge0-ce.p.rapidapi.com/submissions/${token}?base64_encoded=false`, {
+      method: 'GET',
+      headers: {
+        'X-RapidAPI-Key': JUDGE0_API_KEY || '',
+        'X-RapidAPI-Host': 'judge0-ce.p.rapidapi.com',
+      },
     });
 
-    // Determine if all test cases passed
-    const allPassed = finalTestResults.every((r: any) => r.passed === true);
+    if (!resultResponse.ok) {
+      throw new Error(`Judge0 API error: ${resultResponse.statusText}`);
+    }
 
-    // Return the final response
+    const result = await resultResponse.json();
+    console.log('Execution result:', result);
+
+    // Parse the test results from stdout
+    let testResults = [];
+    let logs = [];
+
+    if (result.stdout) {
+      const lines = result.stdout.split('\n');
+      for (const line of lines) {
+        if (line.startsWith('WRAPPER_RESULTS')) {
+          testResults = JSON.parse(line.replace('WRAPPER_RESULTS ', ''));
+        } else if (line.startsWith('WRAPPER_LOGS')) {
+          logs = JSON.parse(line.replace('WRAPPER_LOGS ', ''));
+        }
+      }
+    }
+
+    // Determine overall status
+    const status = testResults.every((test: any) => test.passed)
+      ? { id: 3, description: 'Accepted' }
+      : { id: 4, description: 'Wrong Answer' };
+
     return new Response(
       JSON.stringify({
-        status: {
-          id: allPassed ? 3 : 4,
-          description: allPassed ? 'Accepted' : 'Wrong Answer'
-        },
-        stdout: null,
-        stderr: null,
-        compile_output: null,
-        message: null,
-        test_results: finalTestResults
+        status,
+        test_results: testResults,
+        stdout: logs.length > 0 ? logs.map((log: any) => `Test ${log.testIndex + 1}: ${log.message}`).join('\n') : null,
+        stderr: result.stderr,
+        compile_output: result.compile_output,
+        message: result.message,
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
-
   } catch (error) {
-    console.error('Error executing code:', error);
+    console.error('Error:', error);
     return new Response(
       JSON.stringify({
         status: { id: 0, description: 'Error' },
         stderr: error.message,
         stdout: null,
         compile_output: null,
-        message: null,
-        test_results: []
+        message: 'Failed to execute code'
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );

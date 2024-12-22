@@ -60,7 +60,7 @@ const ProblemCodeEditor = ({ code, onChange, lastSaved }: ProblemCodeEditorProps
 
       console.log('Starting code execution with test cases:', testCases);
       
-      const response = await supabase.functions.invoke('execute-code', {
+      const { data, error } = await supabase.functions.invoke('execute-code', {
         body: {
           source_code: code,
           language_id: 63, // JavaScript
@@ -69,21 +69,17 @@ const ProblemCodeEditor = ({ code, onChange, lastSaved }: ProblemCodeEditorProps
         },
       });
 
-      if (response.error) {
-        console.error('Edge function error:', response.error);
-        throw response.error;
+      if (error) {
+        console.error('Edge function error:', error);
+        throw error;
       }
 
-      const result = response.data;
-      console.log('Execution result:', result);
-      
-      setExecutionResult(result);
-      
-      // Always switch to result tab if there's any output
+      console.log('Execution result:', data);
+      setExecutionResult(data);
       setActiveTab('result');
 
       // Save successful submission if all tests passed
-      if (result.status?.id === 3) {
+      if (data.status?.id === 3) {
         const { error: submissionError } = await supabase
           .from('submissions')
           .insert({
