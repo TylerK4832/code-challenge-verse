@@ -93,6 +93,9 @@ const Problem = () => {
         });
 
       if (error) throw error;
+      
+      // Update lastSaved timestamp after successful save
+      setLastSaved(new Date());
     } catch (error) {
       console.error('Error saving code draft:', error);
       toast({
