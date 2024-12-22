@@ -15,10 +15,14 @@ interface Problem {
   category: string;
   acceptance: string;
   created_at: string;
-  completed?: boolean;
 }
 
-const fetchProblems = async () => {
+// Extend the base Problem type to include completion status
+interface ProblemWithStatus extends Problem {
+  completed: boolean;
+}
+
+const fetchProblems = async (): Promise<ProblemWithStatus[]> => {
   // Fetch problems
   const { data: problems, error: problemsError } = await supabase
     .from('problems')
@@ -30,7 +34,7 @@ const fetchProblems = async () => {
   // Fetch user's successful submissions
   const { data: { user } } = await supabase.auth.getUser();
   
-  if (!user) return problems;
+  if (!user) return problems.map(problem => ({ ...problem, completed: false }));
 
   const { data: submissions } = await supabase
     .from('submissions')
