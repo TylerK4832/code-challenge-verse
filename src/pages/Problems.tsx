@@ -17,13 +17,11 @@ interface Problem {
   created_at: string;
 }
 
-// Extend the base Problem type to include completion status
 interface ProblemWithStatus extends Problem {
   completed: boolean;
 }
 
 const fetchProblems = async (): Promise<ProblemWithStatus[]> => {
-  // Fetch problems
   const { data: problems, error: problemsError } = await supabase
     .from('problems')
     .select('*')
@@ -32,7 +30,6 @@ const fetchProblems = async (): Promise<ProblemWithStatus[]> => {
     
   if (problemsError) throw problemsError;
 
-  // Fetch user's successful submissions
   const { data: { user } } = await supabase.auth.getUser();
   
   if (!user) return problems.map(problem => ({ ...problem, completed: false }));
@@ -43,10 +40,8 @@ const fetchProblems = async (): Promise<ProblemWithStatus[]> => {
     .eq('user_id', user.id)
     .eq('status', 'accepted');
 
-  // Create a set of completed problem IDs
   const completedProblems = new Set(submissions?.map(s => s.problem_id) || []);
 
-  // Mark problems as completed
   return problems.map(problem => ({
     ...problem,
     completed: completedProblems.has(problem.id)
@@ -63,7 +58,6 @@ const Problems = () => {
     queryFn: fetchProblems,
   });
 
-  // Set up real-time subscription
   useEffect(() => {
     const channel = supabase
       .channel('schema-db-changes')
@@ -97,11 +91,11 @@ const Problems = () => {
   const getDifficultyColor = (difficulty: string) => {
     switch (difficulty) {
       case 'Easy':
-        return 'bg-green-500/10 text-green-500';
+        return 'difficulty-easy pointer-events-none';
       case 'Medium':
-        return 'bg-[#ffc01e]/10 text-[#ffc01e]';
+        return 'difficulty-medium pointer-events-none';
       case 'Hard':
-        return 'bg-red-500/10 text-red-500';
+        return 'difficulty-hard pointer-events-none';
       default:
         return '';
     }
@@ -156,7 +150,7 @@ const Problems = () => {
         <div className="rounded-lg border">
           <Table>
             <TableHeader>
-              <TableRow>
+              <TableRow className="pointer-events-none">
                 <TableHead className="w-[40px]"></TableHead>
                 <TableHead>Title</TableHead>
                 <TableHead>Difficulty</TableHead>
