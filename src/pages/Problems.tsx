@@ -27,7 +27,8 @@ const fetchProblems = async (): Promise<ProblemWithStatus[]> => {
   const { data: problems, error: problemsError } = await supabase
     .from('problems')
     .select('*')
-    .order('title');
+    .order('title')
+    .returns<Problem[]>();
     
   if (problemsError) throw problemsError;
 
