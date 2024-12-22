@@ -3,36 +3,20 @@ import CodeEditor from "@/components/CodeEditor";
 import TestCases from "@/components/TestCases";
 import { Clock, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useParams } from "react-router-dom";
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/components/ui/resizable";
-import { format } from 'date-fns';
 
 interface ProblemCodeEditorProps {
   code: string;
   onChange: (value: string) => void;
-  lastSaved?: Date | null;
 }
 
-const ProblemCodeEditor = ({ code, onChange, lastSaved }: ProblemCodeEditorProps) => {
+const ProblemCodeEditor = ({ code, onChange }: ProblemCodeEditorProps) => {
   const { id: problemId } = useParams();
   const [isRunning, setIsRunning] = useState(false);
   const [executionResult, setExecutionResult] = useState(null);
   const [activeTab, setActiveTab] = useState('testcases');
-  const [isModified, setIsModified] = useState(false);
-  const [restoredTime, setRestoredTime] = useState<Date | null>(null);
-
-  useEffect(() => {
-    if (lastSaved) {
-      setRestoredTime(lastSaved);
-      setIsModified(false);
-    }
-  }, [lastSaved]);
-
-  const handleCodeChange = (newCode: string) => {
-    onChange(newCode);
-    setIsModified(true);
-  };
 
   const handleRunCode = async () => {
     setIsRunning(true);
@@ -110,15 +94,7 @@ const ProblemCodeEditor = ({ code, onChange, lastSaved }: ProblemCodeEditorProps
   return (
     <div className="h-full flex flex-col">
       <div className="shrink-0 p-4 border-b border-border flex justify-between items-center">
-        <div className="flex items-center gap-4">
-          <Button variant="secondary">JavaScript</Button>
-          {!isModified && restoredTime && (
-            <div className="text-sm text-muted-foreground flex items-center gap-2">
-              <Clock className="h-4 w-4" />
-              <span>Restored from {format(restoredTime, 'MMM d, yyyy h:mm a')}</span>
-            </div>
-          )}
-        </div>
+        <Button variant="secondary">JavaScript</Button>
         <Button 
           onClick={handleRunCode} 
           className="bg-[#00b8a3] hover:bg-[#00a092]"
@@ -137,7 +113,7 @@ const ProblemCodeEditor = ({ code, onChange, lastSaved }: ProblemCodeEditorProps
       <div className="flex-1 min-h-0">
         <ResizablePanelGroup direction="vertical">
           <ResizablePanel defaultSize={70} minSize={30}>
-            <CodeEditor code={code} onChange={handleCodeChange} />
+            <CodeEditor code={code} onChange={onChange} />
           </ResizablePanel>
           
           <ResizableHandle withHandle />

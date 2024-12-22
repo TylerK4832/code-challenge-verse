@@ -14,7 +14,6 @@ const Problem = () => {
   const { toast } = useToast();
   const [code, setCode] = useState('');
   const [isLoading, setIsLoading] = useState(true);
-  const [lastSaved, setLastSaved] = useState<Date | null>(null);
 
   // Load saved code draft or set default code
   useEffect(() => {
@@ -25,7 +24,7 @@ const Problem = () => {
 
         const { data: draft, error } = await supabase
           .from('code_drafts')
-          .select('code, updated_at')
+          .select('code')
           .eq('problem_id', id)
           .eq('user_id', user.id)
           .maybeSingle();
@@ -34,7 +33,6 @@ const Problem = () => {
 
         if (draft) {
           setCode(draft.code);
-          setLastSaved(new Date(draft.updated_at));
         } else {
           // Set default code if no draft exists
           setCode(() => {
@@ -93,9 +91,6 @@ const Problem = () => {
         });
 
       if (error) throw error;
-      
-      // Update lastSaved timestamp after successful save
-      setLastSaved(new Date());
     } catch (error) {
       console.error('Error saving code draft:', error);
       toast({
@@ -130,7 +125,7 @@ const Problem = () => {
           </TabsContent>
 
           <TabsContent value="code" className="h-[calc(100%-49px)] mt-0">
-            <ProblemCodeEditor code={code} onChange={handleCodeChange} lastSaved={lastSaved} />
+            <ProblemCodeEditor code={code} onChange={handleCodeChange} />
           </TabsContent>
         </Tabs>
       </div>
@@ -148,7 +143,7 @@ const Problem = () => {
           <ResizableHandle withHandle />
           
           <ResizablePanel defaultSize={65} minSize={30}>
-            <ProblemCodeEditor code={code} onChange={handleCodeChange} lastSaved={lastSaved} />
+            <ProblemCodeEditor code={code} onChange={handleCodeChange} />
           </ResizablePanel>
         </ResizablePanelGroup>
       </div>
