@@ -23,7 +23,6 @@ export const twoSumWrapper: ProblemWrapper = {
       });
     };
 
-    
     // Inject user code
     ${code}
 
