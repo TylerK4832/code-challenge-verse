@@ -14,6 +14,7 @@ interface Problem {
   difficulty: 'Easy' | 'Medium' | 'Hard';
   category: string;
   acceptance: string;
+  created_at: string;
   completed?: boolean;
 }
 

@@ -22,12 +22,14 @@ const Problem = () => {
         const { data: { user } } = await supabase.auth.getUser();
         if (!user) return;
 
-        const { data: draft } = await supabase
+        const { data: draft, error } = await supabase
           .from('code_drafts')
           .select('code')
           .eq('problem_id', id)
           .eq('user_id', user.id)
-          .single();
+          .maybeSingle();
+
+        if (error) throw error;
 
         if (draft) {
           setCode(draft.code);
