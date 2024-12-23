@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import CodeEditor from "@/components/CodeEditor";
 import TestCases from "@/components/TestCases";
-import { Clock, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useState } from "react";
 import { useParams } from "react-router-dom";
@@ -55,7 +55,15 @@ const ProblemCodeEditor = ({ code, onChange }: ProblemCodeEditorProps) => {
 
       if (error) {
         console.error('Edge function error:', error);
-        throw error;
+        setExecutionResult({
+          status: { id: 0, description: 'Error' },
+          stderr: error.message,
+          stdout: null,
+          compile_output: null,
+          message: 'Failed to execute code'
+        });
+        setActiveTab('result');
+        return;
       }
 
       console.log('Execution result:', data);

@@ -1,19 +1,24 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
-import { corsHeaders } from './types.ts';
+import { corsHeaders } from '../_shared/cors.ts'
 import { getProblemWrapper } from './problemRegistry.ts';
 import { parseExecutionOutput } from './utils/outputParser.ts';
 
 const JUDGE0_API_URL = "https://judge0-ce.p.rapidapi.com";
 
 serve(async (req) => {
+  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
     const { source_code, language_id, problem_id, test_cases } = await req.json();
-    const problemWrapper = getProblemWrapper(problem_id);
+    
+    if (!source_code || !language_id || !problem_id || !test_cases) {
+      throw new Error('Missing required parameters');
+    }
 
+    const problemWrapper = getProblemWrapper(problem_id);
     console.log('Processing test cases:', test_cases);
 
     // Format test cases for the wrapper
@@ -118,7 +123,6 @@ serve(async (req) => {
 
     // Associate logs with test results
     const finalTestResults = testResults.map((result: any, index: number) => {
-      // Filter logs for this test index and extract just the messages
       const testLogs = logs
         .filter(log => log.testIndex === index)
         .map(log => log.message);
