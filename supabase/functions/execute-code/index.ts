@@ -33,7 +33,7 @@ serve(async (req) => {
       JSON.stringify(formattedTestCases)
     );
 
-    console.log('Submitting wrapped code to Judge0');
+    console.log('Submitting wrapped code to Judge0: ', source_code);
 
     const createResponse = await fetch(`${JUDGE0_API_URL}/submissions`, {
       method: 'POST',
