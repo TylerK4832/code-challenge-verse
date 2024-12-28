@@ -7,7 +7,7 @@ export interface SubmissionRequest {
 }
 
 export interface ProblemWrapper {
-  wrapCode: (code: string, stdin: string, userFunctionName: string) => string;
+  wrapCode: (userCode: string, testCodeList: string[]) => string;
 }
 
 export const corsHeaders = {

@@ -22,18 +22,23 @@ serve(async (req) => {
     console.log('Processing test cases:', test_cases);
 
     // Format test cases for the wrapper
-    const formattedTestCases = test_cases.map((testCase: any) => ({
-      input: testCase.input,
-      expected: testCase.expected_output
+    // const formattedTestCases = test_cases.map((testCase: any) => ({
+    //   input: testCase.input,
+    //   expected: testCase.expected_output
+    // }));
+
+    // Format test cases for the wrapper
+    const testCodeList = test_cases.map((testCase: any) => ({
+      code: testCase.code
     }));
 
     // Wrap the user's code with the test execution logic
     const wrappedCode = problemWrapper.wrapCode(
       source_code,
-      JSON.stringify(formattedTestCases)
+      testCodeList
     );
 
-    console.log('Submitting wrapped code to Judge0: ', source_code);
+    console.log('Submitting wrapped code to Judge0');
 
     const createResponse = await fetch(`${JUDGE0_API_URL}/submissions`, {
       method: 'POST',

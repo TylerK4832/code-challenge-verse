@@ -1,7 +1,38 @@
 import { ProblemWrapper } from '../types.ts';
 
+function formatTestCodeList(testCodeList) {
+  return testCodeList.map((str, index) => 
+    `
+    try {
+      currentTestIndex = ${index}
+      ${str}
+      results.push({
+        expected: expected,
+        actual: output,
+        passed: true
+      });
+    } catch (error) {
+      if (error instanceof assert.AssertionError) {
+        results.push({
+          expected: expected,
+          actual: output,
+          passed: false
+        });
+      } else {
+        results.push({
+          expected: expected,
+          error: error && error.message ? error.message : String(error)
+        });
+      }
+    }
+    `
+  ).join('\n');
+}
+
 export const twoSumWrapper: ProblemWrapper = {
-  wrapCode: (code, testCasesStr, userFunctionName = 'twoSum') => `
+  wrapCode: (userCode, testCodeList) => `
+  import assert from 'assert';
+
   (function() {
     // Store original console.log
     const originalLog = console.log;
@@ -24,51 +55,12 @@ export const twoSumWrapper: ProblemWrapper = {
     };
 
     // Inject user code
-    ${code}
+    ${userCode}
 
     (async function runTests() {
-      const testCases = ${testCasesStr};
       let results = [];
 
-      for (let i = 0; i < testCases.length; i++) {
-        // Before running each test, set currentTestIndex
-        currentTestIndex = i;
-        
-        const { input, expected } = testCases[i];
-        try {
-          // Split the input string on newlines:
-          const lines = input.split('\\n');
-
-          // Parse each line as JSON to get the correct argument type.
-          // e.g. ["[2,7,11,15]", "9", "5"] => [[2,7,11,15], 9, 5]
-          const args = lines.map(line => JSON.parse(line));
-
-          // Call user function with the arguments
-          const actual = ${userFunctionName}(...args);
-
-          // Parse expected if it's a JSON string (e.g. "[0,1]" => [0,1])
-          let parsedExpected = expected;
-          if (typeof parsedExpected === 'string') {
-            parsedExpected = JSON.parse(parsedExpected);
-          }
-
-          // Compare results
-          const passed = JSON.stringify(actual) === JSON.stringify(parsedExpected);
-
-          results.push({
-            input,
-            expected: parsedExpected,
-            actual,
-            passed
-          });
-        } catch (error) {
-          results.push({
-            input,
-            expected,
-            error: error && error.message ? error.message : String(error)
-          });
-        }
-      }
+      ${formatTestCodeList(testCodeList)}
 
       // All tests done, reset currentTestIndex
       currentTestIndex = -1;
