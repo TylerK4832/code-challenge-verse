@@ -31,7 +31,7 @@ function formatTestCodeList(testCodeList) {
 
 export const twoSumWrapper: ProblemWrapper = {
   wrapCode: (userCode, testCodeList) => `
-  import assert from 'assert';
+  const assert = require('assert');
 
   (function() {
     // Store original console.log
@@ -62,7 +62,7 @@ export const twoSumWrapper: ProblemWrapper = {
 
       ${formatTestCodeList(testCodeList)}
 
-      
+
       // All tests done, reset currentTestIndex
       currentTestIndex = -1;
 
