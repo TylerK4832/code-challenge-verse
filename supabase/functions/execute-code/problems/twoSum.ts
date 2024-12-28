@@ -62,6 +62,7 @@ export const twoSumWrapper: ProblemWrapper = {
 
       ${formatTestCodeList(testCodeList)}
 
+      
       // All tests done, reset currentTestIndex
       currentTestIndex = -1;
 
