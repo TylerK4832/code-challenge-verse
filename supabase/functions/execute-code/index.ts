@@ -38,7 +38,7 @@ serve(async (req) => {
       testCodeList
     );
 
-    console.log('Submitting wrapped code to Judge0');
+    console.log('Submitting wrapped code to Judge0:\n', wrappedCode);
 
     const createResponse = await fetch(`${JUDGE0_API_URL}/submissions`, {
       method: 'POST',
