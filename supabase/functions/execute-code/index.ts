@@ -32,6 +32,8 @@ serve(async (req) => {
       code: testCase.code
     }));
 
+    console.log('Test code list\n', testCodeList, 'type of element:\n', typeof testCodeList[0]);
+
     // Wrap the user's code with the test execution logic
     const wrappedCode = problemWrapper.wrapCode(
       source_code,
