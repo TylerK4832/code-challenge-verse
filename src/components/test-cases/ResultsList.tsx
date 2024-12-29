@@ -80,8 +80,7 @@ export const ResultsList = ({ executionResult, isLoading }: ResultsListProps) =>
                 </h3>
                 <div className="space-y-2">
                   <pre className="bg-secondary p-2 rounded-md whitespace-pre">
-                    <code>Test Code:
-{result.code}</code>
+                    <code>{result.code}</code>
                   </pre>
                   {!result.passed && result.error && (
                     <pre className="bg-secondary p-2 rounded-md text-red-500 whitespace-pre">

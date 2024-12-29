@@ -22,12 +22,6 @@ serve(async (req) => {
     console.log('Processing test cases:', test_cases);
 
     // Format test cases for the wrapper
-    // const formattedTestCases = test_cases.map((testCase: any) => ({
-    //   input: testCase.input,
-    //   expected: testCase.expected_output
-    // }));
-
-    // Format test cases for the wrapper
     const testCodeList = test_cases.map((testCase: any) => testCase.code);
 
     console.log('Test code list\n', testCodeList, 'type of element:\n', typeof testCodeList[0]);

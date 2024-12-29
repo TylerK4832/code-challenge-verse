@@ -1,34 +1,5 @@
 import { ProblemWrapper } from '../types.ts';
 
-// function formatTestCodeList(testCodeList) {
-//   return testCodeList.map((str, index) => 
-//     `
-//     try {
-//       currentTestIndex = ${index}
-//       ${str}
-//       results.push({
-//         expected: expected,
-//         actual: output,
-//         passed: true
-//       });
-//     } catch (error) {
-//       if (error instanceof assert.AssertionError) {
-//         results.push({
-//           expected: expected,
-//           actual: output,
-//           passed: false
-//         });
-//       } else {
-//         results.push({
-//           expected: expected,
-//           error: error && error.message ? error.message : String(error)
-//         });
-//       }
-//     }
-//     `
-//   ).join('\n');
-// }
-
 function formatTestCodeList(testCodeList) {
   return testCodeList.map((code, index) => 
     `
