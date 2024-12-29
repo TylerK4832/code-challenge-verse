@@ -30,18 +30,20 @@ import { ProblemWrapper } from '../types.ts';
 // }
 
 function formatTestCodeList(testCodeList) {
-  return testCodeList.map((str, index) => 
+  return testCodeList.map((code, index) => 
     `
     try {
       currentTestIndex = ${index}
-      ${str}
+      ${code}
       results.push({
+        code: code,
         expected: expected,
         actual: output,
         passed: true
       });
     } catch (error) {
       results.push({
+        code: code,
         error: error && error.message ? error.message : String(error)
       });
     }
