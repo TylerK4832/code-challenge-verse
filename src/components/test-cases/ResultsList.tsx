@@ -5,6 +5,7 @@ interface TestResult {
   passed: boolean;
   error?: string;
   code: string;
+  stdout?: string;
 }
 
 interface ExecutionResult {
@@ -82,6 +83,14 @@ export const ResultsList = ({ executionResult, isLoading }: ResultsListProps) =>
                   <pre className="bg-secondary p-2 rounded-md whitespace-pre">
                     <code>{result.code}</code>
                   </pre>
+                  {result.stdout && (
+                    <div className="space-y-1">
+                      <h4 className="text-sm font-medium text-muted-foreground">Console Output:</h4>
+                      <pre className="bg-secondary p-2 rounded-md text-sm">
+                        <code>{result.stdout}</code>
+                      </pre>
+                    </div>
+                  )}
                   {!result.passed && result.error && (
                     <pre className="bg-secondary p-2 rounded-md text-red-500 whitespace-pre">
                       <code>{result.error}</code>
