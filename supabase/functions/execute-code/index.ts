@@ -28,9 +28,7 @@ serve(async (req) => {
     // }));
 
     // Format test cases for the wrapper
-    const testCodeList = test_cases.map((testCase: any) => ({
-      code: testCase.code
-    }));
+    const testCodeList = test_cases.map((testCase: any) => testCase.code);
 
     console.log('Test code list\n', testCodeList, 'type of element:\n', typeof testCodeList[0]);
 
