@@ -17,9 +17,8 @@ interface ExecutionResult {
   message: string | null;
   test_results?: Array<{
     passed: boolean;
-    input: string;
-    expected_output: string;
-    actual_output: string;
+    error?: string;
+    code: string;
   }>;
 }
 
