@@ -140,27 +140,33 @@ export type Database = {
       }
       test_cases: {
         Row: {
+          code: string | null
           created_at: string
           expected_output: string
           id: string
           input: string
           is_hidden: boolean | null
+          language: string | null
           problem_id: string
         }
         Insert: {
+          code?: string | null
           created_at?: string
           expected_output: string
           id?: string
           input: string
           is_hidden?: boolean | null
+          language?: string | null
           problem_id: string
         }
         Update: {
+          code?: string | null
           created_at?: string
           expected_output?: string
           id?: string
           input?: string
           is_hidden?: boolean | null
+          language?: string | null
           problem_id?: string
         }
         Relationships: [

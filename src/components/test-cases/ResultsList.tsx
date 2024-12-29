@@ -3,10 +3,8 @@ import { Loader2 } from "lucide-react";
 
 interface TestResult {
   passed: boolean;
-  input: string;
-  expected_output: string;
-  actual_output: string;
-  stdout?: string;
+  error?: string;
+  code: string;
 }
 
 interface ExecutionResult {
@@ -24,10 +22,6 @@ interface ResultsListProps {
   executionResult: ExecutionResult | null;
   isLoading: boolean;
 }
-
-const formatInput = (input: string) => {
-  return input.split('\\n').join('\n');
-};
 
 const getStatusColor = (status?: { id: number }) => {
   if (!status) return 'text-gray-500';
@@ -86,19 +80,12 @@ export const ResultsList = ({ executionResult, isLoading }: ResultsListProps) =>
                 </h3>
                 <div className="space-y-2">
                   <pre className="bg-secondary p-2 rounded-md whitespace-pre">
-                    <code>Input: {formatInput(result.input)}</code>
+                    <code>Test Code:
+{result.code}</code>
                   </pre>
-                  <pre className="bg-secondary p-2 rounded-md whitespace-pre">
-                    <code>Expected Output: {result.expected_output}</code>
-                  </pre>
-                  {!result.passed && (
-                    <pre className="bg-secondary p-2 rounded-md whitespace-pre">
-                      <code>Your Output: {result.actual_output}</code>
-                    </pre>
-                  )}
-                  {result.stdout && (
-                    <pre className="bg-secondary p-2 rounded-md whitespace-pre">
-                      <code>Console Output: {result.stdout}</code>
+                  {!result.passed && result.error && (
+                    <pre className="bg-secondary p-2 rounded-md text-red-500 whitespace-pre">
+                      <code>Assertion Error: {result.error}</code>
                     </pre>
                   )}
                 </div>

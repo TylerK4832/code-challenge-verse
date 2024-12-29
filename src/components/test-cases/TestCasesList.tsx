@@ -2,17 +2,12 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 
 interface TestCase {
   id: string;
-  input: string;
-  expected_output: string;
+  code: string;
 }
 
 interface TestCasesListProps {
   testCases: TestCase[];
 }
-
-const formatInput = (input: string) => {
-  return input.split('\\n').join('\n');
-};
 
 export const TestCasesList = ({ testCases }: TestCasesListProps) => {
   return (
@@ -22,10 +17,7 @@ export const TestCasesList = ({ testCases }: TestCasesListProps) => {
           <div key={testCase.id} className="space-y-2">
             <h3 className="font-medium">Test Case {index + 1}:</h3>
             <pre className="bg-secondary p-2 rounded-md whitespace-pre">
-              <code>Input: {formatInput(testCase.input)}</code>
-            </pre>
-            <pre className="bg-secondary p-2 rounded-md whitespace-pre">
-              <code>Expected Output: {testCase.expected_output}</code>
+              <code>{testCase.code}</code>
             </pre>
           </div>
         ))}
