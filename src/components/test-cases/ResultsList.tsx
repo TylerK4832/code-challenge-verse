@@ -85,7 +85,7 @@ export const ResultsList = ({ executionResult, isLoading }: ResultsListProps) =>
                   </pre>
                   {!result.passed && result.error && (
                     <pre className="bg-secondary p-2 rounded-md text-red-500 whitespace-pre">
-                      <code>Assertion Error: {result.error}</code>
+                      <code>{result.error}</code>
                     </pre>
                   )}
                 </div>
