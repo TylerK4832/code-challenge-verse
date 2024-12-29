@@ -36,14 +36,12 @@ function formatTestCodeList(testCodeList) {
       currentTestIndex = ${index}
       ${code}
       results.push({
-        code: "${code}",
         expected: expected,
         actual: output,
         passed: true
       });
     } catch (error) {
       results.push({
-        code: "${code}",
         error: error && error.message ? error.message : String(error)
       });
     }
