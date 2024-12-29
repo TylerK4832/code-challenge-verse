@@ -134,6 +134,7 @@ serve(async (req) => {
 
       return {
         ...result,
+        code: test_cases[index]?.code,
         input: test_cases[index]?.input,
         expected_output: test_cases[index]?.expected_output,
         actual_output: JSON.stringify(result.actual ?? result.output),
