@@ -44,7 +44,7 @@ const Index = () => {
         </div>
 
         <div className="h-[200px] border-t border-border">
-          <TestCases />
+          <TestCases selectedLanguage="javascript" />
         </div>
       </div>
     </div>

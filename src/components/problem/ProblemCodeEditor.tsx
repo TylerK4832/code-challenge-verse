@@ -7,6 +7,7 @@ import TestCases from "@/components/TestCases";
 import EditorToolbar from "./EditorToolbar";
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/components/ui/resizable";
 import { useToast } from "@/components/ui/use-toast";
+import { executeCode } from "@/services/codeExecution";
 
 interface ProblemCodeEditorProps {
   code: string;
