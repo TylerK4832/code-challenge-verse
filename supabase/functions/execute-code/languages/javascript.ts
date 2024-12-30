@@ -7,8 +7,6 @@ function formatTestCodeList(testCodeList) {
       currentTestIndex = ${index}
       ${code}
       results.push({
-        expected: expected,
-        actual: output,
         passed: true
       });
     } catch (error) {
