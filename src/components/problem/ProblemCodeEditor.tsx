@@ -6,17 +6,80 @@ import { supabase } from "@/integrations/supabase/client";
 import { useState } from "react";
 import { useParams } from "react-router-dom";
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/components/ui/resizable";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface ProblemCodeEditorProps {
   code: string;
   onChange: (value: string) => void;
 }
 
+const LANGUAGES = [
+  { id: 63, name: 'JavaScript', defaultCode: (problemId: string) => {
+    switch (problemId) {
+      case 'two-sum':
+        return `function twoSum(nums, target) {
+  // Write your solution here
+}`;
+      case 'add-two-numbers':
+        return `function addTwoNumbers(l1, l2) {
+  // Write your solution here
+}`;
+      case 'longest-substring':
+        return `function lengthOfLongestSubstring(s) {
+  // Write your solution here
+}`;
+      case 'median-sorted-arrays':
+        return `function findMedianSortedArrays(nums1, nums2) {
+  // Write your solution here
+}`;
+      default:
+        return '// Write your solution here';
+    }
+  }},
+  { id: 71, name: 'Python', defaultCode: (problemId: string) => {
+    switch (problemId) {
+      case 'two-sum':
+        return `def twoSum(nums, target):
+    # Write your solution here
+    pass`;
+      case 'add-two-numbers':
+        return `def addTwoNumbers(l1, l2):
+    # Write your solution here
+    pass`;
+      case 'longest-substring':
+        return `def lengthOfLongestSubstring(s):
+    # Write your solution here
+    pass`;
+      case 'median-sorted-arrays':
+        return `def findMedianSortedArrays(nums1, nums2):
+    # Write your solution here
+    pass`;
+      default:
+        return '# Write your solution here';
+    }
+  }}
+];
+
 const ProblemCodeEditor = ({ code, onChange }: ProblemCodeEditorProps) => {
   const { id: problemId } = useParams();
   const [isRunning, setIsRunning] = useState(false);
   const [executionResult, setExecutionResult] = useState(null);
   const [activeTab, setActiveTab] = useState('testcases');
+  const [selectedLanguage, setSelectedLanguage] = useState(LANGUAGES[0]);
+
+  const handleLanguageChange = (languageId: string) => {
+    const language = LANGUAGES.find(lang => lang.id === parseInt(languageId));
+    if (language) {
+      setSelectedLanguage(language);
+      onChange(language.defaultCode(problemId || ''));
+    }
+  };
 
   const handleRunCode = async () => {
     setIsRunning(true);
@@ -33,7 +96,8 @@ const ProblemCodeEditor = ({ code, onChange }: ProblemCodeEditorProps) => {
         .from('test_cases')
         .select('*')
         .eq('problem_id', problemId)
-        .eq('is_hidden', false);
+        .eq('is_hidden', false)
+        .eq('language', selectedLanguage.name.toLowerCase());
 
       if (testCasesError) throw testCasesError;
 
@@ -47,7 +111,7 @@ const ProblemCodeEditor = ({ code, onChange }: ProblemCodeEditorProps) => {
       const { data, error } = await supabase.functions.invoke('execute-code', {
         body: {
           source_code: code,
-          language_id: 63, // JavaScript
+          language_id: selectedLanguage.id,
           problem_id: problemId,
           test_cases: testCases,
         },
@@ -77,7 +141,7 @@ const ProblemCodeEditor = ({ code, onChange }: ProblemCodeEditorProps) => {
           .insert({
             problem_id: problemId,
             code,
-            language: 'javascript',
+            language: selectedLanguage.name.toLowerCase(),
             status: 'accepted',
             user_id: user.id
           });
@@ -102,7 +166,21 @@ const ProblemCodeEditor = ({ code, onChange }: ProblemCodeEditorProps) => {
   return (
     <div className="h-full flex flex-col">
       <div className="shrink-0 p-4 border-b border-border flex justify-between items-center">
-        <Button variant="secondary">JavaScript</Button>
+        <Select
+          value={selectedLanguage.id.toString()}
+          onValueChange={handleLanguageChange}
+        >
+          <SelectTrigger className="w-[180px]">
+            <SelectValue placeholder="Select Language" />
+          </SelectTrigger>
+          <SelectContent>
+            {LANGUAGES.map(lang => (
+              <SelectItem key={lang.id} value={lang.id.toString()}>
+                {lang.name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
         <Button 
           onClick={handleRunCode} 
           className="bg-[#00b8a3] hover:bg-[#00a092]"

@@ -1,5 +1,6 @@
 import { LanguageConfig } from './types/languageWrappers.ts';
 import { javascriptWrapper } from './languages/javascript.ts';
+import { pythonWrapper } from './languages/python.ts';
 
 const languageRegistry: LanguageConfig[] = [
   {
@@ -7,7 +8,11 @@ const languageRegistry: LanguageConfig[] = [
     name: 'javascript',
     wrapper: javascriptWrapper,
   },
-  // Add more languages here as they become available
+  {
+    id: 71,
+    name: 'python',
+    wrapper: pythonWrapper,
+  }
 ];
 
 export const getLanguageWrapper = (languageId: number): LanguageConfig | undefined => {
