@@ -1,77 +1,21 @@
-import { Button } from "@/components/ui/button";
 import CodeEditor from "@/components/CodeEditor";
 import TestCases from "@/components/TestCases";
-import { Loader2 } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
-import { useState } from "react";
 import { useParams } from "react-router-dom";
+import { useState } from "react";
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/components/ui/resizable";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { LanguageSelector, LANGUAGES } from "./LanguageSelector";
+import { RunButton } from "./RunButton";
+import { useCodeExecution } from "./useCodeExecution";
 
 interface ProblemCodeEditorProps {
   code: string;
   onChange: (value: string) => void;
 }
 
-const LANGUAGES = [
-  { id: 63, name: 'JavaScript', defaultCode: (problemId: string) => {
-    switch (problemId) {
-      case 'two-sum':
-        return `function twoSum(nums, target) {
-  // Write your solution here
-}`;
-      case 'add-two-numbers':
-        return `function addTwoNumbers(l1, l2) {
-  // Write your solution here
-}`;
-      case 'longest-substring':
-        return `function lengthOfLongestSubstring(s) {
-  // Write your solution here
-}`;
-      case 'median-sorted-arrays':
-        return `function findMedianSortedArrays(nums1, nums2) {
-  // Write your solution here
-}`;
-      default:
-        return '// Write your solution here';
-    }
-  }},
-  { id: 71, name: 'Python', defaultCode: (problemId: string) => {
-    switch (problemId) {
-      case 'two-sum':
-        return `def twoSum(nums, target):
-    # Write your solution here
-    pass`;
-      case 'add-two-numbers':
-        return `def addTwoNumbers(l1, l2):
-    # Write your solution here
-    pass`;
-      case 'longest-substring':
-        return `def lengthOfLongestSubstring(s):
-    # Write your solution here
-    pass`;
-      case 'median-sorted-arrays':
-        return `def findMedianSortedArrays(nums1, nums2):
-    # Write your solution here
-    pass`;
-      default:
-        return '# Write your solution here';
-    }
-  }}
-];
-
 const ProblemCodeEditor = ({ code, onChange }: ProblemCodeEditorProps) => {
   const { id: problemId } = useParams();
-  const [isRunning, setIsRunning] = useState(false);
-  const [executionResult, setExecutionResult] = useState(null);
-  const [activeTab, setActiveTab] = useState('testcases');
   const [selectedLanguage, setSelectedLanguage] = useState(LANGUAGES[0]);
+  const { isRunning, executionResult, activeTab, setActiveTab, executeCode } = useCodeExecution();
 
   const handleLanguageChange = (languageId: string) => {
     const language = LANGUAGES.find(lang => lang.id === parseInt(languageId));
@@ -81,120 +25,21 @@ const ProblemCodeEditor = ({ code, onChange }: ProblemCodeEditorProps) => {
     }
   };
 
-  const handleRunCode = async () => {
-    setIsRunning(true);
-    setExecutionResult(null);
-    
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
-        console.error('Authentication required');
-        return;
-      }
-
-      const { data: testCases, error: testCasesError } = await supabase
-        .from('test_cases')
-        .select('*')
-        .eq('problem_id', problemId)
-        .eq('is_hidden', false)
-        .eq('language', selectedLanguage.name.toLowerCase());
-
-      if (testCasesError) throw testCasesError;
-
-      if (!testCases || testCases.length === 0) {
-        console.error('No test cases found');
-        return;
-      }
-
-      console.log('Starting code execution with test cases:', testCases);
-      
-      const { data, error } = await supabase.functions.invoke('execute-code', {
-        body: {
-          source_code: code,
-          language_id: selectedLanguage.id,
-          problem_id: problemId,
-          test_cases: testCases,
-        },
-      });
-
-      if (error) {
-        console.error('Edge function error:', error);
-        setExecutionResult({
-          status: { id: 0, description: 'Error' },
-          stderr: error.message,
-          stdout: null,
-          compile_output: null,
-          message: 'Failed to execute code'
-        });
-        setActiveTab('result');
-        return;
-      }
-
-      console.log('Execution result:', data);
-      setExecutionResult(data);
-      setActiveTab('result');
-
-      // Save successful submission if all tests passed
-      if (data.status?.id === 3) {
-        const { error: submissionError } = await supabase
-          .from('submissions')
-          .insert({
-            problem_id: problemId,
-            code,
-            language: selectedLanguage.name.toLowerCase(),
-            status: 'accepted',
-            user_id: user.id
-          });
-
-        if (submissionError) throw submissionError;
-      }
-    } catch (error) {
-      console.error('Error running code:', error);
-      setExecutionResult({
-        status: { id: 0, description: 'Error' },
-        stderr: error.message,
-        stdout: null,
-        compile_output: null,
-        message: 'Failed to execute code'
-      });
-      setActiveTab('result');
-    } finally {
-      setIsRunning(false);
-    }
+  const handleRunCode = () => {
+    executeCode(code, selectedLanguage);
   };
 
   return (
     <div className="h-full flex flex-col">
       <div className="shrink-0 p-4 border-b border-border flex justify-between items-center">
-        <Select
-          value={selectedLanguage.id.toString()}
-          onValueChange={handleLanguageChange}
-        >
-          <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="Select Language" />
-          </SelectTrigger>
-          <SelectContent>
-            {LANGUAGES.map(lang => (
-              <SelectItem key={lang.id} value={lang.id.toString()}>
-                {lang.name}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-        <Button 
-          onClick={handleRunCode} 
-          className="bg-[#00b8a3] hover:bg-[#00a092]"
-          disabled={isRunning}
-        >
-          {isRunning ? (
-            <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Running...
-            </>
-          ) : (
-            "Run Code"
-          )}
-        </Button>
+        <LanguageSelector
+          selectedLanguage={selectedLanguage}
+          onLanguageChange={handleLanguageChange}
+        />
+        <RunButton 
+          onClick={handleRunCode}
+          isRunning={isRunning}
+        />
       </div>
       <div className="flex-1 min-h-0">
         <ResizablePanelGroup direction="vertical">
