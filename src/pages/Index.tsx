@@ -40,11 +40,15 @@ const Index = () => {
         </div>
         
         <div className="flex-1">
-          <CodeEditor code={code} onChange={setCode} />
+          <CodeEditor 
+            code={code} 
+            onChange={setCode} 
+            language="JavaScript"
+          />
         </div>
 
         <div className="h-[200px] border-t border-border">
-          <TestCases />
+          <TestCases selectedLanguage="JavaScript" />
         </div>
       </div>
     </div>
