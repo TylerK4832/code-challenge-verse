@@ -22,7 +22,7 @@ const CodeEditor = ({ code, onChange, language }: CodeEditorProps) => {
     <div className="h-full">
       <Editor
         height="100%"
-        defaultLanguage={getMonacoLanguage(language)}
+        language={getMonacoLanguage(language)}
         theme="vs-dark"
         value={code}
         onChange={(value) => onChange(value || '')}
