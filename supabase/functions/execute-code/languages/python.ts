@@ -11,7 +11,7 @@ function formatTestCodeList(testCodeList: string[]) {
     `
     try:
         current_test_index = ${index}
-        ${code}
+${indentCode(code, 8)}
         results.append({
             "passed": True
         })
@@ -54,7 +54,7 @@ ${indentCode(userCode, 4)}
     # Initialize results list
     results = []
 
-    ${formatTestCodeList(testCodeList)}
+${formatTestCodeList(testCodeList)}
 
     # Reset current_test_index
     current_test_index = -1
@@ -68,6 +68,5 @@ ${indentCode(userCode, 4)}
     # Print logs with info about which test produced them
     print("WRAPPER_LOGS " + json.dumps(logs))
 
-run_tests()
-`
+run_tests()`
 };
