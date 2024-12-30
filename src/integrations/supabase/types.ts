@@ -142,9 +142,7 @@ export type Database = {
         Row: {
           code: string | null
           created_at: string
-          expected_output: string
           id: string
-          input: string
           is_hidden: boolean | null
           language: string | null
           problem_id: string
@@ -152,9 +150,7 @@ export type Database = {
         Insert: {
           code?: string | null
           created_at?: string
-          expected_output: string
           id?: string
-          input: string
           is_hidden?: boolean | null
           language?: string | null
           problem_id: string
@@ -162,9 +158,7 @@ export type Database = {
         Update: {
           code?: string | null
           created_at?: string
-          expected_output?: string
           id?: string
-          input?: string
           is_hidden?: boolean | null
           language?: string | null
           problem_id?: string
