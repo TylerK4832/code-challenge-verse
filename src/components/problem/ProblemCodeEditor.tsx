@@ -65,29 +65,18 @@ const ProblemCodeEditor = ({ code, onChange }: ProblemCodeEditorProps) => {
         const { data: { user } } = await supabase.auth.getUser();
         if (!user) return;
 
-        // First try to update existing draft
-        const { error: updateError, count } = await supabase
+        const { error } = await supabase
           .from('code_drafts')
-          .update({ code })
-          .eq('user_id', user.id)
-          .eq('problem_id', problemId)
-          .eq('language', selectedLanguage.name.toLowerCase());
+          .upsert({
+            user_id: user.id,
+            problem_id: problemId || '',
+            code,
+            language: selectedLanguage.name.toLowerCase(),
+          }, {
+            onConflict: 'user_id,problem_id,language'
+          });
 
-        if (updateError) throw updateError;
-
-        // If no rows were updated, insert new draft
-        if (count === 0) {
-          const { error: insertError } = await supabase
-            .from('code_drafts')
-            .insert({
-              user_id: user.id,
-              problem_id: problemId || '',
-              code,
-              language: selectedLanguage.name.toLowerCase(),
-            });
-
-          if (insertError) throw insertError;
-        }
+        if (error) throw error;
       } catch (error) {
         console.error('Error saving code draft:', error);
         toast({
