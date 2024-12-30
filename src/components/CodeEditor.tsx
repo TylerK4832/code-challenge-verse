@@ -3,15 +3,14 @@ import Editor from '@monaco-editor/react';
 interface CodeEditorProps {
   code: string;
   onChange: (value: string) => void;
-  language?: string;
 }
 
-const CodeEditor = ({ code, onChange, language = 'javascript' }: CodeEditorProps) => {
+const CodeEditor = ({ code, onChange }: CodeEditorProps) => {
   return (
     <div className="h-full">
       <Editor
         height="100%"
-        defaultLanguage={language}
+        defaultLanguage="javascript"
         theme="vs-dark"
         value={code}
         onChange={(value) => onChange(value || '')}

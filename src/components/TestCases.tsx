@@ -27,10 +27,9 @@ interface TestCasesProps {
   activeTab?: string;
   onTabChange?: (value: string) => void;
   isLoading?: boolean;
-  selectedLanguage: string;
 }
 
-const TestCases = ({ executionResult, activeTab, onTabChange, isLoading, selectedLanguage }: TestCasesProps) => {
+const TestCases = ({ executionResult, activeTab, onTabChange, isLoading }: TestCasesProps) => {
   const { id: problemId } = useParams();
   const [testCases, setTestCases] = useState<any[]>([]);
   const [showSuccessDialog, setShowSuccessDialog] = useState(false);
@@ -41,8 +40,7 @@ const TestCases = ({ executionResult, activeTab, onTabChange, isLoading, selecte
         .from('test_cases')
         .select('*')
         .eq('problem_id', problemId)
-        .eq('is_hidden', false)
-        .eq('language', selectedLanguage);
+        .eq('is_hidden', false);
 
       if (!error && data) {
         setTestCases(data);
@@ -50,7 +48,7 @@ const TestCases = ({ executionResult, activeTab, onTabChange, isLoading, selecte
     };
 
     fetchTestCases();
-  }, [problemId, selectedLanguage]);
+  }, [problemId]);
 
   useEffect(() => {
     if (executionResult?.status?.id === 3) {
