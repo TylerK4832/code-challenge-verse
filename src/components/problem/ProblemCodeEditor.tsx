@@ -21,7 +21,7 @@ const ProblemCodeEditor = ({ code, onChange }: ProblemCodeEditorProps) => {
   const [executionResult, setExecutionResult] = useState(null);
   const [activeTab, setActiveTab] = useState('testcases');
   const [selectedLanguage, setSelectedLanguage] = useState(LANGUAGES[0]);
-  const [isSaving, setIsSaving] = useState(false);
+  const [saveTimeout, setSaveTimeout] = useState<NodeJS.Timeout | null>(null);
 
   // Load language-specific code draft when language changes
   useEffect(() => {
@@ -58,50 +58,69 @@ const ProblemCodeEditor = ({ code, onChange }: ProblemCodeEditorProps) => {
     loadCodeDraft();
   }, [problemId, selectedLanguage, onChange, toast]);
 
-  // Debounced save function
+  // Save code draft with debouncing and error handling
   const saveCodeDraft = useCallback(async (codeToSave: string) => {
-    if (isSaving) return;
-    
     try {
-      setIsSaving(true);
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 
-      const { error } = await supabase
+      // First try to update existing draft
+      const { count, error: updateError } = await supabase
         .from('code_drafts')
-        .upsert({
-          user_id: user.id,
-          problem_id: problemId || '',
+        .update({ 
           code: codeToSave,
-          language: selectedLanguage.name.toLowerCase(),
-        }, {
-          onConflict: 'user_id,problem_id,language'
-        });
+          updated_at: new Date().toISOString()
+        })
+        .eq('user_id', user.id)
+        .eq('problem_id', problemId)
+        .eq('language', selectedLanguage.name.toLowerCase());
 
-      if (error) throw error;
-    } catch (error) {
-      console.error('Error saving code draft:', error);
-      // Only show toast for non-network related errors
-      if (error.message && !error.message.includes('Failed to execute \'text\'')) {
+      if (updateError) throw updateError;
+
+      // If no rows were updated, insert a new draft
+      if (count === 0) {
+        const { error: insertError } = await supabase
+          .from('code_drafts')
+          .insert({
+            user_id: user.id,
+            problem_id: problemId || '',
+            code: codeToSave,
+            language: selectedLanguage.name.toLowerCase(),
+          });
+
+        if (insertError) throw insertError;
+      }
+    } catch (error: any) {
+      // Only log network-related errors without showing toast
+      if (!error.message?.includes('Failed to execute \'text\'')) {
+        console.error('Error saving code draft:', error);
         toast({
           variant: "destructive",
           title: "Error",
           description: "Failed to save code draft",
         });
       }
-    } finally {
-      setIsSaving(false);
     }
-  }, [problemId, selectedLanguage, toast, isSaving]);
+  }, [problemId, selectedLanguage, toast]);
 
-  // Save code draft when code changes with debouncing
+  // Handle code changes with debouncing
   useEffect(() => {
-    const timeoutId = setTimeout(() => {
+    if (saveTimeout) {
+      clearTimeout(saveTimeout);
+    }
+
+    const newTimeout = setTimeout(() => {
       saveCodeDraft(code);
     }, 1000);
 
-    return () => clearTimeout(timeoutId);
-  }, [code, saveCodeDraft]);
+    setSaveTimeout(newTimeout);
+
+    return () => {
+      if (saveTimeout) {
+        clearTimeout(saveTimeout);
+      }
+    };
+  }, [code, saveCodeDraft, saveTimeout]);
 
   const handleLanguageChange = (languageId: string) => {
     const language = LANGUAGES.find(l => l.id === parseInt(languageId));
