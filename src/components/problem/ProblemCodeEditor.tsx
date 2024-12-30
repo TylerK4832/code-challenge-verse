@@ -73,7 +73,8 @@ const ProblemCodeEditor = ({ code, onChange }: ProblemCodeEditorProps) => {
             code,
             language: selectedLanguage.name.toLowerCase(),
           }, {
-            onConflict: 'user_id,problem_id,language'
+            onConflict: 'user_id,problem_id,language',
+            ignoreDuplicates: false
           });
 
         if (error) throw error;
