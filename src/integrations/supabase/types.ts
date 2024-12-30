@@ -13,6 +13,7 @@ export type Database = {
         Row: {
           code: string
           id: string
+          language: string
           problem_id: string
           updated_at: string | null
           user_id: string
@@ -20,6 +21,7 @@ export type Database = {
         Insert: {
           code: string
           id?: string
+          language?: string
           problem_id: string
           updated_at?: string | null
           user_id: string
@@ -27,6 +29,7 @@ export type Database = {
         Update: {
           code?: string
           id?: string
+          language?: string
           problem_id?: string
           updated_at?: string | null
           user_id?: string
