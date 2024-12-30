@@ -44,7 +44,11 @@ const ProblemCodeEditor = ({ code, onChange }: ProblemCodeEditorProps) => {
       <div className="flex-1 min-h-0">
         <ResizablePanelGroup direction="vertical">
           <ResizablePanel defaultSize={70} minSize={30}>
-            <CodeEditor code={code} onChange={onChange} />
+            <CodeEditor 
+              code={code} 
+              onChange={onChange} 
+              language={selectedLanguage.name}
+            />
           </ResizablePanel>
           
           <ResizableHandle withHandle />
@@ -55,6 +59,7 @@ const ProblemCodeEditor = ({ code, onChange }: ProblemCodeEditorProps) => {
               activeTab={activeTab}
               onTabChange={setActiveTab}
               isLoading={isRunning}
+              selectedLanguage={selectedLanguage.name}
             />
           </ResizablePanel>
         </ResizablePanelGroup>
