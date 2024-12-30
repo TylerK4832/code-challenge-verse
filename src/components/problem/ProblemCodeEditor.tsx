@@ -6,7 +6,6 @@ import EditorToolbar from "./EditorToolbar";
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/components/ui/resizable";
 import { useCodeExecution } from "./hooks/useCodeExecution";
 import { useLanguageSelection } from "./hooks/useLanguageSelection";
-import { getDefaultCode } from "@/config/languages";
 
 interface ProblemCodeEditorProps {
   code: string;
