@@ -1,5 +1,11 @@
 import { LanguageWrapper } from '../types/languageWrappers.ts';
 
+function indentCode(code: string, spaces: number = 4): string {
+  return code.split('\n')
+    .map(line => ' '.repeat(spaces) + line)
+    .join('\n');
+}
+
 function formatTestCodeList(testCodeList: string[]) {
   return testCodeList.map((code, index) => 
     `
@@ -43,7 +49,7 @@ def run_tests():
     globals()['print'] = custom_print
 
     # Inject user code
-    ${userCode}
+${indentCode(userCode, 4)}
 
     # Initialize results list
     results = []
