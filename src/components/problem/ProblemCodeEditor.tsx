@@ -15,13 +15,15 @@ interface ProblemCodeEditorProps {
 const ProblemCodeEditor = ({ code, onChange }: ProblemCodeEditorProps) => {
   const { id: problemId } = useParams();
   const [selectedLanguage, setSelectedLanguage] = useState(LANGUAGES[0]);
-  const { isRunning, executionResult, activeTab, setActiveTab, executeCode } = useCodeExecution();
+  const { isRunning, executionResult, activeTab, setActiveTab, executeCode, resetExecution } = useCodeExecution();
 
   const handleLanguageChange = (languageId: string) => {
     const language = LANGUAGES.find(lang => lang.id === parseInt(languageId));
     if (language) {
       setSelectedLanguage(language);
       onChange(language.defaultCode(problemId || ''));
+      resetExecution();
+      setActiveTab('testcases');
     }
   };
 

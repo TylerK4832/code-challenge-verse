@@ -8,6 +8,10 @@ export const useCodeExecution = () => {
   const [executionResult, setExecutionResult] = useState(null);
   const [activeTab, setActiveTab] = useState('testcases');
 
+  const resetExecution = () => {
+    setExecutionResult(null);
+  };
+
   const executeCode = async (code: string, language: { id: number, name: string }) => {
     setIsRunning(true);
     setExecutionResult(null);
@@ -95,6 +99,7 @@ export const useCodeExecution = () => {
     executionResult,
     activeTab,
     setActiveTab,
-    executeCode
+    executeCode,
+    resetExecution
   };
 };
