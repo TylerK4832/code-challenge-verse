@@ -1,6 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { corsHeaders } from '../_shared/cors.ts'
-import { getProblemWrapper } from './problemRegistry.ts';
+import { getLanguageWrapper } from './languageRegistry.ts';
 import { parseExecutionOutput } from './utils/outputParser.ts';
 
 const JUDGE0_API_URL = "https://judge0-ce.p.rapidapi.com";
@@ -18,19 +18,19 @@ serve(async (req) => {
       throw new Error('Missing required parameters');
     }
 
-    const problemWrapper = getProblemWrapper(problem_id);
-    console.log('Processing test cases:', test_cases);
+    // Get the appropriate language wrapper
+    const languageConfig = getLanguageWrapper(language_id);
+    if (!languageConfig) {
+      throw new Error(`Unsupported language ID: ${language_id}`);
+    }
 
-    // Format test cases for the wrapper
+    console.log(`Using ${languageConfig.name} wrapper for language ID ${language_id}`);
+
+    // Format test cases
     const testCodeList = test_cases.map((testCase: any) => testCase.code);
 
-    console.log('Test code list\n', testCodeList, 'type of element:\n', typeof testCodeList[0]);
-
-    // Wrap the user's code with the test execution logic
-    const wrappedCode = problemWrapper.wrapCode(
-      source_code,
-      testCodeList
-    );
+    // Wrap the user's code with the language-specific test execution logic
+    const wrappedCode = languageConfig.wrapper.wrapCode(source_code, testCodeList);
 
     console.log('Submitting wrapped code to Judge0:\n', wrappedCode);
 
