@@ -9,45 +9,6 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      code_drafts: {
-        Row: {
-          code: string
-          id: string
-          problem_id: string
-          updated_at: string | null
-          user_id: string
-        }
-        Insert: {
-          code: string
-          id?: string
-          problem_id: string
-          updated_at?: string | null
-          user_id: string
-        }
-        Update: {
-          code?: string
-          id?: string
-          problem_id?: string
-          updated_at?: string | null
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "code_drafts_problem_id_fkey"
-            columns: ["problem_id"]
-            isOneToOne: false
-            referencedRelation: "problems"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "code_drafts_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       problems: {
         Row: {
           acceptance: string
