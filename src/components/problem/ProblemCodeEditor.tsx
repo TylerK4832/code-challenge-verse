@@ -6,17 +6,62 @@ import { supabase } from "@/integrations/supabase/client";
 import { useState } from "react";
 import { useParams } from "react-router-dom";
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/components/ui/resizable";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface ProblemCodeEditorProps {
   code: string;
   onChange: (value: string) => void;
 }
 
+const LANGUAGES = [
+  { id: 63, name: 'JavaScript', defaultCode: 'function solution() {\n  // Write your solution here\n}' },
+  { id: 71, name: 'Python', defaultCode: 'def solution():\n    # Write your solution here\n    pass' }
+];
+
 const ProblemCodeEditor = ({ code, onChange }: ProblemCodeEditorProps) => {
   const { id: problemId } = useParams();
   const [isRunning, setIsRunning] = useState(false);
   const [executionResult, setExecutionResult] = useState(null);
   const [activeTab, setActiveTab] = useState('testcases');
+  const [selectedLanguage, setSelectedLanguage] = useState(LANGUAGES[0]);
+
+  const handleLanguageChange = (languageId: string) => {
+    const language = LANGUAGES.find(l => l.id === parseInt(languageId));
+    if (language) {
+      setSelectedLanguage(language);
+      // Set default code for the selected language
+      switch (problemId) {
+        case 'two-sum':
+          onChange(language.id === 63 
+            ? `function twoSum(nums, target) {\n  // Write your solution here\n}`
+            : `def twoSum(nums, target):\n    # Write your solution here\n    pass`);
+          break;
+        case 'add-two-numbers':
+          onChange(language.id === 63
+            ? `function addTwoNumbers(l1, l2) {\n  // Write your solution here\n}`
+            : `def addTwoNumbers(l1, l2):\n    # Write your solution here\n    pass`);
+          break;
+        case 'longest-substring':
+          onChange(language.id === 63
+            ? `function lengthOfLongestSubstring(s) {\n  // Write your solution here\n}`
+            : `def lengthOfLongestSubstring(s):\n    # Write your solution here\n    pass`);
+          break;
+        case 'median-sorted-arrays':
+          onChange(language.id === 63
+            ? `function findMedianSortedArrays(nums1, nums2) {\n  // Write your solution here\n}`
+            : `def findMedianSortedArrays(nums1, nums2):\n    # Write your solution here\n    pass`);
+          break;
+        default:
+          onChange(language.defaultCode);
+      }
+    }
+  };
 
   const handleRunCode = async () => {
     setIsRunning(true);
@@ -47,7 +92,7 @@ const ProblemCodeEditor = ({ code, onChange }: ProblemCodeEditorProps) => {
       const { data, error } = await supabase.functions.invoke('execute-code', {
         body: {
           source_code: code,
-          language_id: 63, // JavaScript
+          language_id: selectedLanguage.id,
           problem_id: problemId,
           test_cases: testCases,
         },
@@ -56,7 +101,7 @@ const ProblemCodeEditor = ({ code, onChange }: ProblemCodeEditorProps) => {
       if (error) {
         console.error('Edge function error:', error);
         setExecutionResult({
-          status: { id: 0, description: 'Error' },
+          status: { id: 4, description: 'Error' },
           stderr: error.message,
           stdout: null,
           compile_output: null,
@@ -77,7 +122,7 @@ const ProblemCodeEditor = ({ code, onChange }: ProblemCodeEditorProps) => {
           .insert({
             problem_id: problemId,
             code,
-            language: 'javascript',
+            language: selectedLanguage.name.toLowerCase(),
             status: 'accepted',
             user_id: user.id
           });
@@ -102,7 +147,21 @@ const ProblemCodeEditor = ({ code, onChange }: ProblemCodeEditorProps) => {
   return (
     <div className="h-full flex flex-col">
       <div className="shrink-0 p-4 border-b border-border flex justify-between items-center">
-        <Button variant="secondary">JavaScript</Button>
+        <Select
+          value={selectedLanguage.id.toString()}
+          onValueChange={handleLanguageChange}
+        >
+          <SelectTrigger className="w-[180px]">
+            <SelectValue placeholder="Select Language" />
+          </SelectTrigger>
+          <SelectContent>
+            {LANGUAGES.map((language) => (
+              <SelectItem key={language.id} value={language.id.toString()}>
+                {language.name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
         <Button 
           onClick={handleRunCode} 
           className="bg-[#00b8a3] hover:bg-[#00a092]"
@@ -121,7 +180,11 @@ const ProblemCodeEditor = ({ code, onChange }: ProblemCodeEditorProps) => {
       <div className="flex-1 min-h-0">
         <ResizablePanelGroup direction="vertical">
           <ResizablePanel defaultSize={70} minSize={30}>
-            <CodeEditor code={code} onChange={onChange} />
+            <CodeEditor 
+              code={code} 
+              onChange={onChange}
+              language={selectedLanguage.name.toLowerCase()}
+            />
           </ResizablePanel>
           
           <ResizableHandle withHandle />
