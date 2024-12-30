@@ -1,33 +1,71 @@
 import { LanguageWrapper } from '../types/languageWrappers.ts';
 
+function formatTestCodeList(testCodeList) {
+  return testCodeList.map((code, index) => 
+    `
+    try {
+      currentTestIndex = ${index}
+      ${code}
+      results.push({
+        expected: expected,
+        actual: output,
+        passed: true
+      });
+    } catch (error) {
+      results.push({
+        error: error && error.message ? error.message : String(error)
+      });
+    }
+    `
+  ).join('\n');
+}
+
 export const javascriptWrapper: LanguageWrapper = {
-  wrapCode: (userCode: string, testCodeList: string[]): string => {
-    const wrappedCode = `
-const assert = require('assert');
+  wrapCode: (userCode, testCodeList) => `
+  const assert = require('assert');
 
-${userCode}
+  (function() {
+    // Store original console.log
+    const originalLog = console.log;
+    
+    // We'll keep a single global array of all logs,
+    // but with metadata (testIndex) so we know which test they came from.
+    let logs = [];
+    // We'll keep track of which test is currently running
+    let currentTestIndex = -1;
+    
+    // Override console.log to capture logs with their test index
+    console.log = function(...args) {
+      const stringified = args.map(item => 
+        typeof item === 'object' ? JSON.stringify(item) : String(item)
+      );
+      logs.push({
+        testIndex: currentTestIndex,
+        message: stringified.join(' ')
+      });
+    };
 
-// Test cases
-try {
-  ${testCodeList.map((test, index) => `
-  try {
-    ${test}
-  } catch (error) {
-    console.log(JSON.stringify({
-      testIndex: ${index},
-      passed: false,
-      error: error.message
-    }));
-    continue;
-  }
-  console.log(JSON.stringify({
-    testIndex: ${index},
-    passed: true
-  }));`).join('\n')}
-} catch (error) {
-  console.error('Test execution error:', error);
-}`;
+    // Inject user code
+    ${userCode}
 
-    return wrappedCode;
-  }
+    (async function runTests() {
+      let results = [];
+
+      ${formatTestCodeList(testCodeList)}
+
+
+      // All tests done, reset currentTestIndex
+      currentTestIndex = -1;
+
+      // Restore original console.log so we can print final lines normally
+      console.log = originalLog;
+
+      // Print final test results
+      console.log("WRAPPER_RESULTS", JSON.stringify(results));
+
+      // Print logs with info about which test produced them
+      console.log("WRAPPER_LOGS", JSON.stringify(logs));
+    })();
+  })();
+  `
 };
