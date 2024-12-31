@@ -12,6 +12,8 @@ const CodeEditor = ({ code, onChange, language }: CodeEditorProps) => {
     switch (lang.toLowerCase()) {
       case 'python':
         return 'python';
+      case 'java':
+        return 'java';
       case 'javascript':
       default:
         return 'javascript';
