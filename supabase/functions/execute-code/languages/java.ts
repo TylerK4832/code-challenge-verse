@@ -11,13 +11,14 @@ function formatTestCodeList(testCodeList: string[]): string {
     return `        try {
             currentTestIndex = ${index};
             ${indentCode(testCode, 12)}
-            results.add(new HashMap<String, Object>() {{
-                put("passed", true);
-            }});
-        } catch (Exception error) {
-            results.add(new HashMap<String, Object>() {{
-                put("error", error.toString());
-            }});
+            Map<String, Object> result = new HashMap<>();
+            result.put("passed", true);
+            results.add(result);
+        } catch (AssertionError | Exception error) {
+            Map<String, Object> result = new HashMap<>();
+            result.put("passed", false);
+            result.put("error", error.getMessage());
+            results.add(result);
         }
 `;
   }).join('\n');
@@ -28,15 +29,16 @@ export const javaWrapper: LanguageWrapper = {
     return `
 import java.util.*;
 
+class Solution {
+${indentCode(userCode, 4)}
+}
+
 public class Main {
     public static void main(String[] args) {
         // Store test results
         List<Map<String, Object>> results = new ArrayList<>();
         List<Map<String, Object>> logs = new ArrayList<>();
         int currentTestIndex = -1;
-
-        // Inject user code
-${indentCode(userCode, 8)}
 
         // Run test cases
 ${formatTestCodeList(testCodeList)}
