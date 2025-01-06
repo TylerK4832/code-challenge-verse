@@ -37,12 +37,15 @@ const TestCases = ({ executionResult, activeTab, onTabChange, isLoading, selecte
 
   useEffect(() => {
     const fetchTestCases = async () => {
+      // Convert language name to match database format
+      const dbLanguage = selectedLanguage === 'C++' ? 'cpp' : selectedLanguage.toLowerCase();
+      
       const { data, error } = await supabase
         .from('test_cases')
         .select('*')
         .eq('problem_id', problemId)
         .eq('is_hidden', false)
-        .eq('language', selectedLanguage.toLowerCase());
+        .eq('language', dbLanguage);
 
       if (!error && data) {
         setTestCases(data);
