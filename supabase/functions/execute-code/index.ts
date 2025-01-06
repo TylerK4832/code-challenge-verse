@@ -34,7 +34,10 @@ serve(async (req) => {
 
     console.log('Submitting wrapped code to Judge0:\n', wrappedCode);
 
-    const createResponse = await fetch(`${JUDGE0_API_URL}/submissions`, {
+    // Convert code to base64
+    const base64Code = btoa(wrappedCode);
+
+    const createResponse = await fetch(`${JUDGE0_API_URL}/submissions?base64_encoded=true`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -42,7 +45,7 @@ serve(async (req) => {
         'X-RapidAPI-Key': Deno.env.get('JUDGE0_API_KEY') || '',
       },
       body: JSON.stringify({
-        source_code: wrappedCode,
+        source_code: base64Code,
         language_id,
         stdin: '',
       }),
@@ -62,7 +65,7 @@ serve(async (req) => {
 
     while (attempts < maxAttempts) {
       const getResponse = await fetch(
-        `${JUDGE0_API_URL}/submissions/${token}?fields=status_id,stdout,stderr,compile_output,message,status`,
+        `${JUDGE0_API_URL}/submissions/${token}?base64_encoded=true&fields=status_id,stdout,stderr,compile_output,message,status`,
         {
           headers: {
             'X-RapidAPI-Host': 'judge0-ce.p.rapidapi.com',
@@ -86,6 +89,11 @@ serve(async (req) => {
       attempts++;
       await new Promise(resolve => setTimeout(resolve, 1000));
     }
+
+    // Decode base64 outputs if they exist
+    if (result.stdout) result.stdout = atob(result.stdout);
+    if (result.stderr) result.stderr = atob(result.stderr);
+    if (result.compile_output) result.compile_output = atob(result.compile_output);
 
     // If there's any error output, return it
     if (result.stderr || result.compile_output) {
