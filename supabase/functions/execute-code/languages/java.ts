@@ -36,6 +36,8 @@ function escapeBackslashes(code: string): string {
 export const javaWrapper: LanguageWrapper = {
   wrapCode: (userCode: string, testCodeList: string[]) => {
     return `
+import java.util.*;
+
 class SimpleJsonUtil {
     /**
      * Converts a List of Map<String, Object> to a minimal JSON-like string.
