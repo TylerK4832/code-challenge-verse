@@ -36,7 +36,7 @@ function escapeBackslashes(code: string): string {
 export const javaWrapper: LanguageWrapper = {
   wrapCode: (userCode: string, testCodeList: string[]) => {
     return `
-public class SimpleJsonUtil {
+class SimpleJsonUtil {
     /**
      * Converts a List of Map<String, Object> to a minimal JSON-like string.
      * Assumes flat structures and string or primitive-like values.
@@ -88,7 +88,7 @@ public class SimpleJsonUtil {
     }
 }
 
-public class Solution {
+class Solution {
 ${indentCode(userCode, 4)}
 }
 
