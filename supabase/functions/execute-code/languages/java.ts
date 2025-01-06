@@ -23,12 +23,16 @@ function formatTestCodeList(testCodeList: string[]): string {
   }).join('\n');
 }
 
+function escapeBackslashes(code: string): string {
+  // Replace backslash with double-backslash
+  return code.replace(/\\/g, '\\\\');
+}
+
 export const javaWrapper: LanguageWrapper = {
   wrapCode: (userCode: string, testCodeList: string[]) => {
-    return `
-import java.util.*;
+    return escapeBackslashes(`
 
-class SimpleJsonUtil {
+public class SimpleJsonUtil {
     /**
      * Converts a List of Map<String, Object> to a minimal JSON-like string.
      * Assumes flat structures and string or primitive-like values.
@@ -42,15 +46,15 @@ class SimpleJsonUtil {
 
             int entryIndex = 0;
             for (Map.Entry<String, Object> entry : map.entrySet()) {
-                sb.append("\\"");
+                sb.append("\"");
                 sb.append(escapeJson(entry.getKey()));
-                sb.append("\\\": ");
+                sb.append("\": ");
                 
                 Object value = entry.getValue();
                 if (value instanceof String) {
-                    sb.append("\\"");
+                    sb.append("\"");
                     sb.append(escapeJson((String) value));
-                    sb.append("\\"");
+                    sb.append("\"");
                 } else {
                     // For simplicity, directly append other types (numbers, booleans, etc.)
                     sb.append(value);
@@ -78,9 +82,27 @@ class SimpleJsonUtil {
         return str.replace("\\", "\\\\")
                   .replace("\"", "\\\"");
     }
+
+    // Simple test in the main method
+    public static void main(String[] args) {
+        List<Map<String, Object>> data = new ArrayList<>();
+        
+        Map<String, Object> map1 = new HashMap<>();
+        map1.put("name", "Alice");
+        map1.put("age", 30);
+        data.add(map1);
+
+        Map<String, Object> map2 = new HashMap<>();
+        map2.put("name", "Bob");
+        map2.put("active", true);
+        data.add(map2);
+
+        String jsonString = toJson(data);
+        System.out.println(jsonString);
+    }
 }
 
-class Solution {
+public class Solution {
 ${indentCode(userCode, 4)}
 }
 
@@ -103,6 +125,6 @@ ${formatTestCodeList(testCodeList)}
         // Print logs as JSON
         System.out.println("WRAPPER_LOGS " + SimpleJsonUtil.toJson(logs));
     }
-}`;
+}`);
   }
 };
