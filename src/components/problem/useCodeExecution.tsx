@@ -23,17 +23,20 @@ export const useCodeExecution = () => {
         return;
       }
 
+      // Convert language name to match database format for test cases query
+      const dbLanguage = language.name === 'C++' ? 'cpp' : language.name.toLowerCase();
+
       const { data: testCases, error: testCasesError } = await supabase
         .from('test_cases')
         .select('*')
         .eq('problem_id', problemId)
         .eq('is_hidden', false)
-        .eq('language', language.name.toLowerCase());
+        .eq('language', dbLanguage);
 
       if (testCasesError) throw testCasesError;
 
       if (!testCases || testCases.length === 0) {
-        console.error('No test cases found');
+        console.error('No test cases found for language:', dbLanguage);
         return;
       }
 
@@ -72,7 +75,7 @@ export const useCodeExecution = () => {
           .insert({
             problem_id: problemId,
             code,
-            language: language.name.toLowerCase(),
+            language: dbLanguage,
             status: 'accepted',
             user_id: user.id
           });
