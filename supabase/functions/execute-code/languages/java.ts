@@ -50,15 +50,15 @@ public class SimpleJsonUtil {
 
             int entryIndex = 0;
             for (Map.Entry<String, Object> entry : map.entrySet()) {
-                sb.append("\"");
+                sb.append("\\"");
                 sb.append(escapeJson(entry.getKey()));
-                sb.append("\": ");
+                sb.append("\\": ");
                 
                 Object value = entry.getValue();
                 if (value instanceof String) {
-                    sb.append("\"");
+                    sb.append("\\"");
                     sb.append(escapeJson((String) value));
-                    sb.append("\"");
+                    sb.append("\\"");
                 } else {
                     // For simplicity, directly append other types (numbers, booleans, etc.)
                     sb.append(value);
@@ -83,8 +83,8 @@ public class SimpleJsonUtil {
      * Minimal escaping for quotes and backslashes in strings.
      */
     private static String escapeJson(String str) {
-        return str.replace("\\", "\\\\")
-                  .replace("\"", "\\\"");
+        return str.replace("\\\\", "\\\\\\\\")
+                  .replace("\\"", "\\\\\\"");
     }
 }
 
