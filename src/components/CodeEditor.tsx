@@ -14,6 +14,8 @@ const CodeEditor = ({ code, onChange, language }: CodeEditorProps) => {
         return 'python';
       case 'java':
         return 'java';
+      case 'c++':
+        return 'cpp';
       case 'javascript':
       default:
         return 'javascript';
