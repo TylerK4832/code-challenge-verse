@@ -35,7 +35,7 @@ function escapeBackslashes(code: string): string {
 
 export const javaWrapper: LanguageWrapper = {
   wrapCode: (userCode: string, testCodeList: string[]) => {
-    return escapeBackslashes(`
+    return `
 public class SimpleJsonUtil {
     /**
      * Converts a List of Map<String, Object> to a minimal JSON-like string.
@@ -111,6 +111,6 @@ ${formatTestCodeList(testCodeList)}
         // Print logs as JSON
         System.out.println("WRAPPER_LOGS " + SimpleJsonUtil.toJson(logs));
     }
-}`);
+}`;
   }
 };
