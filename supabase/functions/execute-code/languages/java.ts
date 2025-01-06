@@ -24,14 +24,18 @@ function formatTestCodeList(testCodeList: string[]): string {
 }
 
 function escapeBackslashes(code: string): string {
-  // Replace backslash with double-backslash
-  return code.replace(/\\/g, '\\\\');
+  // 1) Double all backslashes
+  let escaped = code.replace(/\\/g, '\\\\');
+
+  // 2) Escape all unescaped double quotes
+  escaped = escaped.replace(/"/g, '\\"');
+
+  return escaped;
 }
 
 export const javaWrapper: LanguageWrapper = {
   wrapCode: (userCode: string, testCodeList: string[]) => {
     return escapeBackslashes(`
-
 public class SimpleJsonUtil {
     /**
      * Converts a List of Map<String, Object> to a minimal JSON-like string.
@@ -81,24 +85,6 @@ public class SimpleJsonUtil {
     private static String escapeJson(String str) {
         return str.replace("\\", "\\\\")
                   .replace("\"", "\\\"");
-    }
-
-    // Simple test in the main method
-    public static void main(String[] args) {
-        List<Map<String, Object>> data = new ArrayList<>();
-        
-        Map<String, Object> map1 = new HashMap<>();
-        map1.put("name", "Alice");
-        map1.put("age", 30);
-        data.add(map1);
-
-        Map<String, Object> map2 = new HashMap<>();
-        map2.put("name", "Bob");
-        map2.put("active", true);
-        data.add(map2);
-
-        String jsonString = toJson(data);
-        System.out.println(jsonString);
     }
 }
 
