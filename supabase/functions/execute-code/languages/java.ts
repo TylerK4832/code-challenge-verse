@@ -16,7 +16,6 @@ function formatTestCodeList(testCodeList: string[]): string {
             results.add(result);
         } catch (AssertionError | Exception error) {
             Map<String, Object> result = new HashMap<>();
-            result.put("passed", false);
             result.put("error", error.getMessage());
             results.add(result);
         }
