@@ -51,6 +51,21 @@ export const LANGUAGES = [
 }`;
       }
     }
+  },
+  {
+    id: 54,
+    name: 'C++',
+    defaultCode: (problemId: string) => {
+      switch (problemId) {
+        case 'two-sum':
+          return `vector<int> twoSum(vector<int>& nums, int target) {
+    // Write your solution here
+    return {};
+}`;
+        default:
+          return '// Write your solution here';
+      }
+    }
   }
 ];
 

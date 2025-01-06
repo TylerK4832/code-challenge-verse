@@ -2,6 +2,7 @@ import { LanguageConfig } from './types/languageWrappers.ts';
 import { javascriptWrapper } from './languages/javascript.ts';
 import { pythonWrapper } from './languages/python.ts';
 import { javaWrapper } from './languages/java.ts';
+import { cppWrapper } from './languages/cpp.ts';
 
 const languageRegistry: LanguageConfig[] = [
   {
@@ -18,6 +19,11 @@ const languageRegistry: LanguageConfig[] = [
     id: 62,
     name: 'java',
     wrapper: javaWrapper,
+  },
+  {
+    id: 54,
+    name: 'cpp',
+    wrapper: cppWrapper,
   }
 ];
 
