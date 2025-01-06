@@ -76,7 +76,7 @@ class SimpleJsonUtil {
      */
     private static String escapeJson(String str) {
         return str.replace("\\", "\\\\")
-                  .replace("\\"", "\\\"");
+                  .replace("\"", "\\\"");
     }
 }
 
