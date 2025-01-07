@@ -35,6 +35,7 @@ export const cppWrapper: LanguageWrapper = {
 #include <sstream>
 #include <map>
 #include <stdexcept>
+#include <locale>
 using namespace std;
 
 // Store test results
@@ -103,6 +104,9 @@ public:
 };
 
 int main() {
+    std::locale::global(std::locale("en_US.UTF-8"));
+    std::cout.imbue(std::locale("en_US.UTF-8"));
+
     // Initialize results vector with expected size
     results.reserve(${testCodeList.length});
 
