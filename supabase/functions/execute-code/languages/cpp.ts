@@ -6,13 +6,9 @@ function formatTestCodeList(testCodeList: string[]) {
     try {
         currentTestIndex = ${index};
 ${code}
-        results.push({
-            "passed": true
-        });
+        results.push_back({{{"passed", "true"}}});
     } catch (const std::exception& error) {
-        results.push({
-            "error": error.what()
-        });
+        results.push_back({{{"error", error.what()}}});
     }
     `
   ).join('\n');
