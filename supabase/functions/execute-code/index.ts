@@ -39,7 +39,7 @@ serve(async (req) => {
 
     // Add compiler options for C++ if needed
     const compilerOptions = language_id === 54 ? {
-      compiler_options: "-std=c++17"
+      compiler_options: "-std=c++17 -fexec-charset=UTF-8"
     } : {};
 
     const createResponse = await fetch(`${JUDGE0_API_URL}/submissions`, {
@@ -72,7 +72,7 @@ serve(async (req) => {
 
     while (attempts < maxAttempts) {
       const getResponse = await fetch(
-        `${JUDGE0_API_URL}/submissions/${token}?base64_encoded=true&fields=status_id,stdout,stderr,compile_output,message,status`,
+        `${JUDGE0_API_URL}/submissions/${token}?base64_encoded=false&fields=status_id,stdout,stderr,compile_output,message,status`,
         {
           headers: {
             'X-RapidAPI-Host': 'judge0-ce.p.rapidapi.com',
@@ -98,28 +98,28 @@ serve(async (req) => {
     }
 
     // Decode base64 outputs if they exist and are not null
-    if (result.stdout) {
-      try {
-        result.stdout = atob(result.stdout);
-        console.log('Decoded stdout:', result.stdout);
-      } catch (error) {
-        console.error('Error decoding stdout:', error);
-      }
-    }
-    if (result.stderr) {
-      try {
-        result.stderr = atob(result.stderr);
-      } catch (error) {
-        console.error('Error decoding stderr:', error);
-      }
-    }
-    if (result.compile_output) {
-      try {
-        result.compile_output = atob(result.compile_output);
-      } catch (error) {
-        console.error('Error decoding compile_output:', error);
-      }
-    }
+    // if (result.stdout) {
+    //   try {
+    //     result.stdout = atob(result.stdout);
+    //     console.log('Decoded stdout:', result.stdout);
+    //   } catch (error) {
+    //     console.error('Error decoding stdout:', error);
+    //   }
+    // }
+    // if (result.stderr) {
+    //   try {
+    //     result.stderr = atob(result.stderr);
+    //   } catch (error) {
+    //     console.error('Error decoding stderr:', error);
+    //   }
+    // }
+    // if (result.compile_output) {
+    //   try {
+    //     result.compile_output = atob(result.compile_output);
+    //   } catch (error) {
+    //     console.error('Error decoding compile_output:', error);
+    //   }
+    // }
 
     // If there's any error output, return it
     if (result.stderr || result.compile_output) {
