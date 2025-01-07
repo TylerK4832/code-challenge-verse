@@ -6,7 +6,7 @@ function formatTestCodeList(testCodeList: string[]) {
     try {
         currentTestIndex = ${index};
         // Create a new Solution instance for each test
-        Solution solution;
+        // Solution solution;
 ${code}
         std::map<std::string, std::string> result;
         result["passed"] = "true";
