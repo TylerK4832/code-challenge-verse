@@ -37,8 +37,8 @@ serve(async (req) => {
     // Convert code to base64
     const base64Code = btoa(wrappedCode);
 
-    // Add compiler options for C++17 if needed
-    const compilerOptions = language_id === 76 ? {
+    // Add compiler options for C++ if needed
+    const compilerOptions = language_id === 54 ? {
       compiler_options: "-std=c++17"
     } : {};
 
