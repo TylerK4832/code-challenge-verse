@@ -46,6 +46,17 @@ int currentTestIndex = -1;
 stringstream logStream;
 #define cout logStream
 
+// Detect if a type is iterable
+template <typename T, typename = void>
+struct is_iterable : false_type {};
+
+template <typename T>
+struct is_iterable<T, void_t<decltype(begin(declval<T>())), decltype(end(declval<T>()))>> : true_type {};
+
+// Specialization to exclude std::string from being iterable
+template <>
+struct is_iterable<std::string> : false_type {};
+
 class Printer {
 public:
     template <typename T>
@@ -61,15 +72,6 @@ public:
     }
 
 private:
-    template <typename T, typename = void>
-    struct is_iterable : false_type {};
-
-    template <typename T>
-    struct is_iterable<T, void_t<decltype(begin(declval<T>())), decltype(end(declval<T>()))>> : true_type {};
-
-    template <>
-    struct is_iterable<std::string> : false_type {};
-
     template <typename T>
     static string stringifyImpl(const T& value) {
         if constexpr (is_iterable<T>::value) {
@@ -82,7 +84,7 @@ private:
             oss << "]";
             return oss.str();
         } else if constexpr (is_same_v<T, string>) {
-            return "\\"" + value + "\\"";
+            return "\"" + value + "\"";
         } else if constexpr (is_arithmetic<T>::value) {
             return std::to_string(value);
         } else if constexpr (is_same_v<T, char>) {
@@ -117,15 +119,15 @@ int main() {
         bool first = true;
         for (const auto& pair : results[i]) {
             if (!first) cout << ",";
-            cout << "\\"" << pair.first << "\\":\\"" << pair.second << "\\"";
+            cout << "\"" << pair.first << "\":\"" << pair.second << "\"";
             first = false;
         }
         cout << "}";
     }
-    cout << "]\\n";
+    cout << "]\n";
 
     // Print logs
-    cout << "WRAPPER_LOGS []\\n";
+    cout << "WRAPPER_LOGS []\n";
 
     return 0;
 }
