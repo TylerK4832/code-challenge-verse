@@ -116,7 +116,7 @@ int main() {
 
     // Print final test results in JSON format directly
     std::cout << "{\\n";
-    std::cout << "  \\"test_results\\": [\\n";
+    std::cout << "  \\"WRAPPER_RESULTS\\": [\\n";
     for (size_t i = 0; i < results.size(); ++i) {
         if (i > 0) std::cout << ",\\n";
         std::cout << "    {";
@@ -131,7 +131,7 @@ int main() {
     std::cout << "\\n  ],\\n";
     
     // Add logs section
-    std::cout << "  \\"logs\\": []\\n";
+    std::cout << "  \\"WRAPPER_LOGS\\": []\\n";
     std::cout << "}\\n";
 
     return 0;
