@@ -54,6 +54,7 @@ serve(async (req) => {
         base64_encoded: true,
         language_id,
         stdin: '',
+        env_variables: ["LANG=en_US.UTF-8", "LC_ALL=en_US.UTF-8"],
         ...compilerOptions
       }),
     });
