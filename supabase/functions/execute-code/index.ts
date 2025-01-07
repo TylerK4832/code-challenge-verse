@@ -42,7 +42,7 @@ serve(async (req) => {
       compiler_options: "-std=c++17"
     } : {};
 
-    const createResponse = await fetch(`${JUDGE0_API_URL}/submissions?base64_encoded=false`, {
+    const createResponse = await fetch(`${JUDGE0_API_URL}/submissions`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -51,6 +51,7 @@ serve(async (req) => {
       },
       body: JSON.stringify({
         source_code: base64Code,
+        base64_encoded: true,
         language_id,
         stdin: '',
         ...compilerOptions
