@@ -8,6 +8,7 @@ function formatTestCodeList(testCodeList: string[]) {
         // Create a new Solution instance for each test
         // Solution solution;
 ${code}
+        Printer::compareAndPrint(output, expected);
         std::map<std::string, std::string> result;
         result["passed"] = "true";
         results.push_back(result);
@@ -45,6 +46,55 @@ int currentTestIndex = -1;
 stringstream logStream;
 #define cout logStream
 
+class Printer {
+public:
+    template <typename T>
+    static void compareAndPrint(const T& output, const T& expected) {
+        if (output != expected) {
+            throw runtime_error("Expected " + stringify(expected) + " but got " + stringify(output));
+        }
+    }
+
+    template <typename T>
+    static string stringify(const T& value) {
+        return stringifyImpl(value);
+    }
+
+private:
+    template <typename T, typename = void>
+    struct is_iterable : false_type {};
+
+    template <typename T>
+    struct is_iterable<T, void_t<decltype(begin(declval<T>())), decltype(end(declval<T>()))>> : true_type {};
+
+    template <>
+    struct is_iterable<std::string> : false_type {};
+
+    template <typename T>
+    static string stringifyImpl(const T& value) {
+        if constexpr (is_iterable<T>::value) {
+            ostringstream oss;
+            oss << "[";
+            for (auto it = begin(value); it != end(value); ++it) {
+                if (it != begin(value)) oss << ", ";
+                oss << stringifyImpl(*it);
+            }
+            oss << "]";
+            return oss.str();
+        } else if constexpr (is_same_v<T, string>) {
+            return "\"" + value + "\"";
+        } else if constexpr (is_arithmetic<T>::value) {
+            return std::to_string(value);
+        } else if constexpr (is_same_v<T, char>) {
+            return string(1, value);
+        } else {
+            ostringstream oss;
+            oss << value;
+            return oss.str();
+        }
+    }
+};
+
 class Solution {
 public:
     ${userCode}
@@ -67,15 +117,15 @@ int main() {
         bool first = true;
         for (const auto& pair : results[i]) {
             if (!first) cout << ",";
-            cout << "\\"" << pair.first << "\\":\\"" << pair.second << "\\"";
+            cout << "\"" << pair.first << "\":\"" << pair.second << "\"";
             first = false;
         }
         cout << "}";
     }
-    cout << "]\\n";
+    cout << "]\n";
 
     // Print logs
-    cout << "WRAPPER_LOGS []\\n";
+    cout << "WRAPPER_LOGS []\n";
 
     return 0;
 }
