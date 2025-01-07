@@ -5,10 +5,22 @@ function formatTestCodeList(testCodeList: string[]) {
     `
     try {
         currentTestIndex = ${index};
+        // Create a new Solution instance for each test
+        Solution solution;
 ${code}
-        results.push_back({{{"passed", "true"}}});
+        std::map<std::string, std::string> result;
+        result["passed"] = "true";
+        results.push_back(result);
     } catch (const std::exception& error) {
-        results.push_back({{{"error", error.what()}}});
+        std::map<std::string, std::string> result;
+        result["passed"] = "false";
+        result["error"] = error.what();
+        results.push_back(result);
+    } catch (...) {
+        std::map<std::string, std::string> result;
+        result["passed"] = "false";
+        result["error"] = "Unknown error occurred";
+        results.push_back(result);
     }
     `
   ).join('\n');
@@ -39,6 +51,9 @@ public:
 };
 
 int main() {
+    // Initialize results vector with expected size
+    results.reserve(${testCodeList.length});
+
     ${formatTestCodeList(testCodeList)}
 
     // Reset currentTestIndex
@@ -47,12 +62,15 @@ int main() {
     // Print final test results as JSON
     cout << "WRAPPER_RESULTS [";
     for (size_t i = 0; i < results.size(); ++i) {
+        if (i > 0) cout << ",";
         cout << "{";
+        bool first = true;
         for (const auto& pair : results[i]) {
+            if (!first) cout << ",";
             cout << "\\"" << pair.first << "\\":\\"" << pair.second << "\\"";
+            first = false;
         }
         cout << "}";
-        if (i < results.size() - 1) cout << ",";
     }
     cout << "]\\n";
 
