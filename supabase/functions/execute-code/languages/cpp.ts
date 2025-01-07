@@ -111,6 +111,9 @@ int main() {
     // Reset currentTestIndex
     currentTestIndex = -1;
 
+    // Undefine macro to use std::cout explicitly
+    #undef cout
+
     // Print final test results in JSON format directly
     std::cout << "{\\n";
     std::cout << "  \\"test_results\\": [\\n";
