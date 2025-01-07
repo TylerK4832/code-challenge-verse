@@ -1,176 +1,183 @@
-import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
+import { corsHeaders } from '../_shared/cors.ts'
+import { getLanguageWrapper } from './languageRegistry.ts';
+import { parseExecutionOutput } from './utils/outputParser.ts';
 
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-  'Access-Control-Allow-Methods': 'POST, OPTIONS',
-}
-
-function validateTestCases(testCases: any[]) {
-  if (!Array.isArray(testCases) || testCases.length === 0) {
-    throw new Error('No test cases provided');
-  }
-
-  testCases.forEach((testCase, index) => {
-    if (!testCase.code) {
-      throw new Error(`Test case ${index + 1} is missing code`);
-    }
-  });
-}
-
-function parseTestOutput(stdout: string | null): { passed: boolean; error?: string }[] {
-  if (!stdout) {
-    return [{ passed: false, error: 'No output received from program' }];
-  }
-
-  try {
-    // Split by newline and filter out empty lines
-    const lines = stdout.split('\n').filter(line => line.trim() !== '');
-    
-    return lines.map(line => {
-      try {
-        const result = JSON.parse(line);
-        return {
-          passed: result.passed === true,
-          error: result.error || undefined
-        };
-      } catch (e) {
-        return {
-          passed: false,
-          error: `Invalid test result format: ${line}`
-        };
-      }
-    });
-  } catch (e) {
-    return [{
-      passed: false,
-      error: 'Failed to parse test results'
-    }];
-  }
-}
-
-const JUDGE0_API_KEY = Deno.env.get('JUDGE0_API_KEY')
-const JUDGE0_API_URL = 'https://judge0-ce.p.rapidapi.com'
+const JUDGE0_API_URL = "https://judge0-ce.p.rapidapi.com";
 
 serve(async (req) => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
-    return new Response('ok', { headers: corsHeaders })
+    return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    if (req.method !== 'POST') {
-      throw new Error('Method not allowed');
-    }
-
-    if (!req.body) {
-      throw new Error('Request body is required');
-    }
-
-    const { source_code, language_id, problem_id, test_cases } = await req.json()
-
-    // Validate inputs
+    const { source_code, language_id, problem_id, test_cases } = await req.json();
+    
     if (!source_code || !language_id || !problem_id || !test_cases) {
-      throw new Error('Missing required fields')
+      throw new Error('Missing required parameters');
     }
 
-    validateTestCases(test_cases)
+    // Get the appropriate language wrapper
+    const languageConfig = getLanguageWrapper(language_id);
+    if (!languageConfig) {
+      throw new Error(`Unsupported language ID: ${language_id}`);
+    }
 
-    console.log('Processing request:', {
-      language_id,
-      problem_id,
-      test_cases_count: test_cases.length
-    });
+    console.log(`Using ${languageConfig.name} wrapper for language ID ${language_id}`);
+
+    // Format test cases
+    const testCodeList = test_cases.map((testCase: any) => testCase.code);
+
+    // Wrap the user's code with the language-specific test execution logic
+    const wrappedCode = languageConfig.wrapper.wrapCode(source_code, testCodeList);
+
+    console.log('Submitting wrapped code to Judge0:\n', wrappedCode);
 
     // Convert code to base64
-    const base64Code = btoa(source_code)
+    const base64Code = btoa(wrappedCode);
 
     // Add compiler options for C++ if needed
     const compilerOptions = language_id === 54 ? {
       compiler_options: "-std=c++17"
-    } : {}
+    } : {};
 
-    console.log('Submitting to Judge0...');
-
-    // Submit to Judge0
-    const response = await fetch(`${JUDGE0_API_URL}/submissions?base64_encoded=true&wait=true`, {
+    const createResponse = await fetch(`${JUDGE0_API_URL}/submissions?base64_encoded=true`, {
       method: 'POST',
       headers: {
-        'content-type': 'application/json',
-        'X-RapidAPI-Key': JUDGE0_API_KEY || '',
+        'Content-Type': 'application/json',
+        'X-RapidAPI-Host': 'judge0-ce.p.rapidapi.com',
+        'X-RapidAPI-Key': Deno.env.get('JUDGE0_API_KEY') || '',
       },
       body: JSON.stringify({
         source_code: base64Code,
         language_id,
+        stdin: '',
         ...compilerOptions
-      })
-    })
+      }),
+    });
 
-    if (!response.ok) {
-      console.error('Judge0 API error:', response.status, response.statusText);
-      throw new Error(`Judge0 API error: ${response.status} ${response.statusText}`);
+    if (!createResponse.ok) {
+      throw new Error(`Judge0 submission failed: ${await createResponse.text()}`);
     }
 
-    const result = await response.json()
-    console.log('Judge0 response:', result);
+    const { token } = await createResponse.json();
+    console.log('Submission created with token:', token);
 
-    // Decode outputs if they exist and are base64 encoded
-    const stdout = result.stdout ? atob(result.stdout) : null
-    const stderr = result.stderr ? atob(result.stderr) : null
-    const compile_output = result.compile_output ? atob(result.compile_output) : null
+    // Poll for results
+    let result;
+    let attempts = 0;
+    const maxAttempts = 10;
 
-    // If there's a compilation error or runtime error, return it
-    if (compile_output || stderr) {
+    while (attempts < maxAttempts) {
+      const getResponse = await fetch(
+        `${JUDGE0_API_URL}/submissions/${token}?base64_encoded=true&fields=status_id,stdout,stderr,compile_output,message,status`,
+        {
+          headers: {
+            'X-RapidAPI-Host': 'judge0-ce.p.rapidapi.com',
+            'X-RapidAPI-Key': Deno.env.get('JUDGE0_API_KEY') || '',
+          },
+        }
+      );
+
+      if (!getResponse.ok) {
+        throw new Error(`Failed to get submission result: ${await getResponse.text()}`);
+      }
+
+      result = await getResponse.json();
+      console.log('Raw submission result:', result);
+
+      // Check if execution is complete
+      if (result.status?.id >= 3) {
+        break;
+      }
+
+      attempts++;
+      await new Promise(resolve => setTimeout(resolve, 1000));
+    }
+
+    // Decode base64 outputs if they exist
+    if (result.stdout) result.stdout = atob(result.stdout);
+    if (result.stderr) result.stderr = atob(result.stderr);
+    if (result.compile_output) result.compile_output = atob(result.compile_output);
+
+    // If there's any error output, return it
+    if (result.stderr || result.compile_output) {
       return new Response(
         JSON.stringify({
-          status: { id: 0, description: 'Error' },
-          stdout,
-          stderr,
-          compile_output,
+          status: { id: 4, description: 'Error' },
+          stderr: result.stderr || result.compile_output,
+          stdout: null,
+          compile_output: null,
           message: null,
           test_results: []
         }),
-        {
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        }
-      )
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
     }
 
-    // Parse test results
-    const testResults = parseTestOutput(stdout)
-    const allTestsPassed = testResults.every(result => result.passed)
+    // Parse the execution output
+    const { testResults, logs } = parseExecutionOutput(result.stdout);
 
+    // If we didn't find valid test results, return an error
+    if (!testResults) {
+      return new Response(
+        JSON.stringify({
+          status: { id: 4, description: 'Error' },
+          stderr: 'No valid test results found in output',
+          stdout: result.stdout,
+          compile_output: null,
+          message: null,
+          test_results: []
+        }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Associate logs with test results
+    const finalTestResults = testResults.map((result: any, index: number) => {
+      const testLogs = logs
+        .filter(log => log.testIndex === index)
+        .map(log => log.message);
+
+      return {
+        ...result,
+        code: test_cases[index]?.code,
+        stdout: testLogs.length > 0 ? testLogs.join('\n') : undefined
+      };
+    });
+
+    // Determine if all test cases passed
+    const allPassed = finalTestResults.every((r: any) => r.passed === true);
+
+    // Return the final response
     return new Response(
       JSON.stringify({
         status: {
-          id: allTestsPassed ? 3 : 4,
-          description: allTestsPassed ? 'Accepted' : 'Wrong Answer'
+          id: allPassed ? 3 : 4,
+          description: allPassed ? 'Accepted' : 'Wrong Answer'
         },
-        stdout,
-        stderr,
-        compile_output,
+        stdout: null,
+        stderr: null,
+        compile_output: null,
         message: null,
-        test_results: testResults
+        test_results: finalTestResults
       }),
-      {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      }
-    )
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    );
+
   } catch (error) {
-    console.error('Error:', error);
+    console.error('Error executing code:', error);
     return new Response(
       JSON.stringify({
         status: { id: 0, description: 'Error' },
         stderr: error.message,
         stdout: null,
         compile_output: null,
-        message: 'Failed to execute code',
+        message: null,
         test_results: []
       }),
-      {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        status: 500,
-      }
-    )
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    );
   }
-})
+});
