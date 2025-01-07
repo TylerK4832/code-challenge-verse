@@ -82,7 +82,7 @@ private:
             oss << "]";
             return oss.str();
         } else if constexpr (is_same_v<T, string>) {
-            return "\"" + value + "\"";
+            return "\\"" + value + "\\"";
         } else if constexpr (is_arithmetic<T>::value) {
             return std::to_string(value);
         } else if constexpr (is_same_v<T, char>) {
@@ -117,15 +117,15 @@ int main() {
         bool first = true;
         for (const auto& pair : results[i]) {
             if (!first) cout << ",";
-            cout << "\"" << pair.first << "\":\"" << pair.second << "\"";
+            cout << "\\"" << pair.first << "\\":\\"" << pair.second << "\\"";
             first = false;
         }
         cout << "}";
     }
-    cout << "]\n";
+    cout << "]\\n";
 
     // Print logs
-    cout << "WRAPPER_LOGS []\n";
+    cout << "WRAPPER_LOGS []\\n";
 
     return 0;
 }
