@@ -96,10 +96,29 @@ serve(async (req) => {
       await new Promise(resolve => setTimeout(resolve, 1000));
     }
 
-    // Decode base64 outputs if they exist
-    if (result.stdout) result.stdout = atob(result.stdout);
-    if (result.stderr) result.stderr = atob(result.stderr);
-    if (result.compile_output) result.compile_output = atob(result.compile_output);
+    // Decode base64 outputs if they exist and are not null
+    if (result.stdout) {
+      try {
+        result.stdout = atob(result.stdout);
+        console.log('Decoded stdout:', result.stdout);
+      } catch (error) {
+        console.error('Error decoding stdout:', error);
+      }
+    }
+    if (result.stderr) {
+      try {
+        result.stderr = atob(result.stderr);
+      } catch (error) {
+        console.error('Error decoding stderr:', error);
+      }
+    }
+    if (result.compile_output) {
+      try {
+        result.compile_output = atob(result.compile_output);
+      } catch (error) {
+        console.error('Error decoding compile_output:', error);
+      }
+    }
 
     // If there's any error output, return it
     if (result.stderr || result.compile_output) {
