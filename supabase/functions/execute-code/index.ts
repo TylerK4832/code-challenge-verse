@@ -37,6 +37,11 @@ serve(async (req) => {
     // Convert code to base64
     const base64Code = btoa(wrappedCode);
 
+    // Add compiler options for C++17 if needed
+    const compilerOptions = language_id === 76 ? {
+      compiler_options: "-std=c++17"
+    } : {};
+
     const createResponse = await fetch(`${JUDGE0_API_URL}/submissions?base64_encoded=true`, {
       method: 'POST',
       headers: {
@@ -48,6 +53,7 @@ serve(async (req) => {
         source_code: base64Code,
         language_id,
         stdin: '',
+        ...compilerOptions
       }),
     });
 

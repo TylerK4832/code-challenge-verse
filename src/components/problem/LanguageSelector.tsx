@@ -53,7 +53,7 @@ export const LANGUAGES = [
     }
   },
   {
-    id: 54,
+    id: 76, // Changed from 54 to 76 which is C++17
     name: 'C++',
     defaultCode: (problemId: string) => {
       switch (problemId) {
