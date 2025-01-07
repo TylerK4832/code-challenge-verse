@@ -1,6 +1,10 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
-import { corsHeaders } from '../_shared/cors.ts'
-import { wrapCode } from './languageRegistry.ts'
+
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
+}
 
 function validateTestCases(testCases: any[]) {
   if (!Array.isArray(testCases) || testCases.length === 0) {
@@ -49,11 +53,20 @@ const JUDGE0_API_KEY = Deno.env.get('JUDGE0_API_KEY')
 const JUDGE0_API_URL = 'https://judge0-ce.p.rapidapi.com'
 
 serve(async (req) => {
+  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders })
   }
 
   try {
+    if (req.method !== 'POST') {
+      throw new Error('Method not allowed');
+    }
+
+    if (!req.body) {
+      throw new Error('Request body is required');
+    }
+
     const { source_code, language_id, problem_id, test_cases } = await req.json()
 
     // Validate inputs
@@ -63,25 +76,21 @@ serve(async (req) => {
 
     validateTestCases(test_cases)
 
-    // Wrap the code with test cases
-    const wrappedCode = wrapCode(source_code, test_cases, language_id)
-    if (!wrappedCode) {
-      throw new Error('Failed to wrap code with test cases')
-    }
-
-    console.log('Submitting code to Judge0:', {
+    console.log('Processing request:', {
       language_id,
       problem_id,
       test_cases_count: test_cases.length
     });
 
     // Convert code to base64
-    const base64Code = btoa(wrappedCode)
+    const base64Code = btoa(source_code)
 
     // Add compiler options for C++ if needed
     const compilerOptions = language_id === 54 ? {
       compiler_options: "-std=c++17"
     } : {}
+
+    console.log('Submitting to Judge0...');
 
     // Submit to Judge0
     const response = await fetch(`${JUDGE0_API_URL}/submissions?base64_encoded=true&wait=true`, {
@@ -96,6 +105,11 @@ serve(async (req) => {
         ...compilerOptions
       })
     })
+
+    if (!response.ok) {
+      console.error('Judge0 API error:', response.status, response.statusText);
+      throw new Error(`Judge0 API error: ${response.status} ${response.statusText}`);
+    }
 
     const result = await response.json()
     console.log('Judge0 response:', result);
@@ -143,7 +157,7 @@ serve(async (req) => {
       }
     )
   } catch (error) {
-    console.error('Error:', error)
+    console.error('Error:', error);
     return new Response(
       JSON.stringify({
         status: { id: 0, description: 'Error' },
