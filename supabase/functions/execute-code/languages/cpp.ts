@@ -130,7 +130,9 @@ int main() {
     cout << "WRAPPER_LOGS []\\n";
 
     // Flush logStream to std::cout
+    #undef cout
     std::cout << logStream.str();
+
 
     return 0;
 }
