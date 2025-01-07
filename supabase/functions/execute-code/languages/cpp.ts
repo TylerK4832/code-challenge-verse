@@ -111,28 +111,25 @@ int main() {
     // Reset currentTestIndex
     currentTestIndex = -1;
 
-    // Print final test results as JSON
-    cout << "WRAPPER_RESULTS [";
+    // Print final test results in JSON format directly
+    std::cout << "{\\n";
+    std::cout << "  \\"test_results\\": [\\n";
     for (size_t i = 0; i < results.size(); ++i) {
-        if (i > 0) cout << ",";
-        cout << "{";
+        if (i > 0) std::cout << ",\\n";
+        std::cout << "    {";
         bool first = true;
         for (const auto& pair : results[i]) {
-            if (!first) cout << ",";
-            cout << "\\"" << pair.first << "\\":\\"" << pair.second << "\\"";
+            if (!first) std::cout << ",";
+            std::cout << "\\"" << pair.first << "\\":\\"" << pair.second << "\\"";
             first = false;
         }
-        cout << "}";
+        std::cout << "}";
     }
-    cout << "]\\n";
-
-    // Print logs
-    cout << "WRAPPER_LOGS []\\n";
-
-    // Flush logStream to std::cout
-    #undef cout
-    std::cout << logStream.str();
-
+    std::cout << "\\n  ],\\n";
+    
+    // Add logs section
+    std::cout << "  \\"logs\\": []\\n";
+    std::cout << "}\\n";
 
     return 0;
 }
