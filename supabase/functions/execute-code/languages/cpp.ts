@@ -129,6 +129,9 @@ int main() {
     // Print logs
     cout << "WRAPPER_LOGS []\\n";
 
+    // Flush logStream to std::cout
+    std::cout << logStream.str();
+
     return 0;
 }
 `
