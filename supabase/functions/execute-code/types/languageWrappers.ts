@@ -6,4 +6,5 @@ export interface LanguageConfig {
   id: number;
   name: string;
   wrapper: LanguageWrapper;
+  base64: boolean;
 }

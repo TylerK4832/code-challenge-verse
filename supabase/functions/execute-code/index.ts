@@ -1,6 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { corsHeaders } from '../_shared/cors.ts'
-import { getLanguageWrapper } from './languageRegistry.ts';
+import { getLanguageWrapper, isResponseEncoded } from './languageRegistry.ts';
 import { parseExecutionOutput } from './utils/outputParser.ts';
 
 const JUDGE0_API_URL = "https://judge0-ce.p.rapidapi.com";
@@ -54,7 +54,6 @@ serve(async (req) => {
         base64_encoded: true,
         language_id,
         stdin: '',
-        env_variables: ["LANG=en_US.UTF-8", "LC_ALL=en_US.UTF-8"],
         ...compilerOptions
       }),
     });
@@ -71,9 +70,11 @@ serve(async (req) => {
     let attempts = 0;
     const maxAttempts = 10;
 
+    const isBase64Encoded = languageConfig.base64;
+
     while (attempts < maxAttempts) {
       const getResponse = await fetch(
-        `${JUDGE0_API_URL}/submissions/${token}?base64_encoded=false&fields=status_id,stdout,stderr,compile_output,message,status`,
+        `${JUDGE0_API_URL}/submissions/${token}?base64_encoded=${isBase64Encoded}&fields=status_id,stdout,stderr,compile_output,message,status`,
         {
           headers: {
             'X-RapidAPI-Host': 'judge0-ce.p.rapidapi.com',
@@ -99,28 +100,30 @@ serve(async (req) => {
     }
 
     // Decode base64 outputs if they exist and are not null
-    // if (result.stdout) {
-    //   try {
-    //     result.stdout = atob(result.stdout);
-    //     console.log('Decoded stdout:', result.stdout);
-    //   } catch (error) {
-    //     console.error('Error decoding stdout:', error);
-    //   }
-    // }
-    // if (result.stderr) {
-    //   try {
-    //     result.stderr = atob(result.stderr);
-    //   } catch (error) {
-    //     console.error('Error decoding stderr:', error);
-    //   }
-    // }
-    // if (result.compile_output) {
-    //   try {
-    //     result.compile_output = atob(result.compile_output);
-    //   } catch (error) {
-    //     console.error('Error decoding compile_output:', error);
-    //   }
-    // }
+    if (isBase64Encoded) {
+      if (result.stdout) {
+        try {
+          result.stdout = atob(result.stdout);
+          console.log('Decoded stdout:', result.stdout);
+        } catch (error) {
+          console.error('Error decoding stdout:', error);
+        }
+      }
+      if (result.stderr) {
+        try {
+          result.stderr = atob(result.stderr);
+        } catch (error) {
+          console.error('Error decoding stderr:', error);
+        }
+      }
+      if (result.compile_output) {
+        try {
+          result.compile_output = atob(result.compile_output);
+        } catch (error) {
+          console.error('Error decoding compile_output:', error);
+        }
+      }
+    }
 
     // If there's any error output, return it
     if (result.stderr || result.compile_output) {
