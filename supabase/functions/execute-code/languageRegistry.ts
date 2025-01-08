@@ -9,25 +9,25 @@ const languageRegistry: LanguageConfig[] = [
     id: 63,
     name: 'javascript',
     wrapper: javascriptWrapper,
-    encoded: false,
+    base64: false,
   },
   {
     id: 71,
     name: 'python',
     wrapper: pythonWrapper,
-    encoded: false,
+    base64: false,
   },
   {
     id: 62,
     name: 'java',
     wrapper: javaWrapper,
-    encoded: false,
+    base64: false,
   },
   {
     id: 54,
     name: 'cpp',
     wrapper: cppWrapper,
-    encoded: true,
+    base64: true,
   }
 ];
 

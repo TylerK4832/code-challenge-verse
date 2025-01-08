@@ -35,7 +35,7 @@ serve(async (req) => {
     console.log('Submitting wrapped code to Judge0:\n', wrappedCode);
 
     // Convert code to base64
-    const base64Code = btoa(wrappedCode);
+    //const base64Code = btoa(wrappedCode);
 
     // Add compiler options for C++ if needed
     const compilerOptions = language_id === 54 ? {
@@ -50,8 +50,8 @@ serve(async (req) => {
         'X-RapidAPI-Key': Deno.env.get('JUDGE0_API_KEY') || '',
       },
       body: JSON.stringify({
-        source_code: base64Code,
-        base64_encoded: true,
+        source_code: wrappedCode,
+        // base64_encoded: true,
         language_id,
         stdin: '',
         ...compilerOptions
