@@ -10,16 +10,16 @@ function formatTestCodeList(testCodeList: string[]) {
 ${code}
         Printer::compareAndPrint(output, expected);
         std::map<std::string, std::string> result;
-        result["passed"] = true;
+        result["passed"] = "true";
         results.push_back(result);
     } catch (const std::exception& error) {
         std::map<std::string, std::string> result;
-        // result["passed"] = false;
+        // result["passed"] = "false";
         result["error"] = error.what();
         results.push_back(result);
     } catch (...) {
         std::map<std::string, std::string> result;
-        // result["passed"] = false;
+        // result["passed"] = "false";
         result["error"] = "Unknown error occurred";
         results.push_back(result);
     }
@@ -140,13 +140,21 @@ int main() {
         bool first = true;
         for (const auto& pair : results[i]) {
             if (!first) std::cout << ",";
-            std::cout << "\\"" << pair.first << "\\":\\"" << pair.second << "\\"";
+            std::cout << "\\"" << pair.first << "\\":";
+            
+            // Check if pair.second is a boolean-like string
+            if (pair.second == "true" || pair.second == "false") {
+                std::cout << pair.second; // Print without quotes
+            } else {
+                std::cout << "\\"" << pair.second << "\\""; // Print with quotes
+            }
+            
             first = false;
         }
         std::cout << "}";
     }
     std::cout << "]\\n";
-    
+
     // Add logs section
     std::cout << "WRAPPER_LOGS []\\n";
 
