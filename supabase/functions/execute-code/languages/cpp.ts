@@ -15,12 +15,12 @@ ${code}
         results.push_back(result);
     } catch (const std::exception& error) {
         std::map<std::string, std::string> result;
-        result["passed"] = "false"; // Optionally mark as failed
+        // result["passed"] = "false"; // Optionally mark as failed
         result["error"] = error.what();
         results.push_back(result);
     } catch (...) {
         std::map<std::string, std::string> result;
-        result["passed"] = "false"; // Optionally mark as failed
+        // result["passed"] = "false"; // Optionally mark as failed
         result["error"] = "Unknown error occurred";
         results.push_back(result);
     }
@@ -90,9 +90,8 @@ int currentTestIndex = -1;
 struct CoutRedirector {
     std::stringstream& stream;
     std::streambuf* original;
-    int testIndex;
 
-    CoutRedirector(std::stringstream& s, int index) : stream(s), original(std::cout.rdbuf()), testIndex(index) {
+    CoutRedirector(std::stringstream& s) : stream(s), original(std::cout.rdbuf()) {
         std::cout.rdbuf(stream.rdbuf());
     }
 
@@ -103,7 +102,7 @@ struct CoutRedirector {
 
 // Override cout to capture logs with test index
 stringstream logStream;
-#define coutRedirector CoutRedirector redirector(logStream, currentTestIndex)
+#define coutRedirector CoutRedirector redirector(logStream)
 
 // Detect if a type is iterable
 template <typename T, typename = void>
@@ -162,6 +161,9 @@ public:
 };
 
 int main() {
+    // std::locale::global(std::locale("en_US.UTF-8"));
+    // std::cout.imbue(std::locale("en_US.UTF-8"));
+
     // Initialize results vector with expected size
     results.reserve(${testCodeList.length});
 
@@ -196,23 +198,11 @@ int main() {
     }
     std::cout << "]\\n";
 
-    // Print logs section
-    std::cout << "WRAPPER_LOGS [";
-    std::string logs = logStream.str();
-    std::istringstream logsStream(logs);
-    std::string line;
-    bool firstLog = true;
-    while (std::getline(logsStream, line)) {
-        // Extract test index and message
-        std::string message = line.substr(line.find(":") + 2); // Get the message part
-        int testIndex = std::stoi(line.substr(line.find("(") + 1, line.find(")") - line.find("(") - 1)); // Get the test index
-        if (!firstLog) std::cout << ",";
-        std::cout << "{\\"testIndex\\":" << testIndex << ",\\"message\\":\\"" << message << "\\"}";
-        firstLog = false;
-    }
-    std::cout << "]\\n";
+    // Add logs section
+    std::cout << "WRAPPER_LOGS [" << logStream.str() << "]\\n"; // Print captured logs
 
     return 0;
 }
 `
 };
+
