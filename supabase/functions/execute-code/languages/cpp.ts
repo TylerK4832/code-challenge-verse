@@ -5,22 +5,35 @@ function formatTestCodeList(testCodeList: string[]) {
     `
     try {
         currentTestIndex = ${index};
+        logStream.str(""); // Clear the log stream before each test
         // Create a new Solution instance for each test
         // Solution solution;
         coutRedirector; // Ensure cout is redirected to logStream
 ${code}
+        // Store the log for this test if any output was generated
+        if (!logStream.str().empty()) {
+            testLogs.push_back({${index}, logStream.str()});
+        }
         Printer::compareAndPrint(output, expected);
         std::map<std::string, std::string> result;
         result["passed"] = "true";
         results.push_back(result);
     } catch (const std::exception& error) {
+        // Store the log for this test if any output was generated
+        if (!logStream.str().empty()) {
+            testLogs.push_back({${index}, logStream.str()});
+        }
         std::map<std::string, std::string> result;
-        // result["passed"] = "false"; // Optionally mark as failed
+        result["passed"] = "false";
         result["error"] = error.what();
         results.push_back(result);
     } catch (...) {
+        // Store the log for this test if any output was generated
+        if (!logStream.str().empty()) {
+            testLogs.push_back({${index}, logStream.str()});
+        }
         std::map<std::string, std::string> result;
-        // result["passed"] = "false"; // Optionally mark as failed
+        result["passed"] = "false";
         result["error"] = "Unknown error occurred";
         results.push_back(result);
     }
@@ -85,6 +98,14 @@ using namespace std;
 vector<map<string, string>> results;
 // Track current test
 int currentTestIndex = -1;
+
+// Structure to store test logs with their indices
+struct TestLog {
+    int testIndex;
+    string message;
+    TestLog(int idx, string msg) : testIndex(idx), message(msg) {}
+};
+vector<TestLog> testLogs;
 
 // Wrapper to redirect cout to logStream
 struct CoutRedirector {
@@ -161,9 +182,6 @@ public:
 };
 
 int main() {
-    // std::locale::global(std::locale("en_US.UTF-8"));
-    // std::cout.imbue(std::locale("en_US.UTF-8"));
-
     // Initialize results vector with expected size
     results.reserve(${testCodeList.length});
 
@@ -172,37 +190,35 @@ int main() {
     // Reset currentTestIndex
     currentTestIndex = -1;
 
-    // Undefine macro to use std::cout explicitly
-    #undef coutRedirector
-
     // Print final test results in JSON format directly
-    std::cout << "WRAPPER_RESULTS [";
+    std::cout << "{\\n";
+    std::cout << "  \\"test_results\\": [\\n";
     for (size_t i = 0; i < results.size(); ++i) {
-        if (i > 0) std::cout << ",";
-        std::cout << "{";
+        if (i > 0) std::cout << ",\\n";
+        std::cout << "    {";
         bool first = true;
         for (const auto& pair : results[i]) {
             if (!first) std::cout << ",";
-            std::cout << "\\"" << pair.first << "\\":";
-            
-            // Check if pair.second is a boolean-like string
-            if (pair.second == "true" || pair.second == "false") {
-                std::cout << pair.second; // Print without quotes
-            } else {
-                std::cout << "\\"" << pair.second << "\\""; // Print with quotes
-            }
-            
+            std::cout << "\\"" << pair.first << "\\":\\"" << pair.second << "\\"";
             first = false;
         }
         std::cout << "}";
     }
-    std::cout << "]\\n";
-
-    // Add logs section
-    std::cout << "WRAPPER_LOGS [" << logStream.str() << "]\\n"; // Print captured logs
+    std::cout << "\\n  ],\\n";
+    
+    // Add logs section with proper test indices
+    std::cout << "  \\"logs\\": [\\n";
+    for (size_t i = 0; i < testLogs.size(); ++i) {
+        if (i > 0) std::cout << ",\\n";
+        std::cout << "    {";
+        std::cout << "\\"testIndex\\":" << testLogs[i].testIndex << ",";
+        std::cout << "\\"message\\":\\"" << testLogs[i].message << "\\"";
+        std::cout << "}";
+    }
+    std::cout << "\\n  ]\\n";
+    std::cout << "}\\n";
 
     return 0;
 }
 `
 };
-
