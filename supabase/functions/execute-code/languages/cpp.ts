@@ -7,6 +7,7 @@ function formatTestCodeList(testCodeList: string[]) {
         currentTestIndex = ${index};
         // Create a new Solution instance for each test
         // Solution solution;
+        coutRedirector; // Ensure cout is redirected to logStream
 ${code}
         Printer::compareAndPrint(output, expected);
         std::map<std::string, std::string> result;
@@ -14,12 +15,12 @@ ${code}
         results.push_back(result);
     } catch (const std::exception& error) {
         std::map<std::string, std::string> result;
-        // result["passed"] = "false";
+        result["passed"] = "false"; // Optionally mark as failed
         result["error"] = error.what();
         results.push_back(result);
     } catch (...) {
         std::map<std::string, std::string> result;
-        // result["passed"] = "false";
+        result["passed"] = "false"; // Optionally mark as failed
         result["error"] = "Unknown error occurred";
         results.push_back(result);
     }
@@ -29,13 +30,55 @@ ${code}
 
 export const cppWrapper: LanguageWrapper = {
   wrapCode: (userCode: string, testCodeList: string[]) => `
-#include <iostream>
-#include <vector>
-#include <string>
-#include <sstream>
-#include <map>
-#include <stdexcept>
-#include <locale>
+#include <iostream>        // Standard I/O stream
+#include <vector>          // Dynamic arrays
+#include <string>          // String manipulation
+#include <sstream>         // String stream
+#include <map>             // Associative containers (maps)
+#include <set>             // Set containers
+#include <unordered_map>   // Unordered associative containers
+#include <unordered_set>   // Unordered set containers
+#include <algorithm>       // Standard algorithms (sort, find, etc.)
+#include <functional>      // Function objects, bind, etc.
+#include <iterator>        // Iterators
+#include <thread>          // Threading support
+#include <mutex>           // Mutex for thread synchronization
+#include <condition_variable> // Condition variables for synchronization
+#include <chrono>          // Time utilities
+#include <cmath>           // Mathematical functions (sin, cos, pow, etc.)
+#include <cstdlib>         // Standard library functions (exit, random, etc.)
+#include <ctime>           // Date and time utilities
+#include <fstream>         // File stream
+#include <iomanip>         // Input/output manipulation (e.g., setprecision)
+#include <cassert>         // Assertion macros for debugging
+#include <type_traits>     // Type utilities (std::is_same, std::enable_if, etc.)
+#include <memory>          // Smart pointers (unique_ptr, shared_ptr, weak_ptr)
+#include <utility>         // Utility functions (e.g., std::move, std::pair)
+#include <tuple>           // Tuple
+#include <bitset>          // Bitset operations
+#include <array>           // Fixed-size arrays
+#include <list>            // Doubly-linked list
+#include <deque>           // Double-ended queue
+#include <forward_list>    // Singly-linked list
+#include <atomic>          // Atomic operations
+#include <exception>       // Exception handling (std::exception)
+#include <new>             // Memory management (placement new, bad_alloc)
+#include <valarray>        // Array-like containers
+#include <regex>           // Regular expressions
+#include <complex>         // Complex numbers
+#include <bit>             // Bit operations (e.g., std::popcount, std::bitset)
+#include <numeric>         // Numeric algorithms (e.g., accumulate)
+#include <random>          // Random number generation
+#include <stdexcept>       // Standard exceptions (e.g., runtime_error)
+#include <climits>         // Limits of integral types
+#include <cfloat>          // Limits of floating point types
+#include <cctype>          // Character classification and manipulation
+#include <cstring>         // C-style string manipulation
+#include <cstdio>          // C-style I/O
+#include <typeinfo>        // Type identification
+#include <initializer_list> // Support for initializer lists
+#include <sys/types.h>     // System-specific types (e.g., size_t, ssize_t)
+#include <unistd.h>        // POSIX API (for Linux/Unix systems)
 using namespace std;
 
 // Store test results
@@ -156,9 +199,10 @@ int main() {
     std::cout << "]\\n";
 
     // Add logs section
-    std::cout << "WRAPPER_LOGS []\\n";
+    std::cout << "WRAPPER_LOGS [" << logStream.str() << "]\\n"; // Print captured logs
 
     return 0;
 }
 `
 };
+
