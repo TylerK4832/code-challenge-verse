@@ -211,7 +211,7 @@ int main() {
         }
         std::cout << "}";
     }
-    std::cout << "]";
+    std::cout << "]\\n";
     
     // Add logs section with proper test indices
     std::cout << "WRAPPER_LOGS [";
