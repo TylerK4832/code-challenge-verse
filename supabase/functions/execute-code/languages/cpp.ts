@@ -102,7 +102,10 @@ struct CoutRedirector {
 
 // Override cout to capture logs with test index
 stringstream logStream;
-#define coutRedirector CoutRedirector redirector(logStream)
+#define coutRedirector \
+    std::cout.rdbuf(logStream.rdbuf()); \
+    std::cout << "{\"testIndex\": " << currentTestIndex << ", \"message\": \"" << logStream.str() << "\"}" << std::endl; \
+    logStream.str(""); // Clear after each log entry
 
 // Detect if a type is iterable
 template <typename T, typename = void>
@@ -161,9 +164,6 @@ public:
 };
 
 int main() {
-    // std::locale::global(std::locale("en_US.UTF-8"));
-    // std::cout.imbue(std::locale("en_US.UTF-8"));
-
     // Initialize results vector with expected size
     results.reserve(${testCodeList.length});
 
@@ -205,4 +205,3 @@ int main() {
 }
 `
 };
-
