@@ -43,9 +43,23 @@ vector<map<string, string>> results;
 // Track current test
 int currentTestIndex = -1;
 
+// Wrapper to redirect cout to logStream
+struct CoutRedirector {
+    std::stringstream& stream;
+    std::streambuf* original;
+
+    CoutRedirector(std::stringstream& s) : stream(s), original(std::cout.rdbuf()) {
+        std::cout.rdbuf(stream.rdbuf());
+    }
+
+    ~CoutRedirector() {
+        std::cout.rdbuf(original); // Restore original cout
+    }
+};
+
 // Override cout to capture logs with test index
 stringstream logStream;
-#define cout logStream
+#define coutRedirector CoutRedirector redirector(logStream)
 
 // Detect if a type is iterable
 template <typename T, typename = void>
@@ -104,8 +118,8 @@ public:
 };
 
 int main() {
-    std::locale::global(std::locale("en_US.UTF-8"));
-    std::cout.imbue(std::locale("en_US.UTF-8"));
+    // std::locale::global(std::locale("en_US.UTF-8"));
+    // std::cout.imbue(std::locale("en_US.UTF-8"));
 
     // Initialize results vector with expected size
     results.reserve(${testCodeList.length});
@@ -116,7 +130,7 @@ int main() {
     currentTestIndex = -1;
 
     // Undefine macro to use std::cout explicitly
-    #undef cout
+    #undef coutRedirector
 
     // Print final test results in JSON format directly
     std::cout << "{\\n";
