@@ -10,16 +10,16 @@ function formatTestCodeList(testCodeList: string[]) {
 ${code}
         Printer::compareAndPrint(output, expected);
         std::map<std::string, std::string> result;
-        result["passed"] = "true";
+        result["passed"] = true;
         results.push_back(result);
     } catch (const std::exception& error) {
         std::map<std::string, std::string> result;
-        // result["passed"] = "false";
+        // result["passed"] = false;
         result["error"] = error.what();
         results.push_back(result);
     } catch (...) {
         std::map<std::string, std::string> result;
-        // result["passed"] = "false";
+        // result["passed"] = false;
         result["error"] = "Unknown error occurred";
         results.push_back(result);
     }
