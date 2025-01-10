@@ -191,11 +191,10 @@ int main() {
     currentTestIndex = -1;
 
     // Print final test results in JSON format directly
-    std::cout << "{\\n";
-    std::cout << "  \\"test_results\\": [\\n";
+    std::cout << "WRAPPER_RESULTS [";
     for (size_t i = 0; i < results.size(); ++i) {
-        if (i > 0) std::cout << ",\\n";
-        std::cout << "    {";
+        if (i > 0) std::cout << ",";
+        std::cout << "{";
         bool first = true;
         for (const auto& pair : results[i]) {
             if (!first) std::cout << ",";
@@ -204,19 +203,18 @@ int main() {
         }
         std::cout << "}";
     }
-    std::cout << "\\n  ],\\n";
+    std::cout << "],";
     
     // Add logs section with proper test indices
-    std::cout << "  \\"logs\\": [\\n";
+    std::cout << "WRAPPER_LOGS [";
     for (size_t i = 0; i < testLogs.size(); ++i) {
-        if (i > 0) std::cout << ",\\n";
-        std::cout << "    {";
+        if (i > 0) std::cout << ",";
+        std::cout << "{";
         std::cout << "\\"testIndex\\":" << testLogs[i].testIndex << ",";
         std::cout << "\\"message\\":\\"" << testLogs[i].message << "\\"";
         std::cout << "}";
     }
-    std::cout << "\\n  ]\\n";
-    std::cout << "}\\n";
+    std::cout << "]";
 
     return 0;
 }
