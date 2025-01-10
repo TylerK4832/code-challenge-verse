@@ -198,12 +198,20 @@ int main() {
         bool first = true;
         for (const auto& pair : results[i]) {
             if (!first) std::cout << ",";
-            std::cout << "\\"" << pair.first << "\\":\\"" << pair.second << "\\"";
+            std::cout << "\\"" << pair.first << "\\":";
+            
+            // Check if pair.second is "true" or "false"
+            if (pair.second == "true" || pair.second == "false") {
+                std::cout << pair.second; // Print without quotes
+            } else {
+                std::cout << "\\"" << pair.second << "\\""; // Print with quotes
+            }
+            
             first = false;
         }
         std::cout << "}";
     }
-    std::cout << "],";
+    std::cout << "]";
     
     // Add logs section with proper test indices
     std::cout << "WRAPPER_LOGS [";
