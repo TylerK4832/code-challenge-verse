@@ -90,8 +90,9 @@ int currentTestIndex = -1;
 struct CoutRedirector {
     std::stringstream& stream;
     std::streambuf* original;
+    int testIndex;
 
-    CoutRedirector(std::stringstream& s) : stream(s), original(std::cout.rdbuf()) {
+    CoutRedirector(std::stringstream& s, int index) : stream(s), original(std::cout.rdbuf()), testIndex(index) {
         std::cout.rdbuf(stream.rdbuf());
     }
 
@@ -102,10 +103,7 @@ struct CoutRedirector {
 
 // Override cout to capture logs with test index
 stringstream logStream;
-#define coutRedirector \
-    std::cout.rdbuf(logStream.rdbuf()); \
-    std::cout << "{\\"testIndex\\": " << currentTestIndex << ", \\"message\\": \\"" << logStream.str() << "\\"}" << std::endl; \
-    logStream.str(""); // Clear after each log entry
+#define coutRedirector CoutRedirector redirector(logStream, currentTestIndex)
 
 // Detect if a type is iterable
 template <typename T, typename = void>
@@ -198,8 +196,21 @@ int main() {
     }
     std::cout << "]\\n";
 
-    // Add logs section
-    std::cout << "WRAPPER_LOGS [" << logStream.str() << "]\\n"; // Print captured logs
+    // Print logs section
+    std::cout << "WRAPPER_LOGS [";
+    std::string logs = logStream.str();
+    std::istringstream logsStream(logs);
+    std::string line;
+    bool firstLog = true;
+    while (std::getline(logsStream, line)) {
+        // Extract test index and message
+        std::string message = line.substr(line.find(":") + 2); // Get the message part
+        int testIndex = std::stoi(line.substr(line.find("(") + 1, line.find(")") - line.find("(") - 1)); // Get the test index
+        if (!firstLog) std::cout << ",";
+        std::cout << "{\\"testIndex\\":" << testIndex << ",\\"message\\":\\"" << message << "\\"}";
+        firstLog = false;
+    }
+    std::cout << "]\\n";
 
     return 0;
 }
