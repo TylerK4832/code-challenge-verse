@@ -104,7 +104,6 @@ serve(async (req) => {
       if (result.stdout) {
         try {
           result.stdout = atob(result.stdout);
-          console.log('Decoded stdout:', result.stdout);
         } catch (error) {
           console.error('Error decoding stdout:', error);
         }
@@ -123,6 +122,7 @@ serve(async (req) => {
           console.error('Error decoding compile_output:', error);
         }
       }
+      console.log('Decoded submission result:', result);
     }
 
     // If there's any error output, return it
