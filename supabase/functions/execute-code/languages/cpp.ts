@@ -104,7 +104,7 @@ struct CoutRedirector {
 stringstream logStream;
 #define coutRedirector \
     std::cout.rdbuf(logStream.rdbuf()); \
-    std::cout << "{\"testIndex\": " << currentTestIndex << ", \"message\": \"" << logStream.str() << "\"}" << std::endl; \
+    std::cout << "{\\"testIndex\\": " << currentTestIndex << ", \\"message\\": \\"" << logStream.str() << "\\"}" << std::endl; \
     logStream.str(""); // Clear after each log entry
 
 // Detect if a type is iterable
