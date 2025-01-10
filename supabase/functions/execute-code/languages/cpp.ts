@@ -133,10 +133,9 @@ int main() {
     #undef coutRedirector
 
     // Print final test results in JSON format directly
-    std::cout << "{\\n";
-    std::cout << "WRAPPER_RESULTS [\\n";
+    std::cout << "WRAPPER_RESULTS [";
     for (size_t i = 0; i < results.size(); ++i) {
-        if (i > 0) std::cout << ",\\n";
+        if (i > 0) std::cout << ",";
         std::cout << "{";
         bool first = true;
         for (const auto& pair : results[i]) {
@@ -146,11 +145,10 @@ int main() {
         }
         std::cout << "}";
     }
-    std::cout << "\\n],\\n";
+    std::cout << "]\\n";
     
     // Add logs section
     std::cout << "WRAPPER_LOGS []\\n";
-    std::cout << "}\\n";
 
     return 0;
 }
