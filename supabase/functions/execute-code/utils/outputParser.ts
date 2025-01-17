@@ -71,6 +71,7 @@ export function parseExecutionOutput(stdout: string): {
             });
           } catch (err) {
             console.error('Error parsing concatenated logs:', err);
+            console.log('Raw JSON string:', match[1]);
           }
         }
       }
