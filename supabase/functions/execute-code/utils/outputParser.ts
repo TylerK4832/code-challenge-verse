@@ -25,15 +25,16 @@ export function parseExecutionOutput(stdout: string): {
     
     for (const line of lines) {
       if (line.startsWith('WRAPPER_RESULTS')) {
+        // Extract the JSON part after "WRAPPER_RESULTS "
         const resultsJson = line.replace('WRAPPER_RESULTS ', '');
         testResults = JSON.parse(resultsJson);
       } else if (line.startsWith('WRAPPER_LOGS')) {
-        // Extract the logs JSON string
-        const logsSection = line.substring(line.indexOf('['), line.lastIndexOf(']') + 1);
+        // Extract the JSON part after "WRAPPER_LOGS "
+        const logsJson = line.replace('WRAPPER_LOGS ', '');
         
         try {
           // Parse the logs JSON
-          const parsedLogs = JSON.parse(logsSection);
+          const parsedLogs = JSON.parse(logsJson);
           logs = parsedLogs.map((log: any) => ({
             testIndex: log.testIndex,
             message: log.message
@@ -43,6 +44,7 @@ export function parseExecutionOutput(stdout: string): {
           }));
         } catch (error) {
           console.error('Error parsing logs:', error);
+          console.error('Raw logs line:', line);
           logs = [];
         }
       }
