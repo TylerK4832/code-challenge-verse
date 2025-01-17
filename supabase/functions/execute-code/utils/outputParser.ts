@@ -12,65 +12,50 @@ export function parseExecutionOutput(stdout: string): {
   testResults: TestResult[] | null; 
   logs: Log[];
 } {
-  const lines = stdout.split('\n').filter(line => line.trim() !== '');
-  let testResults = null;
+  if (!stdout) {
+    return { testResults: null, logs: [] };
+  }
+
+  let testResults: TestResult[] | null = null;
   let logs: Log[] = [];
 
-  // Regex to match lines: WRAPPER_RESULTS <json>, WRAPPER_LOGS <json>
-  const resultsRegex = /^WRAPPER_RESULTS\s+(.*)$/;
-  const logsRegex = /^WRAPPER_LOGS\s+(.*)$/;
-
-  for (const line of lines) {
-    if (resultsRegex.test(line)) {
-      const match = line.match(resultsRegex);
-      if (match && match[1]) {
+  try {
+    // Split the output into lines and process each section
+    const lines = stdout.split('\n');
+    
+    for (const line of lines) {
+      if (line.startsWith('WRAPPER_RESULTS')) {
+        const resultsJson = line.replace('WRAPPER_RESULTS ', '');
+        testResults = JSON.parse(resultsJson);
+      } else if (line.startsWith('WRAPPER_LOGS')) {
+        // Extract the logs JSON string
+        const logsSection = line.substring(line.indexOf('['), line.lastIndexOf(']') + 1);
+        
         try {
-          // First try parsing as JSON
-          testResults = JSON.parse(match[1]);
-        } catch (err) {
-          // If JSON parsing fails, try parsing Java format
-          try {
-            const javaFormat = match[1]
-              .replace(/\[|\]/g, '') // Remove square brackets
-              .split(',') // Split by comma
-              .map(result => result.trim()) // Remove whitespace
-              .map(result => {
-                const passedMatch = result.match(/passed=(true|false)/);
-                return {
-                  passed: passedMatch ? passedMatch[1] === 'true' : false
-                };
-              });
-            testResults = javaFormat;
-          } catch (err) {
-            console.error('Error parsing Java format:', err);
-          }
-        }
-      }
-    } else if (logsRegex.test(line)) {
-      const match = line.match(logsRegex);
-      if (match && match[1]) {
-        try {
-          // First try parsing as JSON
-          logs = JSON.parse(match[1]);
-        } catch (err) {
-          // If JSON parsing fails, try parsing Java format
-          try {
-            const javaFormat = match[1]
-              .replace(/\[|\]/g, '') // Remove square brackets
-              .split(',') // Split by comma
-              .map(log => log.trim()) // Remove whitespace
-              .map((log, index) => ({
-                testIndex: index,
-                message: log
-              }));
-            logs = javaFormat;
-          } catch (err) {
-            console.error('Error parsing Java format:', err);
-          }
+          // Parse the logs JSON and process each log entry
+          const parsedLogs = JSON.parse(logsSection);
+          logs = parsedLogs.map((log: any) => ({
+            testIndex: log.testIndex,
+            // Clean up the message by:
+            // 1. Replacing escaped newlines with actual newlines
+            // 2. Removing any trailing/leading quotes
+            // 3. Removing any string concatenation artifacts
+            message: log.message
+              .replace(/\\n/g, '\n')
+              .replace(/^["']|["']$/g, '')
+              .replace(/"\s*\+\s*"/g, '')
+              .trim()
+          }));
+        } catch (error) {
+          console.error('Error parsing logs:', error);
+          logs = [];
         }
       }
     }
-  }
 
-  return { testResults, logs };
+    return { testResults, logs };
+  } catch (error) {
+    console.error('Error parsing execution output:', error);
+    return { testResults: null, logs: [] };
+  }
 }
