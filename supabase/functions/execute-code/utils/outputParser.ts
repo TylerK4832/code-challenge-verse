@@ -25,15 +25,15 @@ export function parseExecutionOutput(stdout: string): {
       const match = line.match(resultsRegex);
       if (match && match[1]) {
         try {
-          // First try parsing as JSON
+          // Parse as JSON
           testResults = JSON.parse(match[1]);
         } catch (err) {
-          // If JSON parsing fails, try parsing Java format
+          // Fallback: Parse Java-style format
           try {
             const javaFormat = match[1]
-              .replace(/\[|\]/g, '') // Remove square brackets
-              .split(',') // Split by comma
-              .map(result => result.trim()) // Remove whitespace
+              .replace(/\[|\]/g, '')
+              .split(',')
+              .map(result => result.trim())
               .map(result => {
                 const passedMatch = result.match(/passed=(true|false)/);
                 return {
@@ -50,22 +50,27 @@ export function parseExecutionOutput(stdout: string): {
       const match = line.match(logsRegex);
       if (match && match[1]) {
         try {
-          // First try parsing as JSON
+          // First attempt to parse as JSON
           logs = JSON.parse(match[1]);
         } catch (err) {
-          // If JSON parsing fails, try parsing Java format
+          // Handle concatenated format manually
           try {
             const javaFormat = match[1]
               .replace(/\[|\]/g, '') // Remove square brackets
-              .split(',') // Split by comma
-              .map(log => log.trim()) // Remove whitespace
-              .map((log, index) => ({
-                testIndex: index,
-                message: log
-              }));
-            logs = javaFormat;
+              .split('},') // Split log objects
+              .map((log, index) => {
+                const cleanedLog = log.endsWith('}') ? log : log + '}';
+                return JSON.parse(cleanedLog);
+              });
+
+            logs = javaFormat.map((log: any) => {
+              return {
+                testIndex: log.testIndex,
+                message: log.message.replace(/\\n/g, '\n').trim() // Handle escaped newlines
+              };
+            });
           } catch (err) {
-            console.error('Error parsing Java format:', err);
+            console.error('Error parsing concatenated logs:', err);
           }
         }
       }
