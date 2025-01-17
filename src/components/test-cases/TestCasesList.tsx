@@ -1,4 +1,5 @@
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Check, X } from 'lucide-react';
 
 interface TestCase {
   id: string;
@@ -12,11 +13,11 @@ interface TestCasesListProps {
 export const TestCasesList = ({ testCases }: TestCasesListProps) => {
   return (
     <ScrollArea className="h-full">
-      <div className="p-4 space-y-4">
+      <div className="p-4 space-y-4 pb-8">
         {testCases.map((testCase, index) => (
-          <div key={testCase.id} className="space-y-2">
-            <h3 className="font-medium">Test Case {index + 1}:</h3>
-            <pre className="bg-secondary p-2 rounded-md whitespace-pre">
+          <div key={testCase.id} className="space-y-2 border border-border rounded-lg p-4">
+            <h3 className="font-medium text-sm text-muted-foreground">Test Case {index + 1}</h3>
+            <pre className="bg-secondary/50 p-3 rounded-md whitespace-pre text-sm font-mono">
               <code>{testCase.code}</code>
             </pre>
           </div>
