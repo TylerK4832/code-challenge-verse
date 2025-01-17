@@ -32,19 +32,14 @@ export function parseExecutionOutput(stdout: string): {
         const logsSection = line.substring(line.indexOf('['), line.lastIndexOf(']') + 1);
         
         try {
-          // Parse the logs JSON and process each log entry
+          // Parse the logs JSON
           const parsedLogs = JSON.parse(logsSection);
           logs = parsedLogs.map((log: any) => ({
             testIndex: log.testIndex,
-            // Clean up the message by:
-            // 1. Replacing escaped newlines with actual newlines
-            // 2. Removing any trailing/leading quotes
-            // 3. Removing any string concatenation artifacts
             message: log.message
-              .replace(/\\n/g, '\n')
-              .replace(/^["']|["']$/g, '')
-              .replace(/"\s*\+\s*"/g, '')
-              .trim()
+              .replace(/\\n/g, '\n') // Replace escaped newlines with actual newlines
+              .replace(/^["']|["']$/g, '') // Remove leading/trailing quotes
+              .replace(/"\s*\+\s*"/g, '') // Remove string concatenation artifacts
           }));
         } catch (error) {
           console.error('Error parsing logs:', error);
