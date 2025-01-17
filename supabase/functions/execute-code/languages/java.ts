@@ -30,8 +30,7 @@ export const javaWrapper: LanguageWrapper = {
   wrapCode: (userCode: string, testCodeList: string[]) => {
     return `
 import java.util.*;
-import java.io.PrintStream;
-import java.io.OutputStream;
+import java.io.*;
 
 class SimpleJsonUtil {
     public static String toJson(List<Map<String, Object>> data) {
@@ -50,7 +49,7 @@ class SimpleJsonUtil {
                 Object value = entry.getValue();
                 if (value instanceof String) {
                     sb.append("\\"");
-                    sb.append(escapeJson((String) value));
+                    sb.append(escapeJson(value.toString()));
                     sb.append("\\"");
                 } else {
                     sb.append(value);
@@ -72,12 +71,18 @@ class SimpleJsonUtil {
     }
 
     private static String escapeJson(String str) {
+        if (str == null) return "";
         return str.replace("\\\\", "\\\\\\\\")
-                  .replace("\\"", "\\\\\\"");
+                 .replace("\\"", "\\\\\\"")
+                 .replace("\\n", "\\\\n")
+                 .replace("\\r", "\\\\r")
+                 .replace("\\t", "\\\\t")
+                 .replace("\\b", "\\\\b")
+                 .replace("\\f", "\\\\f");
     }
 }
 
-${indentCode(userCode, 4)}
+${userCode}
 
 public class Main {
     public static void main(String[] args) {
@@ -87,27 +92,23 @@ public class Main {
 
         // Create a custom PrintStream to capture System.out
         PrintStream originalOut = System.out;
-        StringBuilder outputBuffer = new StringBuilder();
-        PrintStream customOut = new PrintStream(new OutputStream() {
-            @Override
-            public void write(int b) {
-                outputBuffer.append((char) b);
-                originalOut.write(b);
-            }
-        });
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        PrintStream customOut = new PrintStream(outputStream);
         System.setOut(customOut);
 
         // Run test cases
 ${formatTestCodeList(testCodeList)}
 
         // Process captured output
-        String[] lines = outputBuffer.toString().split("\\n");
+        System.setOut(originalOut);
+        String capturedOutput = outputStream.toString();
+        String[] lines = capturedOutput.split("\\n");
         int currentCapturingTest = -1;
         StringBuilder currentOutput = new StringBuilder();
 
         for (String line : lines) {
             if (line.startsWith("TEST_START ")) {
-                currentCapturingTest = Integer.parseInt(line.substring(11));
+                currentCapturingTest = Integer.parseInt(line.substring(11).trim());
                 currentOutput = new StringBuilder();
             } else if (line.startsWith("TEST_END ")) {
                 if (currentCapturingTest >= 0 && currentOutput.length() > 0) {
@@ -122,8 +123,7 @@ ${formatTestCodeList(testCodeList)}
             }
         }
 
-        // Reset System.out and print results
-        System.setOut(originalOut);
+        // Print results and logs with proper JSON escaping
         System.out.println("WRAPPER_RESULTS " + SimpleJsonUtil.toJson(results));
         System.out.println("WRAPPER_LOGS " + SimpleJsonUtil.toJson(logs));
     }
