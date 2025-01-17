@@ -12,7 +12,9 @@ function formatTestCodeList(testCodeList: string[]) {
 ${code}
         // Store the log for this test if any output was generated
         if (!logStream.str().empty()) {
-            testLogs.push_back({${index}, logStream.str()});
+            std::string log = logStream.str();
+            std::replace(log.begin(), log.end(), '\\n', '\\\\n');
+            testLogs.push_back({${index}, log});
         }
         Printer::compareAndPrint(output, expected);
         std::map<std::string, std::string> result;
@@ -21,7 +23,9 @@ ${code}
     } catch (const std::exception& error) {
         // Store the log for this test if any output was generated
         if (!logStream.str().empty()) {
-            testLogs.push_back({${index}, logStream.str()});
+            std::string log = logStream.str();
+            std::replace(log.begin(), log.end(), '\\n', '\\\\n');
+            testLogs.push_back({${index}, log});
         }
         std::map<std::string, std::string> result;
         result["passed"] = "false";
@@ -30,7 +34,9 @@ ${code}
     } catch (...) {
         // Store the log for this test if any output was generated
         if (!logStream.str().empty()) {
-            testLogs.push_back({${index}, logStream.str()});
+            std::string log = logStream.str();
+            std::replace(log.begin(), log.end(), '\\n', '\\\\n');
+            testLogs.push_back({${index}, log});
         }
         std::map<std::string, std::string> result;
         result["passed"] = "false";
