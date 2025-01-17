@@ -41,10 +41,12 @@ export const LANGUAGES = [
     defaultCode: (problemId: string) => {
       switch (problemId) {
         case 'two-sum':
-          return `public int[] twoSum(int[] nums, int target) {
-  // Write your solution here
-  return new int[]{};
-}`;
+          return `public class Solution {
+            public int[] twoSum(int[] nums, int target) {
+    // Write your solution here
+    return new int[]{};
+}
+      }`;
         default:
           return `class Solution {
     // Write your solution here
