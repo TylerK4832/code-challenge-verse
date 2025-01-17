@@ -91,7 +91,7 @@ export const ResultsList = ({ executionResult, isLoading }: ResultsListProps) =>
                   {result.stdout && (
                     <div className="space-y-1">
                       <h4 className="text-sm font-medium text-muted-foreground">Console Output:</h4>
-                      <pre className="bg-secondary p-2 rounded-md text-sm whitespace-pre-wrap">
+                      <pre className="bg-secondary p-2 rounded-md text-sm">
                         <code>{result.stdout}</code>
                       </pre>
                     </div>
