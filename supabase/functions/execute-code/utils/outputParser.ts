@@ -1,76 +1,65 @@
-interface Log {
+interface TestResult {
+  passed: boolean;
+  error?: string;
+  code?: string;
+}
+
+interface TestLog {
   testIndex: number;
   message: string;
 }
 
-interface TestResult {
-  passed: boolean;
-  error?: string;
-}
+export const parseExecutionOutput = (output: string | null): { testResults: TestResult[] | null, logs: TestLog[] } => {
+  if (!output) {
+    return { testResults: null, logs: [] };
+  }
 
-export function parseExecutionOutput(stdout: string): { 
-  testResults: TestResult[] | null; 
-  logs: Log[];
-} {
-  const lines = stdout.split('\n').filter(line => line.trim() !== '');
-  let testResults = null;
-  let logs: Log[] = [];
+  const lines = output.split('\n');
+  let testResults: TestResult[] | null = null;
+  const logs: TestLog[] = [];
 
-  // Regex to match lines: WRAPPER_RESULTS <json>, WRAPPER_LOGS <json>
-  const resultsRegex = /^WRAPPER_RESULTS\s+(.*)$/;
-  const logsRegex = /^WRAPPER_LOGS\s+(.*)$/;
+  // Helper function to clean special characters from error messages
+  const cleanErrorMessage = (message: string): string => {
+    return message
+      .replace(/â/g, '"')    // Replace curved quotes
+      .replace(/â/g, '"')    // Replace curved quotes
+      .replace(/â/g, "'")    // Replace single quotes
+      .replace(/â/g, "'")    // Replace single quotes
+      .replace(/â¦/g, "...")  // Replace ellipsis
+      .replace(/â/g, "-")    // Replace em dash
+      .replace(/â/g, "-")    // Replace en dash
+      .replace(/Â/g, "")     // Remove invisible characters
+      .replace(/\u00A0/g, " "); // Replace non-breaking space with regular space
+  };
 
   for (const line of lines) {
-    if (resultsRegex.test(line)) {
-      const match = line.match(resultsRegex);
-      if (match && match[1]) {
-        try {
-          // First try parsing as JSON
-          testResults = JSON.parse(match[1]);
-        } catch (err) {
-          // If JSON parsing fails, try parsing Java format
-          try {
-            const javaFormat = match[1]
-              .replace(/\[|\]/g, '') // Remove square brackets
-              .split(',') // Split by comma
-              .map(result => result.trim()) // Remove whitespace
-              .map(result => {
-                const passedMatch = result.match(/passed=(true|false)/);
-                return {
-                  passed: passedMatch ? passedMatch[1] === 'true' : false
-                };
-              });
-            testResults = javaFormat;
-          } catch (err) {
-            console.error('Error parsing Java format:', err);
-          }
-        }
+    if (line.startsWith('WRAPPER_RESULTS ')) {
+      try {
+        const jsonStr = line.replace('WRAPPER_RESULTS ', '');
+        testResults = JSON.parse(jsonStr);
+      } catch (error) {
+        console.error('Error parsing test results:', error);
       }
-    } else if (logsRegex.test(line)) {
-      const match = line.match(logsRegex);
-      if (match && match[1]) {
-        try {
-          // First try parsing as JSON
-          logs = JSON.parse(match[1]);
-        } catch (err) {
-          // If JSON parsing fails, try parsing Java format
-          try {
-            const javaFormat = match[1]
-              .replace(/\[|\]/g, '') // Remove square brackets
-              .split(',') // Split by comma
-              .map(log => log.trim()) // Remove whitespace
-              .map((log, index) => ({
-                testIndex: index,
-                message: log
-              }));
-            logs = javaFormat;
-          } catch (err) {
-            console.error('Error parsing Java format:', err);
-          }
+    } else if (line.startsWith('WRAPPER_LOGS ')) {
+      try {
+        const jsonStr = line.replace('WRAPPER_LOGS ', '');
+        const parsedLogs = JSON.parse(jsonStr);
+        if (Array.isArray(parsedLogs)) {
+          logs.push(...parsedLogs);
         }
+      } catch (error) {
+        console.error('Error parsing logs:', error);
       }
     }
   }
 
+  // Clean error messages in test results
+  if (testResults) {
+    testResults = testResults.map(result => ({
+      ...result,
+      error: result.error ? cleanErrorMessage(result.error) : undefined
+    }));
+  }
+
   return { testResults, logs };
-}
+};
