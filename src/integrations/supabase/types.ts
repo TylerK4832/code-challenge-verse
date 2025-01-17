@@ -9,6 +9,38 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      placeholder_code: {
+        Row: {
+          code: string
+          created_at: string
+          id: string
+          language: string
+          problem_id: string
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          id?: string
+          language: string
+          problem_id: string
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          id?: string
+          language?: string
+          problem_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "placeholder_code_problem_id_fkey"
+            columns: ["problem_id"]
+            isOneToOne: false
+            referencedRelation: "problems"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       problems: {
         Row: {
           acceptance: string

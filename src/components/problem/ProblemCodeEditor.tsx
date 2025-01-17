@@ -1,11 +1,13 @@
 import CodeEditor from "@/components/CodeEditor";
 import TestCases from "@/components/TestCases";
 import { useParams } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/components/ui/resizable";
 import { LanguageSelector, LANGUAGES } from "./LanguageSelector";
 import { RunButton } from "./RunButton";
 import { useCodeExecution } from "./useCodeExecution";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/components/ui/use-toast";
 
 interface ProblemCodeEditorProps {
   code: string;
@@ -16,12 +18,41 @@ const ProblemCodeEditor = ({ code, onChange }: ProblemCodeEditorProps) => {
   const { id: problemId } = useParams();
   const [selectedLanguage, setSelectedLanguage] = useState(LANGUAGES[0]);
   const { isRunning, executionResult, activeTab, setActiveTab, executeCode, resetExecution } = useCodeExecution();
+  const { toast } = useToast();
+
+  useEffect(() => {
+    const fetchPlaceholderCode = async () => {
+      const dbLanguage = selectedLanguage.name === 'C++' ? 'C++' : selectedLanguage.name;
+      
+      const { data, error } = await supabase
+        .from('placeholder_code')
+        .select('code')
+        .eq('problem_id', problemId)
+        .eq('language', dbLanguage)
+        .single();
+
+      if (error) {
+        console.error('Error fetching placeholder code:', error);
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "Failed to load placeholder code",
+        });
+        return;
+      }
+
+      if (data) {
+        onChange(data.code);
+      }
+    };
+
+    fetchPlaceholderCode();
+  }, [problemId, selectedLanguage, onChange, toast]);
 
   const handleLanguageChange = (languageId: string) => {
     const language = LANGUAGES.find(lang => lang.id === parseInt(languageId));
     if (language) {
       setSelectedLanguage(language);
-      onChange(language.defaultCode(problemId || ''));
       resetExecution();
       setActiveTab('testcases');
     }
