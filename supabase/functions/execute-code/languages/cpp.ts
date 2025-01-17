@@ -13,7 +13,11 @@ ${code}
         // Store the log for this test if any output was generated
         if (!logStream.str().empty()) {
             std::string log = logStream.str();
-            std::replace(log.begin(), log.end(), '\\n', '\\\\n');
+            size_t pos = 0;
+            while ((pos = log.find('\\n', pos)) != std::string::npos) {
+                log.replace(pos, 1, "\\\\n");
+                pos += 2; // Move past the replaced sequence
+            }
             testLogs.push_back({${index}, log});
         }
         Printer::compareAndPrint(output, expected);
@@ -24,7 +28,11 @@ ${code}
         // Store the log for this test if any output was generated
         if (!logStream.str().empty()) {
             std::string log = logStream.str();
-            std::replace(log.begin(), log.end(), '\\n', '\\\\n');
+            size_t pos = 0;
+            while ((pos = log.find('\\n', pos)) != std::string::npos) {
+                log.replace(pos, 1, "\\\\n");
+                pos += 2; // Move past the replaced sequence
+            }
             testLogs.push_back({${index}, log});
         }
         std::map<std::string, std::string> result;
@@ -35,7 +43,11 @@ ${code}
         // Store the log for this test if any output was generated
         if (!logStream.str().empty()) {
             std::string log = logStream.str();
-            std::replace(log.begin(), log.end(), '\\n', '\\\\n');
+            size_t pos = 0;
+            while ((pos = log.find('\\n', pos)) != std::string::npos) {
+                log.replace(pos, 1, "\\\\n");
+                pos += 2; // Move past the replaced sequence
+            }
             testLogs.push_back({${index}, log});
         }
         std::map<std::string, std::string> result;
