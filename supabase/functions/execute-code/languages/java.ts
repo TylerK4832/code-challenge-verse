@@ -90,9 +90,7 @@ class SimpleJsonUtil {
     }
 }
 
-class Solution {
 ${indentCode(userCode, 4)}
-}
 
 public class Main {
     public static void main(String[] args) {

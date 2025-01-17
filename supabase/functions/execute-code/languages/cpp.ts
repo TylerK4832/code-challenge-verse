@@ -194,10 +194,7 @@ private:
     }
 };
 
-class Solution {
-public:
-    ${userCode}
-};
+${userCode}
 
 int main() {
     // Initialize results vector with expected size
