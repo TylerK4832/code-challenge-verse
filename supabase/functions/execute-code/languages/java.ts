@@ -10,27 +10,20 @@ function formatTestCodeList(testCodeList: string[]): string {
   return testCodeList.map((testCode, index) => {
     return `        try {
             currentTestIndex = ${index};
+            System.out.println("TEST_START " + currentTestIndex);
             ${indentCode(testCode, 12)}
             Map<String, Object> result = new HashMap<>();
             result.put("passed", true);
             results.add(result);
+            System.out.println("TEST_END " + currentTestIndex);
         } catch (AssertionError | Exception error) {
             Map<String, Object> result = new HashMap<>();
             result.put("error", error.getMessage());
             results.add(result);
+            System.out.println("TEST_END " + currentTestIndex);
         }
 `;
   }).join('\n');
-}
-
-function escapeBackslashes(code: string): string {
-  // 1) Double all backslashes
-  let escaped = code.replace(/\\/g, '\\\\');
-
-  // 2) Escape all unescaped double quotes
-  escaped = escaped.replace(/"/g, '\\"');
-
-  return escaped;
 }
 
 export const javaWrapper: LanguageWrapper = {
@@ -39,10 +32,6 @@ export const javaWrapper: LanguageWrapper = {
 import java.util.*;
 
 class SimpleJsonUtil {
-    /**
-     * Converts a List of Map<String, Object> to a minimal JSON-like string.
-     * Assumes flat structures and string or primitive-like values.
-     */
     public static String toJson(List<Map<String, Object>> data) {
         StringBuilder sb = new StringBuilder();
         sb.append("[");
@@ -62,7 +51,6 @@ class SimpleJsonUtil {
                     sb.append(escapeJson((String) value));
                     sb.append("\\"");
                 } else {
-                    // For simplicity, directly append other types (numbers, booleans, etc.)
                     sb.append(value);
                 }
 
@@ -81,9 +69,6 @@ class SimpleJsonUtil {
         return sb.toString();
     }
 
-    /**
-     * Minimal escaping for quotes and backslashes in strings.
-     */
     private static String escapeJson(String str) {
         return str.replace("\\\\", "\\\\\\\\")
                   .replace("\\"", "\\\\\\"");
@@ -94,21 +79,50 @@ ${indentCode(userCode, 4)}
 
 public class Main {
     public static void main(String[] args) {
-        // Store test results
         List<Map<String, Object>> results = new ArrayList<>();
         List<Map<String, Object>> logs = new ArrayList<>();
         int currentTestIndex = -1;
 
+        // Create a custom PrintStream to capture System.out
+        PrintStream originalOut = System.out;
+        StringBuilder outputBuffer = new StringBuilder();
+        PrintStream customOut = new PrintStream(new OutputStream() {
+            @Override
+            public void write(int b) {
+                outputBuffer.append((char) b);
+                originalOut.write(b);
+            }
+        });
+        System.setOut(customOut);
+
         // Run test cases
 ${formatTestCodeList(testCodeList)}
 
-        // Reset currentTestIndex
-        currentTestIndex = -1;
+        // Process captured output
+        String[] lines = outputBuffer.toString().split("\\n");
+        int currentCapturingTest = -1;
+        StringBuilder currentOutput = new StringBuilder();
 
-        // Print final test results as JSON
+        for (String line : lines) {
+            if (line.startsWith("TEST_START ")) {
+                currentCapturingTest = Integer.parseInt(line.substring(11));
+                currentOutput = new StringBuilder();
+            } else if (line.startsWith("TEST_END ")) {
+                if (currentCapturingTest >= 0 && currentOutput.length() > 0) {
+                    Map<String, Object> log = new HashMap<>();
+                    log.put("testIndex", currentCapturingTest);
+                    log.put("message", currentOutput.toString().trim());
+                    logs.add(log);
+                }
+                currentCapturingTest = -1;
+            } else if (currentCapturingTest >= 0) {
+                currentOutput.append(line).append("\\n");
+            }
+        }
+
+        // Reset System.out and print results
+        System.setOut(originalOut);
         System.out.println("WRAPPER_RESULTS " + SimpleJsonUtil.toJson(results));
-        
-        // Print logs as JSON
         System.out.println("WRAPPER_LOGS " + SimpleJsonUtil.toJson(logs));
     }
 }`;
