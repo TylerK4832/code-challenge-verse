@@ -25,60 +25,52 @@ export function parseExecutionOutput(stdout: string): {
       const match = line.match(resultsRegex);
       if (match && match[1]) {
         try {
-          // First try parsing as JSON
           testResults = JSON.parse(match[1]);
         } catch (err) {
-          // If JSON parsing fails, try parsing Java format
-          try {
-            const javaFormat = match[1]
-              .replace(/\[|\]/g, '') // Remove square brackets
-              .split(',') // Split by comma
-              .map(result => result.trim()) // Remove whitespace
-              .map(result => {
-                const passedMatch = result.match(/passed=(true|false)/);
-                return {
-                  passed: passedMatch ? passedMatch[1] === 'true' : false
-                };
-              });
-            testResults = javaFormat;
-          } catch (err) {
-            console.error('Error parsing Java format:', err);
-          }
+          console.error('Error parsing test results:', err);
         }
       }
     } else if (logsRegex.test(line)) {
       const match = line.match(logsRegex);
       if (match && match[1]) {
         try {
-          // Parse the logs JSON and process each log entry
-          const rawLogs = JSON.parse(match[1]);
-          logs = rawLogs.map((log: any) => ({
-            testIndex: log.testIndex,
-            // Replace escaped newlines with actual newlines and clean up concatenated strings
-            message: log.message
-              .replace(/\\n/g, '\n') // Replace escaped newlines
-              .replace(/"\s*\+\s*"/g, '') // Remove string concatenation artifacts
-              .replace(/\\"/g, '"') // Replace escaped quotes
-              .trim()
-          }));
-        } catch (err) {
-          // If JSON parsing fails, try parsing Java format
-          try {
-            const javaFormat = match[1]
-              .replace(/\[|\]/g, '') // Remove square brackets
-              .split(',') // Split by comma
-              .map(log => log.trim()) // Remove whitespace
-              .map((log, index) => ({
-                testIndex: index,
-                message: log
-                  .replace(/\\n/g, '\n')
-                  .replace(/"\s*\+\s*"/g, '')
-                  .replace(/\\"/g, '"')
+          // Parse the complete JSON string for logs
+          const parsedLogs = JSON.parse(match[1]);
+          
+          // Ensure each log entry is properly formatted
+          logs = parsedLogs.map((log: any) => {
+            if (typeof log === 'object' && 'testIndex' in log && 'message' in log) {
+              return {
+                testIndex: log.testIndex,
+                message: log.message
+                  .replace(/\\n/g, '\n')  // Replace escaped newlines
+                  .replace(/\\"/g, '"')   // Replace escaped quotes
+                  .replace(/"\s*\+\s*"/g, '') // Remove string concatenation artifacts
                   .trim()
-              }));
-            logs = javaFormat;
-          } catch (err) {
-            console.error('Error parsing Java format:', err);
+              };
+            }
+            // If log entry doesn't match expected format, create a default structure
+            return {
+              testIndex: 0,
+              message: String(log)
+            };
+          });
+        } catch (err) {
+          console.error('Error parsing logs:', err);
+          // If JSON parsing fails, try to salvage what we can
+          try {
+            const rawContent = match[1]
+              .replace(/\\n/g, '\n')
+              .replace(/\\"/g, '"')
+              .replace(/"\s*\+\s*"/g, '')
+              .trim();
+            
+            logs = [{
+              testIndex: 0,
+              message: rawContent
+            }];
+          } catch (fallbackErr) {
+            console.error('Error in fallback parsing:', fallbackErr);
           }
         }
       }
