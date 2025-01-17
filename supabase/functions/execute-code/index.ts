@@ -18,7 +18,6 @@ serve(async (req) => {
       throw new Error('Missing required parameters');
     }
 
-    // Get the appropriate language wrapper
     const languageConfig = getLanguageWrapper(language_id);
     if (!languageConfig) {
       throw new Error(`Unsupported language ID: ${language_id}`);
@@ -26,20 +25,14 @@ serve(async (req) => {
 
     console.log(`Using ${languageConfig.name} wrapper for language ID ${language_id}`);
 
-    // Format test cases
     const testCodeList = test_cases.map((testCase: any) => testCase.code);
-
-    // Wrap the user's code with the language-specific test execution logic
     const wrappedCode = languageConfig.wrapper.wrapCode(source_code, testCodeList);
 
     console.log('Submitting wrapped code to Judge0:\n', wrappedCode);
 
-    // Convert code to base64
-    //const base64Code = btoa(wrappedCode);
-
-    // Add compiler options for C++ if needed
+    // Enhanced compiler options for C++
     const compilerOptions = language_id === 54 ? {
-      compiler_options: "-std=c++17 -fexec-charset=UTF-8"
+      compiler_options: "-std=c++17 -fexec-charset=UTF-8 -finput-charset=UTF-8"
     } : {};
 
     const createResponse = await fetch(`${JUDGE0_API_URL}/submissions`, {
@@ -51,7 +44,6 @@ serve(async (req) => {
       },
       body: JSON.stringify({
         source_code: wrappedCode,
-        // base64_encoded: true,
         language_id,
         stdin: '',
         ...compilerOptions
@@ -69,7 +61,6 @@ serve(async (req) => {
     let result;
     let attempts = 0;
     const maxAttempts = 10;
-
     const isBase64Encoded = languageConfig.base64;
 
     while (attempts < maxAttempts) {
@@ -90,47 +81,32 @@ serve(async (req) => {
       result = await getResponse.json();
       console.log('Raw submission result:', result);
 
-      // Check if execution is complete
-      if (result.status?.id >= 3) {
-        break;
-      }
+      if (result.status?.id >= 3) break;
 
       attempts++;
       await new Promise(resolve => setTimeout(resolve, 1000));
     }
 
-    // Decode base64 outputs if they exist and are not null
+    // Decode base64 outputs if necessary
     if (isBase64Encoded) {
-      if (result.stdout) {
-        try {
-          result.stdout = atob(result.stdout);
-        } catch (error) {
-          console.error('Error decoding stdout:', error);
-        }
-      }
-      if (result.stderr) {
-        try {
-          result.stderr = atob(result.stderr);
-        } catch (error) {
-          console.error('Error decoding stderr:', error);
-        }
-      }
-      if (result.compile_output) {
-        try {
-          result.compile_output = atob(result.compile_output);
-        } catch (error) {
-          console.error('Error decoding compile_output:', error);
-        }
-      }
+      if (result.stdout) result.stdout = atob(result.stdout);
+      if (result.stderr) result.stderr = atob(result.stderr);
+      if (result.compile_output) result.compile_output = atob(result.compile_output);
       console.log('Decoded submission result:', result);
     }
 
-    // If there's any error output, return it
+    // Handle errors
     if (result.stderr || result.compile_output) {
+      // Convert error messages to ASCII
+      const errorMessage = (result.stderr || result.compile_output || '')
+        .replace(/[^\x00-\x7F]/g, '') // Remove non-ASCII characters
+        .replace(/\u00E2|\u0080|\u009C|\u009D/g, '"') // Replace UTF-8 quote marks
+        .replace(/\u00C3|\u00A2/g, ''); // Remove other problematic characters
+
       return new Response(
         JSON.stringify({
           status: { id: 4, description: 'Error' },
-          stderr: result.stderr || result.compile_output,
+          stderr: errorMessage,
           stdout: null,
           compile_output: null,
           message: null,
@@ -140,10 +116,9 @@ serve(async (req) => {
       );
     }
 
-    // Parse the execution output
+    // Parse execution output
     const { testResults, logs } = parseExecutionOutput(result.stdout);
 
-    // If we didn't find valid test results, return an error
     if (!testResults) {
       return new Response(
         JSON.stringify({
@@ -159,22 +134,17 @@ serve(async (req) => {
     }
 
     // Associate logs with test results
-    const finalTestResults = testResults.map((result: any, index: number) => {
-      const testLogs = logs
+    const finalTestResults = testResults.map((result: any, index: number) => ({
+      ...result,
+      code: test_cases[index]?.code,
+      stdout: logs
         .filter(log => log.testIndex === index)
-        .map(log => log.message);
+        .map(log => log.message)
+        .join('\n')
+    }));
 
-      return {
-        ...result,
-        code: test_cases[index]?.code,
-        stdout: testLogs.length > 0 ? testLogs.join('\n') : undefined
-      };
-    });
-
-    // Determine if all test cases passed
     const allPassed = finalTestResults.every((r: any) => r.passed === true);
 
-    // Return the final response
     return new Response(
       JSON.stringify({
         status: {
