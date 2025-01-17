@@ -30,6 +30,8 @@ export const javaWrapper: LanguageWrapper = {
   wrapCode: (userCode: string, testCodeList: string[]) => {
     return `
 import java.util.*;
+import java.io.PrintStream;
+import java.io.OutputStream;
 
 class SimpleJsonUtil {
     public static String toJson(List<Map<String, Object>> data) {
