@@ -50,8 +50,17 @@ export function parseExecutionOutput(stdout: string): {
       const match = line.match(logsRegex);
       if (match && match[1]) {
         try {
-          // First try parsing as JSON
-          logs = JSON.parse(match[1]);
+          // Parse the logs JSON and process each log entry
+          const rawLogs = JSON.parse(match[1]);
+          logs = rawLogs.map((log: any) => ({
+            testIndex: log.testIndex,
+            // Replace escaped newlines with actual newlines and clean up concatenated strings
+            message: log.message
+              .replace(/\\n/g, '\n') // Replace escaped newlines
+              .replace(/"\s*\+\s*"/g, '') // Remove string concatenation artifacts
+              .replace(/\\"/g, '"') // Replace escaped quotes
+              .trim()
+          }));
         } catch (err) {
           // If JSON parsing fails, try parsing Java format
           try {
@@ -62,6 +71,10 @@ export function parseExecutionOutput(stdout: string): {
               .map((log, index) => ({
                 testIndex: index,
                 message: log
+                  .replace(/\\n/g, '\n')
+                  .replace(/"\s*\+\s*"/g, '')
+                  .replace(/\\"/g, '"')
+                  .trim()
               }));
             logs = javaFormat;
           } catch (err) {
