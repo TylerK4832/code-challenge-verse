@@ -20,7 +20,6 @@ export function parseExecutionOutput(stdout: string): {
   let logs: Log[] = [];
 
   try {
-    // Split the output into lines and process each section
     const lines = stdout.split('\n');
     
     for (const line of lines) {
@@ -29,23 +28,27 @@ export function parseExecutionOutput(stdout: string): {
         const resultsJson = line.replace('WRAPPER_RESULTS ', '');
         testResults = JSON.parse(resultsJson);
       } else if (line.startsWith('WRAPPER_LOGS')) {
-        // Extract the JSON part after "WRAPPER_LOGS "
-        const logsJson = line.replace('WRAPPER_LOGS ', '');
-        
         try {
-          // Parse the logs JSON
-          const parsedLogs = JSON.parse(logsJson);
-          logs = parsedLogs.map((log: any) => ({
-            testIndex: log.testIndex,
-            message: log.message
-              .replace(/\\n/g, '\n') // Replace escaped newlines with actual newlines
-              .replace(/^["']|["']$/g, '') // Remove leading/trailing quotes
-              .replace(/"\s*\+\s*"/g, '') // Remove string concatenation artifacts
-          }));
+          // Extract everything between the first [ and last ]
+          const match = line.match(/\[(.*)\]/);
+          if (match && match[1]) {
+            // Try to parse the content as JSON by adding the brackets back
+            const parsedLogs = JSON.parse(`[${match[1]}]`);
+            if (Array.isArray(parsedLogs)) {
+              logs.push(...parsedLogs.map((log: any) => ({
+                testIndex: log.testIndex,
+                message: log.message
+                  ?.replace(/\\n/g, '\n')
+                  ?.replace(/^["']|["']$/g, '')
+                  ?.replace(/"\s*\+\s*"/g, '') || ''
+              })));
+            }
+          } else {
+            console.error('No valid JSON array found in logs line');
+          }
         } catch (error) {
           console.error('Error parsing logs:', error);
           console.error('Raw logs line:', line);
-          logs = [];
         }
       }
     }
