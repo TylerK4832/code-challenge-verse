@@ -79,22 +79,23 @@ export const ResultsList = ({ executionResult, isLoading }: ResultsListProps) =>
                 <h3 className={`font-medium ${result.passed ? 'text-[#00b8a3]' : 'text-red-500'}`}>
                   Test Case {index + 1}: {result.passed ? 'Passed' : 'Failed'}
                 </h3>
+                {result.stdout && (
+                  <div className="space-y-2">
+                    <h4 className="text-sm font-medium">Console Output:</h4>
+                    <pre className="bg-secondary p-2 rounded-md whitespace-pre-wrap">
+                      <code>{result.stdout}</code>
+                    </pre>
+                  </div>
+                )}
                 <div className="space-y-2">
-                  <pre className="bg-secondary p-2 rounded-md whitespace-pre">
+                  <h4 className="text-sm font-medium">Test Case:</h4>
+                  <pre className="bg-secondary p-2 rounded-md whitespace-pre-wrap">
                     <code>{result.code}</code>
                   </pre>
                   {!result.passed && result.error && (
-                    <pre className="bg-secondary p-2 rounded-md text-red-500 whitespace-pre">
+                    <pre className="bg-secondary p-2 rounded-md text-red-500 whitespace-pre-wrap">
                       <code>{result.error}</code>
                     </pre>
-                  )}
-                  {result.stdout && (
-                    <div className="space-y-1">
-                      <h4 className="text-sm font-medium text-muted-foreground">Console Output:</h4>
-                      <pre className="bg-secondary p-2 rounded-md text-sm">
-                        <code>{result.stdout}</code>
-                      </pre>
-                    </div>
                   )}
                 </div>
               </div>
