@@ -1,5 +1,5 @@
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Loader2, Check, X } from "lucide-react";
+import { Loader2, CheckCircle, XCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface TestResult {
@@ -32,10 +32,10 @@ const StatusBadge = ({ status }: { status?: { id: number; description: string } 
   
   return (
     <div className={cn(
-      "inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium",
-      isAccepted ? "bg-[#00b8a3]/10 text-[#00b8a3]" : "bg-red-500/10 text-red-500"
+      "inline-flex items-center gap-2 px-4 py-2 rounded-full text-base font-medium",
+      isAccepted ? "bg-[#00b8a3]/10 text-[#00b8a3] border-2 border-[#00b8a3]" : "bg-red-500/10 text-red-500 border-2 border-red-500"
     )}>
-      {isAccepted ? <Check className="w-4 h-4" /> : <X className="w-4 h-4" />}
+      {isAccepted ? <CheckCircle className="w-5 h-5" /> : <XCircle className="w-5 h-5" />}
       {status.description}
     </div>
   );
@@ -51,7 +51,7 @@ export const ResultsList = ({ executionResult, isLoading }: ResultsListProps) =>
           </div>
         ) : executionResult ? (
           <>
-            <div className="flex justify-center pb-2">
+            <div className="flex justify-center pb-4">
               <StatusBadge status={executionResult.status} />
             </div>
 
@@ -85,19 +85,25 @@ export const ResultsList = ({ executionResult, isLoading }: ResultsListProps) =>
 
             {/* Test results */}
             {executionResult.test_results?.map((result, index) => (
-              <div key={index} className="border border-border rounded-lg p-4 space-y-2">
+              <div 
+                key={index} 
+                className={cn(
+                  "border-2 rounded-lg p-4 space-y-2",
+                  result.passed ? "border-[#00b8a3]" : "border-red-500"
+                )}
+              >
                 <div className="flex items-center justify-between">
                   <h3 className="font-medium text-sm text-muted-foreground">
                     Test Case {index + 1}
                   </h3>
                   <div className={cn(
-                    "flex items-center gap-1.5 text-sm font-medium",
+                    "flex items-center gap-2 text-base font-medium",
                     result.passed ? "text-[#00b8a3]" : "text-red-500"
                   )}>
                     {result.passed ? (
-                      <Check className="w-4 h-4" />
+                      <CheckCircle className="w-5 h-5" />
                     ) : (
-                      <X className="w-4 h-4" />
+                      <XCircle className="w-5 h-5" />
                     )}
                     {result.passed ? "Passed" : "Failed"}
                   </div>
