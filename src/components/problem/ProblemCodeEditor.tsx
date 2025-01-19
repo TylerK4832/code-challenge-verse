@@ -34,7 +34,7 @@ const ProblemCodeEditor = ({ code, onChange }: ProblemCodeEditorProps) => {
         .eq('problem_id', problemId)
         .eq('language', selectedLanguage.name === 'C++' ? 'cpp' : selectedLanguage.name.toLowerCase())
         .eq('user_id', user.id)
-        .maybeSingle(); // Changed from .single() to .maybeSingle()
+        .maybeSingle();
 
       if (error) {
         throw error;
@@ -66,11 +66,6 @@ const ProblemCodeEditor = ({ code, onChange }: ProblemCodeEditorProps) => {
 
       if (error) throw error;
       return data;
-    },
-    onSuccess: () => {
-      toast({
-        description: "Your solution has been saved",
-      });
     },
     onError: (error) => {
       console.error('Error saving solution:', error);
