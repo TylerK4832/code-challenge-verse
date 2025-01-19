@@ -34,9 +34,9 @@ const ProblemCodeEditor = ({ code, onChange }: ProblemCodeEditorProps) => {
         .eq('problem_id', problemId)
         .eq('language', selectedLanguage.name === 'C++' ? 'cpp' : selectedLanguage.name.toLowerCase())
         .eq('user_id', user.id)
-        .single();
+        .maybeSingle(); // Changed from .single() to .maybeSingle()
 
-      if (error && error.code !== 'PGRST116') { // PGRST116 is "not found" error
+      if (error) {
         throw error;
       }
 
