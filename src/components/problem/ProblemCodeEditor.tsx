@@ -8,6 +8,7 @@ import { RunButton } from "./RunButton";
 import { useCodeExecution } from "./useCodeExecution";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
+import { useMutation, useQuery } from "@tanstack/react-query";
 
 interface ProblemCodeEditorProps {
   code: string;
@@ -20,8 +21,79 @@ const ProblemCodeEditor = ({ code, onChange }: ProblemCodeEditorProps) => {
   const { isRunning, executionResult, activeTab, setActiveTab, executeCode, resetExecution } = useCodeExecution();
   const { toast } = useToast();
 
+  // Fetch user's saved solution
+  const { data: savedSolution, isLoading: isLoadingSolution } = useQuery({
+    queryKey: ['userSolution', problemId, selectedLanguage.name],
+    queryFn: async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return null;
+
+      const { data, error } = await supabase
+        .from('user_solutions')
+        .select('code')
+        .eq('problem_id', problemId)
+        .eq('language', selectedLanguage.name === 'C++' ? 'cpp' : selectedLanguage.name.toLowerCase())
+        .eq('user_id', user.id)
+        .single();
+
+      if (error && error.code !== 'PGRST116') { // PGRST116 is "not found" error
+        throw error;
+      }
+
+      return data;
+    }
+  });
+
+  // Save solution mutation
+  const saveSolution = useMutation({
+    mutationFn: async (newCode: string) => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('User not authenticated');
+
+      const dbLanguage = selectedLanguage.name === 'C++' ? 'cpp' : selectedLanguage.name.toLowerCase();
+
+      const { data, error } = await supabase
+        .from('user_solutions')
+        .upsert({
+          user_id: user.id,
+          problem_id: problemId,
+          language: dbLanguage,
+          code: newCode,
+          updated_at: new Date().toISOString()
+        }, {
+          onConflict: 'user_id,problem_id,language'
+        });
+
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      toast({
+        description: "Your solution has been saved",
+      });
+    },
+    onError: (error) => {
+      console.error('Error saving solution:', error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to save your solution",
+      });
+    }
+  });
+
+  // Load placeholder code when language changes
   useEffect(() => {
     const fetchPlaceholderCode = async () => {
+      if (isLoadingSolution) return;
+
+      // If there's a saved solution, use it
+      if (savedSolution) {
+        onChange(savedSolution.code);
+        return;
+      }
+
+      // Otherwise, fetch placeholder code
       const dbLanguage = selectedLanguage.name === 'C++' ? 'C++' : selectedLanguage.name;
       
       const { data, error } = await supabase
@@ -47,7 +119,18 @@ const ProblemCodeEditor = ({ code, onChange }: ProblemCodeEditorProps) => {
     };
 
     fetchPlaceholderCode();
-  }, [problemId, selectedLanguage, onChange, toast]);
+  }, [problemId, selectedLanguage, onChange, toast, savedSolution, isLoadingSolution]);
+
+  // Auto-save when code changes
+  useEffect(() => {
+    const debounceTimer = setTimeout(() => {
+      if (code && code.trim() !== '') {
+        saveSolution.mutate(code);
+      }
+    }, 1000);
+
+    return () => clearTimeout(debounceTimer);
+  }, [code]);
 
   const handleLanguageChange = (languageId: string) => {
     const language = LANGUAGES.find(lang => lang.id === parseInt(languageId));
@@ -61,6 +144,14 @@ const ProblemCodeEditor = ({ code, onChange }: ProblemCodeEditorProps) => {
   const handleRunCode = () => {
     executeCode(code, selectedLanguage);
   };
+
+  if (isLoadingSolution) {
+    return (
+      <div className="flex items-center justify-center h-full">
+        <div className="animate-pulse text-muted-foreground">Loading...</div>
+      </div>
+    );
+  }
 
   return (
     <div className="h-full flex flex-col">
