@@ -69,18 +69,18 @@ const TestCases = ({ executionResult, activeTab, onTabChange, isLoading, selecte
       />
 
       <Tabs value={activeTab} onValueChange={onTabChange} className="h-full">
-        <div className="px-3 py-2 border-b border-border">
-          <TabsList className="h-8">
-            <TabsTrigger value="testcases" className="text-sm">Test Cases</TabsTrigger>
-            <TabsTrigger value="result" className="text-sm">Result</TabsTrigger>
+        <div className="p-4 border-b border-border">
+          <TabsList className="bg-secondary">
+            <TabsTrigger value="testcases">Test Cases</TabsTrigger>
+            <TabsTrigger value="result">Result</TabsTrigger>
           </TabsList>
         </div>
 
-        <TabsContent value="testcases" className="h-[calc(100%-3rem)]">
+        <TabsContent value="testcases" className="h-[calc(100%-4rem)]">
           <TestCasesList testCases={testCases} />
         </TabsContent>
 
-        <TabsContent value="result" className="h-[calc(100%-3rem)]">
+        <TabsContent value="result" className="h-[calc(100%-4rem)]">
           <ResultsList 
             executionResult={executionResult} 
             isLoading={isLoading || false} 
