@@ -92,7 +92,7 @@ export const ResultsList = ({ executionResult, isLoading }: ResultsListProps) =>
               {executionResult.stderr && (
                 <div className="border border-border rounded-lg p-4 space-y-2">
                   <h3 className="font-medium text-sm text-red-500">Error Output</h3>
-                  <pre className="bg-secondary/50 p-3 rounded-md text-sm font-mono text-red-500">
+                  <pre className="bg-secondary/50 p-3 rounded-md text-sm font-mono text-red-500 whitespace-pre-wrap break-words">
                     <code>{executionResult.stderr}</code>
                   </pre>
                 </div>
@@ -101,7 +101,7 @@ export const ResultsList = ({ executionResult, isLoading }: ResultsListProps) =>
               {executionResult.compile_output && (
                 <div className="border border-border rounded-lg p-4 space-y-2">
                   <h3 className="font-medium text-sm text-muted-foreground">Compilation Output</h3>
-                  <pre className="bg-secondary/50 p-3 rounded-md text-sm font-mono">
+                  <pre className="bg-secondary/50 p-3 rounded-md text-sm font-mono whitespace-pre-wrap break-words">
                     <code>{executionResult.compile_output}</code>
                   </pre>
                 </div>
@@ -110,7 +110,7 @@ export const ResultsList = ({ executionResult, isLoading }: ResultsListProps) =>
               {executionResult.message && (
                 <div className="border border-border rounded-lg p-4 space-y-2">
                   <h3 className="font-medium text-sm text-muted-foreground">Additional Information</h3>
-                  <pre className="bg-secondary/50 p-3 rounded-md text-sm font-mono">
+                  <pre className="bg-secondary/50 p-3 rounded-md text-sm font-mono whitespace-pre-wrap break-words">
                     <code>{executionResult.message}</code>
                   </pre>
                 </div>
@@ -143,12 +143,12 @@ export const ResultsList = ({ executionResult, isLoading }: ResultsListProps) =>
                     </div>
                   </div>
                   
-                  <pre className="bg-secondary/50 p-3 rounded-md text-sm font-mono whitespace-pre">
+                  <pre className="bg-secondary/50 p-3 rounded-md text-sm font-mono whitespace-pre-wrap break-words">
                     <code>{result.code}</code>
                   </pre>
                   
                   {!result.passed && result.error && (
-                    <pre className="bg-secondary/50 p-3 rounded-md text-sm font-mono text-red-500 whitespace-pre">
+                    <pre className="bg-secondary/50 p-3 rounded-md text-sm font-mono text-red-500 whitespace-pre-wrap break-words">
                       <code>{result.error}</code>
                     </pre>
                   )}
@@ -156,7 +156,7 @@ export const ResultsList = ({ executionResult, isLoading }: ResultsListProps) =>
                   {result.stdout && (
                     <div className="space-y-2">
                       <h4 className="text-sm font-medium text-muted-foreground">Console Output</h4>
-                      <pre className="bg-secondary/50 p-3 rounded-md text-sm font-mono">
+                      <pre className="bg-secondary/50 p-3 rounded-md text-sm font-mono whitespace-pre-wrap break-words">
                         <code>{result.stdout}</code>
                       </pre>
                     </div>

@@ -33,7 +33,7 @@ export const ConsoleOutput = ({ executionResult, isLoading }: ConsoleOutputProps
             {executionResult.stdout && (
               <div className="space-y-2">
                 <h3 className="font-medium">Console Output:</h3>
-                <pre className="bg-secondary p-2 rounded-md">
+                <pre className="bg-secondary p-2 rounded-md whitespace-pre-wrap break-words">
                   <code>{executionResult.stdout}</code>
                 </pre>
               </div>
@@ -41,7 +41,7 @@ export const ConsoleOutput = ({ executionResult, isLoading }: ConsoleOutputProps
             {executionResult.stderr && (
               <div className="space-y-2">
                 <h3 className="font-medium text-red-500">Error Output:</h3>
-                <pre className="bg-secondary p-2 rounded-md text-red-500">
+                <pre className="bg-secondary p-2 rounded-md text-red-500 whitespace-pre-wrap break-words">
                   <code>{executionResult.stderr}</code>
                 </pre>
               </div>
@@ -49,7 +49,7 @@ export const ConsoleOutput = ({ executionResult, isLoading }: ConsoleOutputProps
             {executionResult.compile_output && (
               <div className="space-y-2">
                 <h3 className="font-medium">Compilation Output:</h3>
-                <pre className="bg-secondary p-2 rounded-md">
+                <pre className="bg-secondary p-2 rounded-md whitespace-pre-wrap break-words">
                   <code>{executionResult.compile_output}</code>
                 </pre>
               </div>
@@ -57,7 +57,7 @@ export const ConsoleOutput = ({ executionResult, isLoading }: ConsoleOutputProps
             {executionResult.message && (
               <div className="space-y-2">
                 <h3 className="font-medium">Additional Information:</h3>
-                <pre className="bg-secondary p-2 rounded-md">
+                <pre className="bg-secondary p-2 rounded-md whitespace-pre-wrap break-words">
                   <code>{executionResult.message}</code>
                 </pre>
               </div>
