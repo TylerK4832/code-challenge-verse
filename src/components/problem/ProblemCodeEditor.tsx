@@ -150,7 +150,7 @@ const ProblemCodeEditor = ({ code, onChange }: ProblemCodeEditorProps) => {
 
   return (
     <div className="h-full flex flex-col">
-      <div className="shrink-0 p-4 border-b border-border flex justify-between items-center">
+      <div className="shrink-0 px-3 py-2 border-b border-border flex justify-between items-center">
         <LanguageSelector
           selectedLanguage={selectedLanguage}
           onLanguageChange={handleLanguageChange}
@@ -162,7 +162,7 @@ const ProblemCodeEditor = ({ code, onChange }: ProblemCodeEditorProps) => {
       </div>
       <div className="flex-1 min-h-0">
         <ResizablePanelGroup direction="vertical">
-          <ResizablePanel defaultSize={70} minSize={30}>
+          <ResizablePanel defaultSize={75} minSize={40}>
             <CodeEditor 
               code={code} 
               onChange={onChange} 
@@ -170,9 +170,9 @@ const ProblemCodeEditor = ({ code, onChange }: ProblemCodeEditorProps) => {
             />
           </ResizablePanel>
           
-          <ResizableHandle withHandle />
+          <ResizableHandle className="h-1" />
           
-          <ResizablePanel defaultSize={30} minSize={20}>
+          <ResizablePanel defaultSize={25} minSize={15}>
             <TestCases 
               executionResult={executionResult} 
               activeTab={activeTab}
