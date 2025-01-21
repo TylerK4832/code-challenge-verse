@@ -90,6 +90,10 @@ const ProblemCodeEditor = ({ code, onChange }: ProblemCodeEditorProps) => {
 
       // Otherwise, fetch placeholder code
       const dbLanguage = selectedLanguage.name === 'C++' ? 'C++' : selectedLanguage.name;
+      console.log('Fetching placeholder code for:', {
+        problemId,
+        language: dbLanguage
+      });
       
       const { data, error } = await supabase
         .from('placeholder_code')
@@ -97,6 +101,8 @@ const ProblemCodeEditor = ({ code, onChange }: ProblemCodeEditorProps) => {
         .eq('problem_id', problemId)
         .eq('language', dbLanguage)
         .single();
+
+      console.log('Placeholder code result:', { data, error });
 
       if (error) {
         console.error('Error fetching placeholder code:', error);
