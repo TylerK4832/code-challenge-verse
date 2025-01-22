@@ -8,7 +8,7 @@ import { RunButton } from "./RunButton";
 import { useCodeExecution } from "./useCodeExecution";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 
 interface ProblemCodeEditorProps {
   code: string;
@@ -20,9 +20,6 @@ const ProblemCodeEditor = ({ code, onChange }: ProblemCodeEditorProps) => {
   const [selectedLanguage, setSelectedLanguage] = useState(LANGUAGES[0]);
   const { isRunning, executionResult, activeTab, setActiveTab, executeCode, resetExecution } = useCodeExecution();
   const { toast } = useToast();
-  const queryClient = useQueryClient();
-
-  console.log('Current problem and language:', { problemId, language: selectedLanguage.name });
 
   // Fetch user's saved solution
   const { data: savedSolution, isLoading: isLoadingSolution } = useQuery({
@@ -43,37 +40,8 @@ const ProblemCodeEditor = ({ code, onChange }: ProblemCodeEditorProps) => {
         throw error;
       }
 
-      console.log('Saved solution result:', { data, error });
       return data;
     }
-  });
-
-  // Fetch placeholder code
-  const { data: placeholderCode, isLoading: isLoadingPlaceholder } = useQuery({
-    queryKey: ['placeholderCode', problemId, selectedLanguage.name],
-    queryFn: async () => {
-      console.log('Fetching placeholder code for:', {
-        problemId,
-        language: selectedLanguage.name
-      });
-
-      const { data, error } = await supabase
-        .from('placeholder_code')
-        .select('code')
-        .eq('problem_id', problemId)
-        .eq('language', selectedLanguage.name)
-        .single();
-
-      console.log('Placeholder code query result:', { data, error });
-
-      if (error) {
-        console.error('Error fetching placeholder code:', error);
-        return null;
-      }
-
-      return data;
-    },
-    retry: false
   });
 
   // Save solution mutation
@@ -109,32 +77,44 @@ const ProblemCodeEditor = ({ code, onChange }: ProblemCodeEditorProps) => {
     }
   });
 
-  // Load code when language changes or when data is fetched
+  // Load placeholder code when language changes
   useEffect(() => {
-    console.log('Effect triggered with:', {
-      isLoadingSolution,
-      isLoadingPlaceholder,
-      hasSavedSolution: !!savedSolution,
-      hasPlaceholderCode: !!placeholderCode
-    });
+    const fetchPlaceholderCode = async () => {
+      if (isLoadingSolution) return;
 
-    if (isLoadingSolution || isLoadingPlaceholder) return;
+      // If there's a saved solution, use it
+      if (savedSolution) {
+        onChange(savedSolution.code);
+        return;
+      }
 
-    // If there's a saved solution, use it
-    if (savedSolution) {
-      console.log('Using saved solution:', savedSolution.code);
-      onChange(savedSolution.code);
-      return;
-    }
+      // Otherwise, fetch placeholder code
+      const dbLanguage = selectedLanguage.name === 'C++' ? 'C++' : selectedLanguage.name;
+      
+      const { data, error } = await supabase
+        .from('placeholder_code')
+        .select('code')
+        .eq('problem_id', problemId)
+        .eq('language', dbLanguage)
+        .single();
 
-    // Otherwise, use placeholder code if available
-    if (placeholderCode) {
-      console.log('Using placeholder code:', placeholderCode.code);
-      onChange(placeholderCode.code);
-    } else {
-      console.log('No placeholder code available');
-    }
-  }, [savedSolution, placeholderCode, isLoadingSolution, isLoadingPlaceholder, onChange]);
+      if (error) {
+        console.error('Error fetching placeholder code:', error);
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "Failed to load placeholder code",
+        });
+        return;
+      }
+
+      if (data) {
+        onChange(data.code);
+      }
+    };
+
+    fetchPlaceholderCode();
+  }, [problemId, selectedLanguage, onChange, toast, savedSolution, isLoadingSolution]);
 
   // Auto-save when code changes
   useEffect(() => {
@@ -150,13 +130,9 @@ const ProblemCodeEditor = ({ code, onChange }: ProblemCodeEditorProps) => {
   const handleLanguageChange = (languageId: string) => {
     const language = LANGUAGES.find(lang => lang.id === parseInt(languageId));
     if (language) {
-      console.log('Language changed to:', language.name);
       setSelectedLanguage(language);
       resetExecution();
       setActiveTab('testcases');
-      // Invalidate both queries when language changes
-      queryClient.invalidateQueries({ queryKey: ['userSolution', problemId, language.name] });
-      queryClient.invalidateQueries({ queryKey: ['placeholderCode', problemId, language.name] });
     }
   };
 
@@ -164,7 +140,7 @@ const ProblemCodeEditor = ({ code, onChange }: ProblemCodeEditorProps) => {
     executeCode(code, selectedLanguage);
   };
 
-  if (isLoadingSolution || isLoadingPlaceholder) {
+  if (isLoadingSolution) {
     return (
       <div className="flex items-center justify-center h-full">
         <div className="animate-pulse text-muted-foreground">Loading...</div>
