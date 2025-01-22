@@ -45,6 +45,26 @@ const ProblemCodeEditor = ({ code, onChange }: ProblemCodeEditorProps) => {
     }
   });
 
+  // Fetch placeholder code
+  const { data: placeholderCode } = useQuery({
+    queryKey: ['placeholderCode', problemId, selectedLanguage.name],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('placeholder_code')
+        .select('code')
+        .eq('problem_id', problemId)
+        .eq('language', selectedLanguage.name)
+        .single();
+
+      if (error) {
+        console.error('Error fetching placeholder code:', error);
+        return null;
+      }
+
+      return data;
+    }
+  });
+
   // Save solution mutation
   const saveSolution = useMutation({
     mutationFn: async (newCode: string) => {
@@ -78,50 +98,21 @@ const ProblemCodeEditor = ({ code, onChange }: ProblemCodeEditorProps) => {
     }
   });
 
-  // Load placeholder code when language changes
+  // Load code when language changes or when data is fetched
   useEffect(() => {
-    const fetchPlaceholderCode = async () => {
-      if (isLoadingSolution) return;
+    if (isLoadingSolution) return;
 
-      // If there's a saved solution, use it
-      if (savedSolution) {
-        onChange(savedSolution.code);
-        return;
-      }
+    // If there's a saved solution, use it
+    if (savedSolution) {
+      onChange(savedSolution.code);
+      return;
+    }
 
-      // Otherwise, fetch placeholder code
-      const dbLanguage = selectedLanguage.name;
-      console.log('Fetching placeholder code for:', {
-        problemId,
-        language: dbLanguage
-      });
-      
-      const { data, error } = await supabase
-        .from('placeholder_code')
-        .select('code')
-        .eq('problem_id', problemId)
-        .eq('language', dbLanguage)
-        .single();
-
-      console.log('Placeholder code result:', { data, error });
-
-      if (error) {
-        console.error('Error fetching placeholder code:', error);
-        toast({
-          variant: "destructive",
-          title: "Error",
-          description: "Failed to load placeholder code",
-        });
-        return;
-      }
-
-      if (data) {
-        onChange(data.code);
-      }
-    };
-
-    fetchPlaceholderCode();
-  }, [problemId, selectedLanguage, onChange, toast, savedSolution, isLoadingSolution]);
+    // Otherwise, use placeholder code if available
+    if (placeholderCode) {
+      onChange(placeholderCode.code);
+    }
+  }, [savedSolution, placeholderCode, isLoadingSolution, onChange]);
 
   // Auto-save when code changes
   useEffect(() => {
@@ -140,8 +131,9 @@ const ProblemCodeEditor = ({ code, onChange }: ProblemCodeEditorProps) => {
       setSelectedLanguage(language);
       resetExecution();
       setActiveTab('testcases');
-      // Invalidate the placeholder code cache when language changes
+      // Invalidate both queries when language changes
       queryClient.invalidateQueries({ queryKey: ['userSolution', problemId, language.name] });
+      queryClient.invalidateQueries({ queryKey: ['placeholderCode', problemId, language.name] });
     }
   };
 
