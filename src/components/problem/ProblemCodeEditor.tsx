@@ -8,7 +8,7 @@ import { RunButton } from "./RunButton";
 import { useCodeExecution } from "./useCodeExecution";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 interface ProblemCodeEditorProps {
   code: string;
@@ -20,6 +20,7 @@ const ProblemCodeEditor = ({ code, onChange }: ProblemCodeEditorProps) => {
   const [selectedLanguage, setSelectedLanguage] = useState(LANGUAGES[0]);
   const { isRunning, executionResult, activeTab, setActiveTab, executeCode, resetExecution } = useCodeExecution();
   const { toast } = useToast();
+  const queryClient = useQueryClient();
 
   // Fetch user's saved solution
   const { data: savedSolution, isLoading: isLoadingSolution } = useQuery({
@@ -89,7 +90,7 @@ const ProblemCodeEditor = ({ code, onChange }: ProblemCodeEditorProps) => {
       }
 
       // Otherwise, fetch placeholder code
-      const dbLanguage = selectedLanguage.name === 'C++' ? 'C++' : selectedLanguage.name;
+      const dbLanguage = selectedLanguage.name;
       console.log('Fetching placeholder code for:', {
         problemId,
         language: dbLanguage
@@ -139,6 +140,8 @@ const ProblemCodeEditor = ({ code, onChange }: ProblemCodeEditorProps) => {
       setSelectedLanguage(language);
       resetExecution();
       setActiveTab('testcases');
+      // Invalidate the placeholder code cache when language changes
+      queryClient.invalidateQueries({ queryKey: ['userSolution', problemId, language.name] });
     }
   };
 
