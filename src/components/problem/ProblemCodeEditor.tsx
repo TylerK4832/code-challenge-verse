@@ -22,6 +22,8 @@ const ProblemCodeEditor = ({ code, onChange }: ProblemCodeEditorProps) => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
+  console.log('Current problem and language:', { problemId, language: selectedLanguage.name });
+
   // Fetch user's saved solution
   const { data: savedSolution, isLoading: isLoadingSolution } = useQuery({
     queryKey: ['userSolution', problemId, selectedLanguage.name],
@@ -41,14 +43,20 @@ const ProblemCodeEditor = ({ code, onChange }: ProblemCodeEditorProps) => {
         throw error;
       }
 
+      console.log('Saved solution result:', { data, error });
       return data;
     }
   });
 
   // Fetch placeholder code
-  const { data: placeholderCode } = useQuery({
+  const { data: placeholderCode, isLoading: isLoadingPlaceholder } = useQuery({
     queryKey: ['placeholderCode', problemId, selectedLanguage.name],
     queryFn: async () => {
+      console.log('Fetching placeholder code for:', {
+        problemId,
+        language: selectedLanguage.name
+      });
+
       const { data, error } = await supabase
         .from('placeholder_code')
         .select('code')
@@ -56,13 +64,16 @@ const ProblemCodeEditor = ({ code, onChange }: ProblemCodeEditorProps) => {
         .eq('language', selectedLanguage.name)
         .single();
 
+      console.log('Placeholder code query result:', { data, error });
+
       if (error) {
         console.error('Error fetching placeholder code:', error);
         return null;
       }
 
       return data;
-    }
+    },
+    retry: false
   });
 
   // Save solution mutation
@@ -100,19 +111,30 @@ const ProblemCodeEditor = ({ code, onChange }: ProblemCodeEditorProps) => {
 
   // Load code when language changes or when data is fetched
   useEffect(() => {
-    if (isLoadingSolution) return;
+    console.log('Effect triggered with:', {
+      isLoadingSolution,
+      isLoadingPlaceholder,
+      hasSavedSolution: !!savedSolution,
+      hasPlaceholderCode: !!placeholderCode
+    });
+
+    if (isLoadingSolution || isLoadingPlaceholder) return;
 
     // If there's a saved solution, use it
     if (savedSolution) {
+      console.log('Using saved solution:', savedSolution.code);
       onChange(savedSolution.code);
       return;
     }
 
     // Otherwise, use placeholder code if available
     if (placeholderCode) {
+      console.log('Using placeholder code:', placeholderCode.code);
       onChange(placeholderCode.code);
+    } else {
+      console.log('No placeholder code available');
     }
-  }, [savedSolution, placeholderCode, isLoadingSolution, onChange]);
+  }, [savedSolution, placeholderCode, isLoadingSolution, isLoadingPlaceholder, onChange]);
 
   // Auto-save when code changes
   useEffect(() => {
@@ -128,6 +150,7 @@ const ProblemCodeEditor = ({ code, onChange }: ProblemCodeEditorProps) => {
   const handleLanguageChange = (languageId: string) => {
     const language = LANGUAGES.find(lang => lang.id === parseInt(languageId));
     if (language) {
+      console.log('Language changed to:', language.name);
       setSelectedLanguage(language);
       resetExecution();
       setActiveTab('testcases');
@@ -141,7 +164,7 @@ const ProblemCodeEditor = ({ code, onChange }: ProblemCodeEditorProps) => {
     executeCode(code, selectedLanguage);
   };
 
-  if (isLoadingSolution) {
+  if (isLoadingSolution || isLoadingPlaceholder) {
     return (
       <div className="flex items-center justify-center h-full">
         <div className="animate-pulse text-muted-foreground">Loading...</div>
