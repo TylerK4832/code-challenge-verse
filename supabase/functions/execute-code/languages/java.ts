@@ -85,14 +85,15 @@ class SimpleJsonUtil {
 ${userCode}
 
 public class Main {
-    public static void main(String[] args) {
 
-        // Assertion utility
-        public static void assertEquals(Object output, Object expected) {
-            if (!java.util.Objects.equals(output, expected)) {
-                throw new AssertionError("Expected " + expected + " but got " + output);
-            }
+    // Assertion utility
+    public static void assertEquals(Object output, Object expected) {
+        if (!java.util.Objects.equals(output, expected)) {
+            throw new AssertionError("Expected " + expected + " but got " + output);
         }
+    }
+
+    public static void main(String[] args) {
 
         List<Map<String, Object>> results = new ArrayList<>();
         List<Map<String, Object>> logs = new ArrayList<>();
