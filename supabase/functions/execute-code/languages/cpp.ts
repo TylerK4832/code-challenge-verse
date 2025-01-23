@@ -20,7 +20,6 @@ ${code}
             }
             testLogs.push_back({${index}, log});
         }
-        Printer::compareAndPrint(output, expected);
         std::map<std::string, std::string> result;
         result["passed"] = "true";
         results.push_back(result);
@@ -157,7 +156,7 @@ struct is_iterable<std::string> : false_type {};
 class Printer {
 public:
     template <typename T>
-    static void compareAndPrint(const T& output, const T& expected) {
+    static void assertEquals(const T& output, const T& expected) {
         if (output != expected) {
             throw runtime_error("Expected " + stringify(expected) + " but got " + stringify(output));
         }
