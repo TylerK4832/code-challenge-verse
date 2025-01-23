@@ -1,7 +1,6 @@
 import { Badge } from '@/components/ui/badge';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 
 const ParkingLotDescription = () => {
@@ -41,32 +40,36 @@ const ParkingLotDescription = () => {
       </div>
 
       <div className="prose prose-invert max-w-none">
-        <Card className="bg-secondary/50">
-          <CardContent className="pt-6">
-            <h3 className="text-lg font-semibold mb-2">Overview</h3>
-            <p className="text-muted-foreground">
-              Design a parking system for a parking lot with three types of parking spaces: big, medium, and small.
-              The system should efficiently manage a fixed number of slots for each size and handle parking requests based on vehicle size.
-            </p>
-          </CardContent>
-        </Card>
+        <div>
+          <h3 className="text-lg font-semibold mb-2">Overview</h3>
+          <p className="text-muted-foreground">
+            Design a parking system for a parking lot with three types of parking spaces: big, medium, and small.
+            The system should efficiently manage a fixed number of slots for each size and handle parking requests based on vehicle size.
+          </p>
+        </div>
 
         <div className="mt-8">
-          <h3 className="text-lg font-semibold mb-4">Requirements</h3>
-          <ul className="space-y-2 text-muted-foreground">
-            <li>Initialize the parking system with a fixed number of slots for each size (big, medium, small)</li>
-            <li>Handle parking requests based on car size (represented by carType: 1 for big, 2 for medium, 3 for small)</li>
-            <li>Cars can only park in spaces matching their size</li>
-            <li>Return true if parking is successful, false if no space is available</li>
-          </ul>
+          <h3 className="text-lg font-semibold mb-4">Methods</h3>
+          <div className="space-y-4 text-muted-foreground">
+            <div>
+              <code className="text-sm">ParkingSystem(int big, int medium, int small)</code>
+              <p className="mt-1">
+                Initializes object of the ParkingSystem class. The number of slots for each parking space are given as part of the constructor.
+              </p>
+            </div>
+            <div>
+              <code className="text-sm">bool addCar(int carType)</code>
+              <p className="mt-1">
+                Checks whether there is a parking space of carType for the car that wants to get into the parking lot. carType can be of three kinds: big, medium, or small, which are represented by 1, 2, and 3 respectively. A car can only park in a parking space of its carType. If there is no space available, return false, else park the car in that size space and return true.
+              </p>
+            </div>
+          </div>
         </div>
 
         <div className="mt-8">
           <h3 className="text-lg font-semibold mb-4">Example</h3>
-          <Card className="bg-secondary/50">
-            <CardContent className="pt-6">
-              <pre className="bg-secondary p-4 rounded-md whitespace-pre-wrap break-words overflow-x-auto">
-                <code>
+          <pre className="bg-secondary p-4 rounded-md whitespace-pre-wrap break-words overflow-x-auto">
+            <code>
 {`// Initialize parking system with 2 big spots, 2 medium spots, and 1 small spot
 const parkingSystem = new ParkingSystem(2, 2, 1);
 
@@ -77,10 +80,8 @@ parkingSystem.addCar(1);  // returns true (parks another big car)
 parkingSystem.addCar(3);  // returns false (no small spots left)
 parkingSystem.addCar(2);  // returns true (parks another medium car)
 parkingSystem.addCar(2);  // returns false (no medium spots left)`}
-                </code>
-              </pre>
-            </CardContent>
-          </Card>
+            </code>
+          </pre>
         </div>
 
         <div className="mt-8">
