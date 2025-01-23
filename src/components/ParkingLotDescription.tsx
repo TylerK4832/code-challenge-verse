@@ -40,47 +40,48 @@ const ParkingLotDescription = () => {
 
       <div className="prose prose-invert max-w-none">
         <p>
-          Design and implement a parking lot system that can efficiently manage multiple levels of parking spaces for different types of vehicles.
-          The system should handle parking and retrieval of vehicles while maintaining optimal space utilization.
+          Design a parking system for a parking lot with three types of parking spaces: big, medium, and small.
+          The system should efficiently manage a fixed number of slots for each size and handle parking requests based on vehicle size.
         </p>
 
         <h3>Requirements:</h3>
         <ul>
-          <li>The parking lot should have multiple levels, each with multiple parking spots</li>
-          <li>The system should support different types of vehicles (Motorcycle, Car, Bus)</li>
-          <li>Each vehicle type requires different parking space sizes</li>
-          <li>The system should be able to find the nearest available parking spot for a given vehicle</li>
-          <li>Implement parking fee calculation based on duration of parking</li>
+          <li>Initialize the parking system with a fixed number of slots for each size (big, medium, small)</li>
+          <li>Handle parking requests based on car size (represented by carType: 1 for big, 2 for medium, 3 for small)</li>
+          <li>Cars can only park in spaces matching their size</li>
+          <li>Return true if parking is successful, false if no space is available</li>
         </ul>
 
         <h3>Example:</h3>
         <pre className="bg-secondary p-4 rounded-md whitespace-pre-wrap break-words overflow-auto">
           <code>
-{`Input: 
-parkingLot.parkVehicle(new Car("ABC-123"))
-parkingLot.parkVehicle(new Motorcycle("XYZ-789"))
-parkingLot.removeVehicle("ABC-123")
+{`Input:
+["ParkingSystem", "addCar", "addCar", "addCar", "addCar"]
+[[1, 1, 0], [1], [2], [3], [1]]
 
 Output:
-"Parked car ABC-123 on Level 1, Spot 3"
-"Parked motorcycle XYZ-789 on Level 1, Spot 1"
-"Vehicle ABC-123 removed. Fee: $15"`}
+[null, true, true, false, false]
+
+Explanation:
+ParkingSystem parkingSystem = new ParkingSystem(1, 1, 0);
+parkingSystem.addCar(1); // return true because there is 1 available big slot
+parkingSystem.addCar(2); // return true because there is 1 available medium slot
+parkingSystem.addCar(3); // return false because there is no available small slot
+parkingSystem.addCar(1); // return false because there is no available big slot`}
           </code>
         </pre>
 
         <h3>Constraints:</h3>
         <ul>
-          <li>1 ≤ number of levels ≤ 5</li>
-          <li>1 ≤ spots per level ≤ 100</li>
-          <li>Vehicle IDs are unique strings</li>
-          <li>Parking duration is measured in hours</li>
-          <li>The system should handle concurrent parking operations efficiently</li>
+          <li>0 ≤ big, medium, small ≤ 1000</li>
+          <li>carType is 1, 2, or 3</li>
+          <li>At most 1000 calls will be made to addCar</li>
         </ul>
 
         <h3>Note:</h3>
         <p>
-          Focus on object-oriented design principles and ensure your implementation is extensible for future requirements.
-          Consider edge cases such as full parking lots, invalid vehicle types, and error handling.
+          Focus on implementing an efficient solution that tracks available spaces for each size category.
+          Consider edge cases such as attempting to park when no spaces are available or invalid car types.
         </p>
       </div>
     </div>
