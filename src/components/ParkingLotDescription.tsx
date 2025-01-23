@@ -58,14 +58,13 @@ const ParkingLotDescription = () => {
 {`// Initialize parking system with 2 big spots, 2 medium spots, and 1 small spot
 const parkingSystem = new ParkingSystem(2, 2, 1);
 
-// Test parking different car types
-console.log(parkingSystem.addCar(1));  // returns true (parks a big car)
-console.log(parkingSystem.addCar(2));  // returns true (parks a medium car)
-console.log(parkingSystem.addCar(3));  // returns true (parks a small car)
-console.log(parkingSystem.addCar(1));  // returns true (parks another big car)
-console.log(parkingSystem.addCar(3));  // returns false (no small spots left)
-console.log(parkingSystem.addCar(2));  // returns true (parks another medium car)
-console.log(parkingSystem.addCar(2));  // returns false (no medium spots left)`}
+parkingSystem.addCar(1);  // returns true (parks a big car)
+parkingSystem.addCar(2);  // returns true (parks a medium car)
+parkingSystem.addCar(3);  // returns true (parks a small car)
+parkingSystem.addCar(1);  // returns true (parks another big car)
+parkingSystem.addCar(3);  // returns false (no small spots left)
+parkingSystem.addCar(2);  // returns true (parks another medium car)
+parkingSystem.addCar(2);  // returns false (no medium spots left)`}
           </code>
         </pre>
 
