@@ -55,19 +55,17 @@ const ParkingLotDescription = () => {
         <h3>Example:</h3>
         <pre className="bg-secondary p-4 rounded-md whitespace-pre-wrap break-words overflow-auto">
           <code>
-{`Input:
-["ParkingSystem", "addCar", "addCar", "addCar", "addCar"]
-[[1, 1, 0], [1], [2], [3], [1]]
+{`// Initialize parking system with 2 big spots, 2 medium spots, and 1 small spot
+const parkingSystem = new ParkingSystem(2, 2, 1);
 
-Output:
-[null, true, true, false, false]
-
-Explanation:
-ParkingSystem parkingSystem = new ParkingSystem(1, 1, 0);
-parkingSystem.addCar(1); // return true because there is 1 available big slot
-parkingSystem.addCar(2); // return true because there is 1 available medium slot
-parkingSystem.addCar(3); // return false because there is no available small slot
-parkingSystem.addCar(1); // return false because there is no available big slot`}
+// Test parking different car types
+console.log(parkingSystem.addCar(1));  // returns true (parks a big car)
+console.log(parkingSystem.addCar(2));  // returns true (parks a medium car)
+console.log(parkingSystem.addCar(3));  // returns true (parks a small car)
+console.log(parkingSystem.addCar(1));  // returns true (parks another big car)
+console.log(parkingSystem.addCar(3));  // returns false (no small spots left)
+console.log(parkingSystem.addCar(2));  // returns true (parks another medium car)
+console.log(parkingSystem.addCar(2));  // returns false (no medium spots left)`}
           </code>
         </pre>
 
