@@ -86,6 +86,14 @@ ${userCode}
 
 public class Main {
     public static void main(String[] args) {
+
+        // Assertion utility
+        public static void assertEquals(Object output, Object expected) {
+            if (!java.util.Objects.equals(output, expected)) {
+                throw new AssertionError("Expected " + expected + " but got " + output);
+            }
+        }
+
         List<Map<String, Object>> results = new ArrayList<>();
         List<Map<String, Object>> logs = new ArrayList<>();
         int currentTestIndex = -1;
