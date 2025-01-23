@@ -48,6 +48,9 @@ def run_tests():
     # Replace built-in print with our custom version
     globals()['print'] = custom_print
 
+    def assertEquals(output, expected):
+        assert output == expected, f"Expected {expected} but got {output}"
+
     # Inject user code
 ${indentCode(userCode, 4)}
 
