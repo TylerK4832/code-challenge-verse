@@ -7,11 +7,11 @@ import {
 } from "@/components/ui/select";
 
 export const LANGUAGES = [
-  { id: 63, name: 'JavaScript' },
-  { id: 71, name: 'Python' },
+  { id: 54, name: 'C++' },
   { id: 62, name: 'Java' },
-  { id: 54, name: 'C++' }
-];
+  { id: 63, name: 'JavaScript' },
+  { id: 71, name: 'Python' }
+].sort((a, b) => a.name.localeCompare(b.name));
 
 interface LanguageSelectorProps {
   selectedLanguage: typeof LANGUAGES[0];

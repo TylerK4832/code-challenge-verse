@@ -1,11 +1,41 @@
 import { Badge } from '@/components/ui/badge';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
 
 const ProblemDescription = () => {
+  const { data: problem, isLoading } = useQuery({
+    queryKey: ['problem', 'two-sum'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('problems')
+        .select('title, difficulty')
+        .eq('id', 'two-sum')
+        .single();
+
+      if (error) throw error;
+      return data;
+    }
+  });
+
+  if (isLoading) {
+    return (
+      <div className="p-6 animate-pulse">
+        <div className="h-8 bg-muted rounded w-48 mb-4"></div>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">1. Two Sum</h1>
-        <Badge className="bg-[#ffc01e] text-black">Medium</Badge>
+        <h1 className="text-2xl font-bold">{problem?.title}</h1>
+        <Badge className={`${
+          problem?.difficulty === 'Easy' ? 'bg-green-500' :
+          problem?.difficulty === 'Medium' ? 'bg-[#ffc01e] text-black' :
+          'bg-red-500'
+        }`}>
+          {problem?.difficulty}
+        </Badge>
       </div>
 
       <div className="prose prose-invert max-w-none">
