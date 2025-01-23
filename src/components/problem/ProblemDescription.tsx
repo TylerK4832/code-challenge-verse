@@ -1,10 +1,9 @@
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
 import TwoSumDescription from "@/components/TwoSumDescription";
 import AddTwoNumbersDescription from "@/components/AddTwoNumbersDescription";
 import LongestSubstringDescription from "@/components/LongestSubstringDescription";
 import MedianSortedArraysDescription from "@/components/MedianSortedArraysDescription";
+import ParkingLotDescription from "@/components/ParkingLotDescription";
 
 interface ProblemDescriptionProps {
   problemId: string;
@@ -21,6 +20,8 @@ const ProblemDescription = ({ problemId }: ProblemDescriptionProps) => {
         return <LongestSubstringDescription />;
       case 'median-sorted-arrays':
         return <MedianSortedArraysDescription />;
+      case 'parking-lot':
+        return <ParkingLotDescription />;
       default:
         return <div>Problem not found</div>;
     }
