@@ -46,11 +46,14 @@ export const javascriptWrapper: LanguageWrapper = {
     // Inject user code
     ${userCode}
 
+    function assertEquals(output, expected) {
+      assert.deepStrictEqual(output, expected, \`Expected \${JSON.stringify(expected)} but got \${JSON.stringify(output)}\`);
+    }
+
     (async function runTests() {
       let results = [];
 
       ${formatTestCodeList(testCodeList)}
-
 
       // All tests done, reset currentTestIndex
       currentTestIndex = -1;
