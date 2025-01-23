@@ -92,14 +92,6 @@ parkingSystem.addCar(2);  // returns false (no medium spots left)`}
             <li>At most 1000 calls will be made to addCar</li>
           </ul>
         </div>
-
-        <div className="mt-8">
-          <Separator className="my-4" />
-          <p className="text-sm text-muted-foreground italic">
-            Note: Focus on implementing an efficient solution that tracks available spaces for each size category.
-            Consider edge cases such as attempting to park when no spaces are available or invalid car types.
-          </p>
-        </div>
       </div>
     </div>
   );
