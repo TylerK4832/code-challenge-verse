@@ -1,3 +1,4 @@
+
 import { useParams } from 'react-router-dom';
 import { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -27,6 +28,16 @@ const Problem = () => {
       case 'median-sorted-arrays':
         return `function findMedianSortedArrays(nums1, nums2) {
   // Write your solution here
+}`;
+      case 'parking-lot':
+        return `class ParkingSystem {
+  constructor(big, medium, small) {
+    // Write your solution here
+  }
+    
+  addCar(carType) {
+    // Write your solution here
+  }
 }`;
       default:
         return '// Write your solution here';
