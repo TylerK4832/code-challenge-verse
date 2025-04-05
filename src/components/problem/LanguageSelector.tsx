@@ -1,3 +1,4 @@
+
 import {
   Select,
   SelectContent,
@@ -7,11 +8,11 @@ import {
 } from "@/components/ui/select";
 
 export const LANGUAGES = [
-  { id: 54, name: 'C++' },
-  { id: 62, name: 'Java' },
-  { id: 63, name: 'JavaScript' },
-  { id: 71, name: 'Python' }
-].sort((a, b) => a.name.localeCompare(b.name));
+  { id: 54, name: 'cpp', displayName: 'C++' },
+  { id: 62, name: 'java', displayName: 'Java' },
+  { id: 63, name: 'javascript', displayName: 'JavaScript' },
+  { id: 71, name: 'python', displayName: 'Python' }
+].sort((a, b) => a.displayName.localeCompare(b.displayName));
 
 interface LanguageSelectorProps {
   selectedLanguage: typeof LANGUAGES[0];
@@ -30,7 +31,7 @@ export const LanguageSelector = ({ selectedLanguage, onLanguageChange }: Languag
       <SelectContent>
         {LANGUAGES.map(lang => (
           <SelectItem key={lang.id} value={lang.id.toString()}>
-            {lang.name}
+            {lang.displayName}
           </SelectItem>
         ))}
       </SelectContent>

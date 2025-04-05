@@ -1,3 +1,4 @@
+
 import Editor from '@monaco-editor/react';
 
 interface CodeEditorProps {
@@ -14,7 +15,7 @@ const CodeEditor = ({ code, onChange, language }: CodeEditorProps) => {
         return 'python';
       case 'java':
         return 'java';
-      case 'c++':
+      case 'cpp':
         return 'cpp';
       case 'javascript':
       default:

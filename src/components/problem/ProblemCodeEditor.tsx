@@ -32,7 +32,7 @@ const ProblemCodeEditor = ({ code, onChange }: ProblemCodeEditorProps) => {
         .from('user_solutions')
         .select('code')
         .eq('problem_id', problemId)
-        .eq('language', selectedLanguage.name === 'C++' ? 'cpp' : selectedLanguage.name.toLowerCase())
+        .eq('language', selectedLanguage.name)
         .eq('user_id', user.id)
         .maybeSingle();
 
@@ -50,14 +50,12 @@ const ProblemCodeEditor = ({ code, onChange }: ProblemCodeEditorProps) => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error('User not authenticated');
 
-      const dbLanguage = selectedLanguage.name === 'C++' ? 'cpp' : selectedLanguage.name.toLowerCase();
-
       const { data, error } = await supabase
         .from('user_solutions')
         .upsert({
           user_id: user.id,
           problem_id: problemId,
-          language: dbLanguage,
+          language: selectedLanguage.name,
           code: newCode,
           updated_at: new Date().toISOString()
         }, {
@@ -89,13 +87,11 @@ const ProblemCodeEditor = ({ code, onChange }: ProblemCodeEditorProps) => {
       }
 
       // Otherwise, fetch placeholder code
-      const dbLanguage = selectedLanguage.name === 'C++' ? 'C++' : selectedLanguage.name;
-      
       const { data, error } = await supabase
         .from('placeholder_code')
         .select('code')
         .eq('problem_id', problemId)
-        .eq('language', dbLanguage)
+        .eq('language', selectedLanguage.name)
         .single();
 
       if (error) {
@@ -166,7 +162,7 @@ const ProblemCodeEditor = ({ code, onChange }: ProblemCodeEditorProps) => {
             <CodeEditor 
               code={code} 
               onChange={onChange} 
-              language={selectedLanguage.name}
+              language={selectedLanguage.displayName}
             />
           </ResizablePanel>
           
