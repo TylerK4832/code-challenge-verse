@@ -2,14 +2,9 @@
 import { Badge } from '@/components/ui/badge';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { Separator } from '@/components/ui/separator';
 import { ReactNode } from 'react';
 
-// Import all problem content components
-import TwoSumContent from '@/components/problem-content/TwoSumContent';
-import AddTwoNumbersContent from '@/components/problem-content/AddTwoNumbersContent';
-import LongestSubstringContent from '@/components/problem-content/LongestSubstringContent';
-import MedianSortedArraysContent from '@/components/problem-content/MedianSortedArraysContent';
+// Import only the Parking Lot content component
 import ParkingLotContent from '@/components/problem-content/ParkingLotContent';
 
 interface ProblemDescriptionProps {
@@ -33,14 +28,6 @@ const GenericProblemDescription = ({ problemId }: ProblemDescriptionProps) => {
 
   const getProblemContent = (): ReactNode => {
     switch (problemId) {
-      case 'two-sum':
-        return <TwoSumContent />;
-      case 'add-two-numbers':
-        return <AddTwoNumbersContent />;
-      case 'longest-substring':
-        return <LongestSubstringContent />;
-      case 'median-sorted-arrays':
-        return <MedianSortedArraysContent />;
       case 'parking-lot':
         return <ParkingLotContent />;
       default:

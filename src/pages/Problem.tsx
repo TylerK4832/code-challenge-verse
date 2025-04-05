@@ -11,26 +11,8 @@ const Problem = () => {
   const { id } = useParams();
   const isMobile = useIsMobile();
   const [code, setCode] = useState(() => {
-    // Set default code based on problem
-    switch (id) {
-      case 'two-sum':
-        return `function twoSum(nums, target) {
-  // Write your solution here
-}`;
-      case 'add-two-numbers':
-        return `function addTwoNumbers(l1, l2) {
-  // Write your solution here
-}`;
-      case 'longest-substring':
-        return `function lengthOfLongestSubstring(s) {
-  // Write your solution here
-}`;
-      case 'median-sorted-arrays':
-        return `function findMedianSortedArrays(nums1, nums2) {
-  // Write your solution here
-}`;
-      case 'parking-lot':
-        return `class ParkingSystem {
+    // Set default code for Parking Lot problem
+    return `class ParkingSystem {
   constructor(big, medium, small) {
     // Write your solution here
   }
@@ -39,9 +21,6 @@ const Problem = () => {
     // Write your solution here
   }
 }`;
-      default:
-        return '// Write your solution here';
-    }
   });
 
   if (isMobile) {
