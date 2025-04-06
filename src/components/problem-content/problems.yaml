@@ -1,217 +1,173 @@
 problems:
-  - title: "2. Bookstore Inventory"
-    id: "bookstore-inventory"
+  - title: "2. Call Center"
+    id: "call-center"
     difficulty: "Medium"
-    problem-content: "./BookstoreInventoryContent.tsx"
+    problem-content: "./CallCenterContent.tsx"
     placeholder-code:
       - language: python
         code: |
-          class Bookstore:
+          class CallCenter:
 
-              def __init__(self, inventory: dict):
-                  """
-                  Initializes the bookstore with an inventory dictionary.
-                  The keys are book titles and the values are the number of copies available.
-                  """
+              def __init__(self, numAgents: int):
+                  # Initialize your call center with numAgents agents.
+                  # Agents are numbered from 1 to numAgents.
+                  pass
 
-              def addBook(self, title: str, quantity: int) -> None:
-                  """
-                  Adds a certain number of books (quantity) of a given title to the inventory.
-                  """
+              def dispatchCall(self) -> int:
+                  # Dispatch a call to the available agent with the smallest id.
+                  # If an agent is available, mark them as busy and return their id.
+                  # If no agents are available, return -1.
+                  pass
 
-              def sellBook(self, title: str) -> bool:
-                  """
-                  Sells one copy of the book with the given title.
-                  Returns True if the sale is successful, False if there are no copies left.
-                  """
-                  
-              def getInventory(self) -> dict:
-                  """
-                  Returns the current state of the inventory as a dictionary.
-                  """
+              def endCall(self, agentId: int) -> None:
+                  # Mark the agent with agentId as available.
+                  pass
 
-          # Your Bookstore object will be instantiated and called as such:
-          # obj = Bookstore(inventory)
-          # obj.addBook(title, quantity)
-          # param_1 = obj.sellBook(title)
-          # param_2 = obj.getInventory()
+          # Your CallCenter object will be instantiated and called as such:
+          # obj = CallCenter(numAgents)
+          # param = obj.dispatchCall()
+          # obj.endCall(agentId)
       - language: cpp
         code: |
-          class Bookstore {
-              public:
-                  Bookstore(std::unordered_map<std::string, int> inventory) {
-                      // Constructor
-                  }
-
-                  void addBook(std::string title, int quantity) {
-                      // Add books to the inventory
-                  }
-
-                  bool sellBook(std::string title) {
-                      // Sell a book and return true if successful, false if no stock
-                  }
-
-                  std::unordered_map<std::string, int> getInventory() {
-                      // Return the current inventory
-                  }
+          class CallCenter {
+          public:
+              CallCenter(int numAgents) {
+                  // Initialize your call center with numAgents agents.
+                  // Agents are numbered from 1 to numAgents.
+              }
+              
+              int dispatchCall() {
+                  // Dispatch a call to the available agent with the smallest id.
+                  // If an agent is available, mark them as busy and return their id.
+                  // If no agents are available, return -1.
+              }
+              
+              void endCall(int agentId) {
+                  // Mark the agent with agentId as available.
+              }
           };
 
           /**
-          * Your Bookstore object will be instantiated and called as such:
-          * Bookstore* obj = new Bookstore(inventory);
-          * obj->addBook(title, quantity);
-          * bool param_1 = obj->sellBook(title);
-          * std::unordered_map<std::string, int> param_2 = obj->getInventory();
+          * Your CallCenter object will be instantiated and called as such:
+          * CallCenter* obj = new CallCenter(numAgents);
+          * int param = obj->dispatchCall();
+          * obj->endCall(agentId);
           */
       - language: java
         code: |
-          class Bookstore {
+          class CallCenter {
 
-              public Bookstore(Map<String, Integer> inventory) {
-                  // Constructor
+              public CallCenter(int numAgents) {
+                  // Initialize your call center with numAgents agents.
+                  // Agents are numbered from 1 to numAgents.
               }
-
-              public void addBook(String title, int quantity) {
-                  // Add books to the inventory
+              
+              public int dispatchCall() {
+                  // Dispatch a call to the available agent with the smallest id.
+                  // If an agent is available, mark them as busy and return their id.
+                  // If no agents are available, return -1.
               }
-
-              public boolean sellBook(String title) {
-                  // Sell a book and return true if successful, false if no stock
-              }
-
-              public Map<String, Integer> getInventory() {
-                  // Return the current inventory
+              
+              public void endCall(int agentId) {
+                  // Mark the agent with agentId as available.
               }
           }
 
           /**
-          * Your Bookstore object will be instantiated and called as such:
-          * Bookstore obj = new Bookstore(inventory);
-          * obj.addBook(title, quantity);
-          * boolean param_1 = obj.sellBook(title);
-          * Map<String, Integer> param_2 = obj.getInventory();
+          * Your CallCenter object will be instantiated and called as such:
+          * CallCenter obj = new CallCenter(numAgents);
+          * int param = obj.dispatchCall();
+          * obj.endCall(agentId);
           */
       - language: javascript
         code: |
           /**
-          * @param {Object} inventory - A dictionary with book titles as keys and quantities as values.
+          * @param {number} numAgents
           */
-          var Bookstore = function(inventory) {
-              // Constructor
+          var CallCenter = function(numAgents) {
+              // Initialize your call center with numAgents agents.
+              // Agents are numbered from 1 to numAgents.
+          };
+
+          /**
+          * @return {number}
+          */
+          CallCenter.prototype.dispatchCall = function() {
+              // Dispatch a call to the available agent with the smallest id.
+              // If an agent is available, mark them as busy and return their id.
+              // If no agents are available, return -1.
+          };
+
+          /**
+          * @param {number} agentId
+          */
+          CallCenter.prototype.endCall = function(agentId) {
+              // Mark the agent with agentId as available.
           };
 
           /** 
-          * @param {string} title - The title of the book to add.
-          * @param {number} quantity - The number of copies to add.
-          */
-          Bookstore.prototype.addBook = function(title, quantity) {
-              // Add books to the inventory
-          };
-
-          /** 
-          * @param {string} title - The title of the book to sell.
-          * @return {boolean} - Returns true if the book is sold, false if no stock is available.
-          */
-          Bookstore.prototype.sellBook = function(title) {
-              // Sell the book
-          };
-
-          /** 
-          * @return {Object} - Returns the current inventory as a dictionary.
-          */
-          Bookstore.prototype.getInventory = function() {
-              // Return current inventory
-          };
-
-          /** 
-          * Your Bookstore object will be instantiated and called as such:
-          * var obj = new Bookstore(inventory);
-          * obj.addBook(title, quantity);
-          * var param_1 = obj.sellBook(title);
-          * var param_2 = obj.getInventory();
+          * Your CallCenter object will be instantiated and called as such:
+          * var obj = new CallCenter(numAgents)
+          * var param = obj.dispatchCall()
+          * obj.endCall(agentId)
           */
     test-cases:
       - language: python
         number: 1
         code: |
-          inventory = {'Book A': 5, 'Book B': 2, 'Book C': 0}
-          bookstore = Bookstore(inventory)
-          bookstore.addBook('Book A', 3)
-          assertEquals(bookstore.sellBook('Book A'), True)
-          assertEquals(bookstore.sellBook('Book B'), True)
-          assertEquals(bookstore.sellBook('Book C'), False)
-          assertEquals(bookstore.getInventory(), {'Book A': 7, 'Book B': 1, 'Book C': 0})
+          center = CallCenter(2)
+          assertEquals(center.dispatchCall(), 1)
+          assertEquals(center.dispatchCall(), 2)
+          assertEquals(center.dispatchCall(), -1)
+          center.endCall(1)
+          assertEquals(center.dispatchCall(), 1)
       - language: python
         number: 2
         code: |
-          inventory = {'Book X': 0}
-          bookstore = Bookstore(inventory)
-          bookstore.addBook('Book X', 2)
-          assertEquals(bookstore.sellBook('Book X'), True)
-          assertEquals(bookstore.sellBook('Book X'), True)
-          assertEquals(bookstore.sellBook('Book X'), False)
-          assertEquals(bookstore.getInventory(), {'Book X': 0})
+          center = CallCenter(1)
+          assertEquals(center.dispatchCall(), 1)
+          assertEquals(center.dispatchCall(), -1)
+          center.endCall(1)
+          assertEquals(center.dispatchCall(), 1)
       - language: cpp
         number: 1
         code: |
-          std::unordered_map<std::string, int> inventory = {{"Book A", 5}, {"Book B", 2}, {"Book C", 0}};
-          Bookstore* bookstore = new Bookstore(inventory);
-          bookstore->addBook("Book A", 3);
-          Printer::assertEquals(bookstore->sellBook("Book A"), true);
-          Printer::assertEquals(bookstore->sellBook("Book B"), true);
-          Printer::assertEquals(bookstore->sellBook("Book C"), false);
-          Printer::assertEquals(bookstore->getInventory(), {{"Book A", 7}, {"Book B", 1}, {"Book C", 0}});
+          CallCenter* center = new CallCenter(2);
+          Printer::assertEquals(center->dispatchCall(), 1);
+          Printer::assertEquals(center->dispatchCall(), 2);
+          Printer::assertEquals(center->dispatchCall(), -1);
+          center->endCall(1);
+          Printer::assertEquals(center->dispatchCall(), 1);
       - language: cpp
         number: 2
         code: |
-          std::unordered_map<std::string, int> inventory = {{"Book X", 0}};
-          Bookstore* bookstore = new Bookstore(inventory);
-          bookstore->addBook("Book X", 2);
-          Printer::assertEquals(bookstore->sellBook("Book X"), true);
-          Printer::assertEquals(bookstore->sellBook("Book X"), true);
-          Printer::assertEquals(bookstore->sellBook("Book X"), false);
-          Printer::assertEquals(bookstore->getInventory(), {{"Book X", 0}});
+          CallCenter* center = new CallCenter(0);
+          Printer::assertEquals(center->dispatchCall(), -1);
       - language: java
         number: 1
         code: |
-          Map<String, Integer> inventory = new HashMap<>();
-          inventory.put("Book A", 5);
-          inventory.put("Book B", 2);
-          inventory.put("Book C", 0);
-          Bookstore bookstore = new Bookstore(inventory);
-          bookstore.addBook("Book A", 3);
-          assertEquals(bookstore.sellBook("Book A"), true);
-          assertEquals(bookstore.sellBook("Book B"), true);
-          assertEquals(bookstore.sellBook("Book C"), false);
-          assertEquals(bookstore.getInventory(), Map.of("Book A", 7, "Book B", 1, "Book C", 0));
+          CallCenter center = new CallCenter(2);
+          assertEquals(center.dispatchCall(), 1);
+          assertEquals(center.dispatchCall(), 2);
+          assertEquals(center.dispatchCall(), -1);
+          center.endCall(1);
+          assertEquals(center.dispatchCall(), 1);
       - language: java
         number: 2
         code: |
-          Map<String, Integer> inventory = new HashMap<>();
-          inventory.put("Book X", 0);
-          Bookstore bookstore = new Bookstore(inventory);
-          bookstore.addBook("Book X", 2);
-          assertEquals(bookstore.sellBook("Book X"), true);
-          assertEquals(bookstore.sellBook("Book X"), true);
-          assertEquals(bookstore.sellBook("Book X"), false);
-          assertEquals(bookstore.getInventory(), Map.of("Book X", 0));
+          CallCenter center = new CallCenter(0);
+          assertEquals(center.dispatchCall(), -1);
       - language: javascript
         number: 1
         code: |
-          var inventory = {"Book A": 5, "Book B": 2, "Book C": 0};
-          var bookstore = new Bookstore(inventory);
-          bookstore.addBook("Book A", 3);
-          assertEquals(bookstore.sellBook("Book A"), true);
-          assertEquals(bookstore.sellBook("Book B"), true);
-          assertEquals(bookstore.sellBook("Book C"), false);
-          assertEquals(bookstore.getInventory(), {"Book A": 7, "Book B": 1, "Book C": 0});
+          var center = new CallCenter(2)
+          assertEquals(center.dispatchCall(), 1);
+          assertEquals(center.dispatchCall(), 2);
+          assertEquals(center.dispatchCall(), -1);
+          center.endCall(1);
+          assertEquals(center.dispatchCall(), 1);
       - language: javascript
         number: 2
         code: |
-          var inventory = {"Book X": 0};
-          var bookstore = new Bookstore(inventory);
-          bookstore.addBook("Book X", 2);
-          assertEquals(bookstore.sellBook("Book X"), true);
-          assertEquals(bookstore.sellBook("Book X"), true);
-          assertEquals(bookstore.sellBook("Book X"), false);
-          assertEquals(bookstore.getInventory(), {"Book X": 0});
+          var center = new CallCenter(0)
+          assertEquals(center.dispatchCall(), -1);
