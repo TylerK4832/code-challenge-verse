@@ -1,5 +1,6 @@
 problems:
-  - title: "Parking Lot"
+  - title: "1. Parking Lot"
+    id: "parking-lot"
     difficulty: "Easy"
     problem-content: "./ParkingLotContent.tsx"
     placeholder-code:
