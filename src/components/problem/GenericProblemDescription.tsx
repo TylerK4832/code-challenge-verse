@@ -25,10 +25,11 @@ const GenericProblemDescription = ({ problemId }: ProblemDescriptionProps) => {
 
   // Dynamically import the problem content component based on the problem ID
   const DynamicProblemContent = lazy(() => {
-    return import(`@/components/problem-content/${problemId}-content`)
+    // The key fix is here - using the correct path without the @ alias
+    return import(`../problem-content/${problemId}-content`)
       .catch(err => {
         console.error(`Failed to load problem content for ${problemId}:`, err);
-        return import('@/components/problem-content/fallback-content');
+        return import('../problem-content/fallback-content');
       });
   });
 
