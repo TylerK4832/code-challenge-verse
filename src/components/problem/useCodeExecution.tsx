@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useParams } from "react-router-dom";
@@ -12,7 +13,7 @@ export const useCodeExecution = () => {
     setExecutionResult(null);
   };
 
-  const executeCode = async (code: string, language: { id: number, name: string }) => {
+  const executeCode = async (code: string, language: { id: number, name: string, displayName?: string }) => {
     setIsRunning(true);
     setExecutionResult(null);
     
@@ -23,20 +24,18 @@ export const useCodeExecution = () => {
         return;
       }
 
-      // Convert language name to match database format for test cases query
-      const dbLanguage = language.name === 'C++' ? 'cpp' : language.name.toLowerCase();
-
+      // Language name is already in standardized format (lowercase)
       const { data: testCases, error: testCasesError } = await supabase
         .from('test_cases')
         .select('*')
         .eq('problem_id', problemId)
         .eq('is_hidden', false)
-        .eq('language', dbLanguage);
+        .eq('language', language.name);
 
       if (testCasesError) throw testCasesError;
 
       if (!testCases || testCases.length === 0) {
-        console.error('No test cases found for language:', dbLanguage);
+        console.error('No test cases found for language:', language.name);
         return;
       }
 
@@ -75,7 +74,7 @@ export const useCodeExecution = () => {
           .insert({
             problem_id: problemId,
             code,
-            language: dbLanguage,
+            language: language.name,
             status: 'accepted',
             user_id: user.id
           });

@@ -1,3 +1,4 @@
+
 import Editor from '@monaco-editor/react';
 
 interface CodeEditorProps {
@@ -8,12 +9,13 @@ interface CodeEditorProps {
 
 const CodeEditor = ({ code, onChange, language }: CodeEditorProps) => {
   // Map language names to Monaco editor language IDs
-  const getMonacoLanguage = (lang: string) => {
+  const getMonacoLanguage = (lang: string = '') => {
     switch (lang.toLowerCase()) {
       case 'python':
         return 'python';
       case 'java':
         return 'java';
+      case 'cpp':
       case 'c++':
         return 'cpp';
       case 'javascript':

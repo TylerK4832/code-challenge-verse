@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -37,15 +38,13 @@ const TestCases = ({ executionResult, activeTab, onTabChange, isLoading, selecte
 
   useEffect(() => {
     const fetchTestCases = async () => {
-      // Convert language name to match database format
-      const dbLanguage = selectedLanguage === 'C++' ? 'cpp' : selectedLanguage.toLowerCase();
-      
+      // selectedLanguage is already in standardized format (lowercase)
       const { data, error } = await supabase
         .from('test_cases')
         .select('*')
         .eq('problem_id', problemId)
         .eq('is_hidden', false)
-        .eq('language', dbLanguage);
+        .eq('language', selectedLanguage);
 
       if (!error && data) {
         setTestCases(data);
