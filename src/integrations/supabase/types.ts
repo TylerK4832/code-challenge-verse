@@ -138,6 +138,7 @@ export type Database = {
           id: string
           is_hidden: boolean | null
           language: string | null
+          number: number | null
           problem_id: string
         }
         Insert: {
@@ -146,6 +147,7 @@ export type Database = {
           id?: string
           is_hidden?: boolean | null
           language?: string | null
+          number?: number | null
           problem_id: string
         }
         Update: {
@@ -154,6 +156,7 @@ export type Database = {
           id?: string
           is_hidden?: boolean | null
           language?: string | null
+          number?: number | null
           problem_id?: string
         }
         Relationships: [
