@@ -1,25 +1,13 @@
-
 import { useState, useEffect } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
-import { Search, Check, Trash2 } from 'lucide-react';
+import { Search, Check } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useToast } from '@/components/ui/use-toast';
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
 
 interface Problem {
   id: string;
@@ -109,32 +97,6 @@ const Problems = () => {
     return matchesSearch && matchesCategory;
   });
 
-  const deleteProblem = async (problemId: string) => {
-    try {
-      const { error } = await supabase
-        .from('problems')
-        .delete()
-        .eq('id', problemId);
-      
-      if (error) throw error;
-      
-      toast({
-        title: "Problem deleted",
-        description: "The problem has been deleted successfully.",
-      });
-      
-      // Refresh problems list
-      queryClient.invalidateQueries({ queryKey: ['problems'] });
-    } catch (error) {
-      console.error("Error deleting problem:", error);
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Failed to delete the problem. Please try again.",
-      });
-    }
-  };
-
   const getDifficultyColor = (difficulty: string) => {
     switch (difficulty) {
       case 'Easy':
@@ -203,7 +165,6 @@ const Problems = () => {
                 <TableHead>Difficulty</TableHead>
                 <TableHead className="hidden sm:table-cell">Category</TableHead>
                 <TableHead className="hidden sm:table-cell">Acceptance</TableHead>
-                <TableHead className="w-[60px]">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -229,33 +190,6 @@ const Problems = () => {
                   </TableCell>
                   <TableCell className="hidden sm:table-cell">{problem.category}</TableCell>
                   <TableCell className="hidden sm:table-cell">{problem.acceptance}</TableCell>
-                  <TableCell>
-                    <AlertDialog>
-                      <AlertDialogTrigger asChild>
-                        <Button variant="ghost" size="icon" className="h-8 w-8">
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </AlertDialogTrigger>
-                      <AlertDialogContent>
-                        <AlertDialogHeader>
-                          <AlertDialogTitle>Delete Problem</AlertDialogTitle>
-                          <AlertDialogDescription>
-                            Are you sure you want to delete "{problem.title}"? This action cannot be undone.
-                            All related data including user solutions, test cases, and submissions will be permanently deleted.
-                          </AlertDialogDescription>
-                        </AlertDialogHeader>
-                        <AlertDialogFooter>
-                          <AlertDialogCancel>Cancel</AlertDialogCancel>
-                          <AlertDialogAction 
-                            onClick={() => deleteProblem(problem.id)}
-                            className="bg-red-500 hover:bg-red-600"
-                          >
-                            Delete
-                          </AlertDialogAction>
-                        </AlertDialogFooter>
-                      </AlertDialogContent>
-                    </AlertDialog>
-                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>
