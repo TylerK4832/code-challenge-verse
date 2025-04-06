@@ -1,152 +1,217 @@
 problems:
-  - title: "1. Parking Lot"
-    id: "parking-lot"
-    difficulty: "Easy"
-    problem-content: "./ParkingLotContent.tsx"
+  - title: "2. Bookstore Inventory"
+    id: "bookstore-inventory"
+    difficulty: "Medium"
+    problem-content: "./BookstoreInventoryContent.tsx"
     placeholder-code:
       - language: python
         code: |
-          class ParkingLot:
+          class Bookstore:
 
-              def __init__(self, big: int, medium: int, small: int):
+              def __init__(self, inventory: dict):
+                  """
+                  Initializes the bookstore with an inventory dictionary.
+                  The keys are book titles and the values are the number of copies available.
+                  """
+
+              def addBook(self, title: str, quantity: int) -> None:
+                  """
+                  Adds a certain number of books (quantity) of a given title to the inventory.
+                  """
+
+              def sellBook(self, title: str) -> bool:
+                  """
+                  Sells one copy of the book with the given title.
+                  Returns True if the sale is successful, False if there are no copies left.
+                  """
                   
+              def getInventory(self) -> dict:
+                  """
+                  Returns the current state of the inventory as a dictionary.
+                  """
 
-              def addCar(self, carType: int) -> bool:
-                  
-
-
-          # Your ParkingLot object will be instantiated and called as such:
-          # obj = ParkingLot(big, medium, small)
-          # param_1 = obj.addCar(carType)
+          # Your Bookstore object will be instantiated and called as such:
+          # obj = Bookstore(inventory)
+          # obj.addBook(title, quantity)
+          # param_1 = obj.sellBook(title)
+          # param_2 = obj.getInventory()
       - language: cpp
         code: |
-          class ParkingLot {
+          class Bookstore {
               public:
-                  ParkingLot(int big, int medium, int small) {
-                      
+                  Bookstore(std::unordered_map<std::string, int> inventory) {
+                      // Constructor
                   }
-                  
-                  bool addCar(int carType) {
-                      
+
+                  void addBook(std::string title, int quantity) {
+                      // Add books to the inventory
                   }
-              };
+
+                  bool sellBook(std::string title) {
+                      // Sell a book and return true if successful, false if no stock
+                  }
+
+                  std::unordered_map<std::string, int> getInventory() {
+                      // Return the current inventory
+                  }
+          };
 
           /**
-          * Your ParkingLot object will be instantiated and called as such:
-          * ParkingLot* obj = new ParkingLot(big, medium, small);
-          * bool param_1 = obj->addCar(carType);
+          * Your Bookstore object will be instantiated and called as such:
+          * Bookstore* obj = new Bookstore(inventory);
+          * obj->addBook(title, quantity);
+          * bool param_1 = obj->sellBook(title);
+          * std::unordered_map<std::string, int> param_2 = obj->getInventory();
           */
       - language: java
         code: |
-          class ParkingLot {
+          class Bookstore {
 
-              public ParkingLot(int big, int medium, int small) {
-                  
+              public Bookstore(Map<String, Integer> inventory) {
+                  // Constructor
               }
-              
-              public boolean addCar(int carType) {
-                  
+
+              public void addBook(String title, int quantity) {
+                  // Add books to the inventory
+              }
+
+              public boolean sellBook(String title) {
+                  // Sell a book and return true if successful, false if no stock
+              }
+
+              public Map<String, Integer> getInventory() {
+                  // Return the current inventory
               }
           }
 
           /**
-          * Your ParkingLot object will be instantiated and called as such:
-          * ParkingLot obj = new ParkingLot(big, medium, small);
-          * boolean param_1 = obj.addCar(carType);
+          * Your Bookstore object will be instantiated and called as such:
+          * Bookstore obj = new Bookstore(inventory);
+          * obj.addBook(title, quantity);
+          * boolean param_1 = obj.sellBook(title);
+          * Map<String, Integer> param_2 = obj.getInventory();
           */
       - language: javascript
         code: |
           /**
-          * @param {number} big
-          * @param {number} medium
-          * @param {number} small
+          * @param {Object} inventory - A dictionary with book titles as keys and quantities as values.
           */
-          var ParkingLot = function(big, medium, small) {
-              
+          var Bookstore = function(inventory) {
+              // Constructor
           };
 
           /** 
-          * @param {number} carType
-          * @return {boolean}
+          * @param {string} title - The title of the book to add.
+          * @param {number} quantity - The number of copies to add.
           */
-          ParkingLot.prototype.addCar = function(carType) {
-              
+          Bookstore.prototype.addBook = function(title, quantity) {
+              // Add books to the inventory
           };
 
           /** 
-          * Your ParkingLot object will be instantiated and called as such:
-          * var obj = new ParkingLot(big, medium, small)
-          * var param_1 = obj.addCar(carType)
+          * @param {string} title - The title of the book to sell.
+          * @return {boolean} - Returns true if the book is sold, false if no stock is available.
+          */
+          Bookstore.prototype.sellBook = function(title) {
+              // Sell the book
+          };
+
+          /** 
+          * @return {Object} - Returns the current inventory as a dictionary.
+          */
+          Bookstore.prototype.getInventory = function() {
+              // Return current inventory
+          };
+
+          /** 
+          * Your Bookstore object will be instantiated and called as such:
+          * var obj = new Bookstore(inventory);
+          * obj.addBook(title, quantity);
+          * var param_1 = obj.sellBook(title);
+          * var param_2 = obj.getInventory();
           */
     test-cases:
       - language: python
         number: 1
         code: |
-          lot = ParkingLot(2, 1, 0)
-          assertEquals(lot.addCar(1), True)
-          assertEquals(lot.addCar(1), True)
-          assertEquals(lot.addCar(1), False)
-          assertEquals(lot.addCar(2), True)
-          assertEquals(lot.addCar(2), False)
-          assertEquals(lot.addCar(3), False)
+          inventory = {'Book A': 5, 'Book B': 2, 'Book C': 0}
+          bookstore = Bookstore(inventory)
+          bookstore.addBook('Book A', 3)
+          assertEquals(bookstore.sellBook('Book A'), True)
+          assertEquals(bookstore.sellBook('Book B'), True)
+          assertEquals(bookstore.sellBook('Book C'), False)
+          assertEquals(bookstore.getInventory(), {'Book A': 7, 'Book B': 1, 'Book C': 0})
       - language: python
         number: 2
         code: |
-          lot = ParkingLot(0, 0, 0)
-          assertEquals(lot.addCar(1), False)
-          assertEquals(lot.addCar(2), False)
-          assertEquals(lot.addCar(3), False)
+          inventory = {'Book X': 0}
+          bookstore = Bookstore(inventory)
+          bookstore.addBook('Book X', 2)
+          assertEquals(bookstore.sellBook('Book X'), True)
+          assertEquals(bookstore.sellBook('Book X'), True)
+          assertEquals(bookstore.sellBook('Book X'), False)
+          assertEquals(bookstore.getInventory(), {'Book X': 0})
       - language: cpp
         number: 1
         code: |
-          ParkingLot* lot = new ParkingLot(2, 1, 0);
-          Printer::assertEquals(lot->addCar(1), true);
-          Printer::assertEquals(lot->addCar(1), true);
-          Printer::assertEquals(lot->addCar(1), false);
-          Printer::assertEquals(lot->addCar(2), true);
-          Printer::assertEquals(lot->addCar(2), false);
-          Printer::assertEquals(lot->addCar(3), false);
+          std::unordered_map<std::string, int> inventory = {{"Book A", 5}, {"Book B", 2}, {"Book C", 0}};
+          Bookstore* bookstore = new Bookstore(inventory);
+          bookstore->addBook("Book A", 3);
+          Printer::assertEquals(bookstore->sellBook("Book A"), true);
+          Printer::assertEquals(bookstore->sellBook("Book B"), true);
+          Printer::assertEquals(bookstore->sellBook("Book C"), false);
+          Printer::assertEquals(bookstore->getInventory(), {{"Book A", 7}, {"Book B", 1}, {"Book C", 0}});
       - language: cpp
         number: 2
         code: |
-          ParkingLot* lot = new ParkingLot(0, 0, 0);
-          Printer::assertEquals(lot->addCar(1), false);
-          Printer::assertEquals(lot->addCar(2), false);
-          Printer::assertEquals(lot->addCar(3), false);
+          std::unordered_map<std::string, int> inventory = {{"Book X", 0}};
+          Bookstore* bookstore = new Bookstore(inventory);
+          bookstore->addBook("Book X", 2);
+          Printer::assertEquals(bookstore->sellBook("Book X"), true);
+          Printer::assertEquals(bookstore->sellBook("Book X"), true);
+          Printer::assertEquals(bookstore->sellBook("Book X"), false);
+          Printer::assertEquals(bookstore->getInventory(), {{"Book X", 0}});
       - language: java
         number: 1
         code: |
-          ParkingLot lot = new ParkingLot(2, 1, 0);
-          assertEquals(lot.addCar(1), true);
-          assertEquals(lot.addCar(1), true);
-          assertEquals(lot.addCar(1), false);
-          assertEquals(lot.addCar(2), true);
-          assertEquals(lot.addCar(2), false);
-          assertEquals(lot.addCar(3), false);        
+          Map<String, Integer> inventory = new HashMap<>();
+          inventory.put("Book A", 5);
+          inventory.put("Book B", 2);
+          inventory.put("Book C", 0);
+          Bookstore bookstore = new Bookstore(inventory);
+          bookstore.addBook("Book A", 3);
+          assertEquals(bookstore.sellBook("Book A"), true);
+          assertEquals(bookstore.sellBook("Book B"), true);
+          assertEquals(bookstore.sellBook("Book C"), false);
+          assertEquals(bookstore.getInventory(), Map.of("Book A", 7, "Book B", 1, "Book C", 0));
       - language: java
         number: 2
         code: |
-          ParkingLot lot = new ParkingLot(0, 0, 0);
-          assertEquals(lot.addCar(1), false);
-          assertEquals(lot.addCar(2), false);
-          assertEquals(lot.addCar(3), false);
+          Map<String, Integer> inventory = new HashMap<>();
+          inventory.put("Book X", 0);
+          Bookstore bookstore = new Bookstore(inventory);
+          bookstore.addBook("Book X", 2);
+          assertEquals(bookstore.sellBook("Book X"), true);
+          assertEquals(bookstore.sellBook("Book X"), true);
+          assertEquals(bookstore.sellBook("Book X"), false);
+          assertEquals(bookstore.getInventory(), Map.of("Book X", 0));
       - language: javascript
         number: 1
         code: |
-          var lot = new ParkingLot(2, 1, 0)
-          assertEquals(lot.addCar(1), true);
-          assertEquals(lot.addCar(1), true);
-          assertEquals(lot.addCar(1), false);
-          assertEquals(lot.addCar(2), true);
-          assertEquals(lot.addCar(2), false);
-          assertEquals(lot.addCar(3), false);
+          var inventory = {"Book A": 5, "Book B": 2, "Book C": 0};
+          var bookstore = new Bookstore(inventory);
+          bookstore.addBook("Book A", 3);
+          assertEquals(bookstore.sellBook("Book A"), true);
+          assertEquals(bookstore.sellBook("Book B"), true);
+          assertEquals(bookstore.sellBook("Book C"), false);
+          assertEquals(bookstore.getInventory(), {"Book A": 7, "Book B": 1, "Book C": 0});
       - language: javascript
         number: 2
         code: |
-          var lot = new ParkingLot(0, 0, 0)
-          assertEquals(lot.addCar(1), false);
-          assertEquals(lot.addCar(2), false);
-          assertEquals(lot.addCar(3), false);
-        
-
-
+          var inventory = {"Book X": 0};
+          var bookstore = new Bookstore(inventory);
+          bookstore.addBook("Book X", 2);
+          assertEquals(bookstore.sellBook("Book X"), true);
+          assertEquals(bookstore.sellBook("Book X"), true);
+          assertEquals(bookstore.sellBook("Book X"), false);
+          assertEquals(bookstore.getInventory(), {"Book X": 0});

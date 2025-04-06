@@ -1,0 +1,152 @@
+problems:
+  - title: "1. Parking Lot"
+    id: "parking-lot"
+    difficulty: "Easy"
+    problem-content: "./ParkingLotContent.tsx"
+    placeholder-code:
+      - language: python
+        code: |
+          class ParkingLot:
+
+              def __init__(self, big: int, medium: int, small: int):
+                  
+
+              def addCar(self, carType: int) -> bool:
+                  
+
+
+          # Your ParkingLot object will be instantiated and called as such:
+          # obj = ParkingLot(big, medium, small)
+          # param_1 = obj.addCar(carType)
+      - language: cpp
+        code: |
+          class ParkingLot {
+              public:
+                  ParkingLot(int big, int medium, int small) {
+                      
+                  }
+                  
+                  bool addCar(int carType) {
+                      
+                  }
+              };
+
+          /**
+          * Your ParkingLot object will be instantiated and called as such:
+          * ParkingLot* obj = new ParkingLot(big, medium, small);
+          * bool param_1 = obj->addCar(carType);
+          */
+      - language: java
+        code: |
+          class ParkingLot {
+
+              public ParkingLot(int big, int medium, int small) {
+                  
+              }
+              
+              public boolean addCar(int carType) {
+                  
+              }
+          }
+
+          /**
+          * Your ParkingLot object will be instantiated and called as such:
+          * ParkingLot obj = new ParkingLot(big, medium, small);
+          * boolean param_1 = obj.addCar(carType);
+          */
+      - language: javascript
+        code: |
+          /**
+          * @param {number} big
+          * @param {number} medium
+          * @param {number} small
+          */
+          var ParkingLot = function(big, medium, small) {
+              
+          };
+
+          /** 
+          * @param {number} carType
+          * @return {boolean}
+          */
+          ParkingLot.prototype.addCar = function(carType) {
+              
+          };
+
+          /** 
+          * Your ParkingLot object will be instantiated and called as such:
+          * var obj = new ParkingLot(big, medium, small)
+          * var param_1 = obj.addCar(carType)
+          */
+    test-cases:
+      - language: python
+        number: 1
+        code: |
+          lot = ParkingLot(2, 1, 0)
+          assertEquals(lot.addCar(1), True)
+          assertEquals(lot.addCar(1), True)
+          assertEquals(lot.addCar(1), False)
+          assertEquals(lot.addCar(2), True)
+          assertEquals(lot.addCar(2), False)
+          assertEquals(lot.addCar(3), False)
+      - language: python
+        number: 2
+        code: |
+          lot = ParkingLot(0, 0, 0)
+          assertEquals(lot.addCar(1), False)
+          assertEquals(lot.addCar(2), False)
+          assertEquals(lot.addCar(3), False)
+      - language: cpp
+        number: 1
+        code: |
+          ParkingLot* lot = new ParkingLot(2, 1, 0);
+          Printer::assertEquals(lot->addCar(1), true);
+          Printer::assertEquals(lot->addCar(1), true);
+          Printer::assertEquals(lot->addCar(1), false);
+          Printer::assertEquals(lot->addCar(2), true);
+          Printer::assertEquals(lot->addCar(2), false);
+          Printer::assertEquals(lot->addCar(3), false);
+      - language: cpp
+        number: 2
+        code: |
+          ParkingLot* lot = new ParkingLot(0, 0, 0);
+          Printer::assertEquals(lot->addCar(1), false);
+          Printer::assertEquals(lot->addCar(2), false);
+          Printer::assertEquals(lot->addCar(3), false);
+      - language: java
+        number: 1
+        code: |
+          ParkingLot lot = new ParkingLot(2, 1, 0);
+          assertEquals(lot.addCar(1), true);
+          assertEquals(lot.addCar(1), true);
+          assertEquals(lot.addCar(1), false);
+          assertEquals(lot.addCar(2), true);
+          assertEquals(lot.addCar(2), false);
+          assertEquals(lot.addCar(3), false);        
+      - language: java
+        number: 2
+        code: |
+          ParkingLot lot = new ParkingLot(0, 0, 0);
+          assertEquals(lot.addCar(1), false);
+          assertEquals(lot.addCar(2), false);
+          assertEquals(lot.addCar(3), false);
+      - language: javascript
+        number: 1
+        code: |
+          var lot = new ParkingLot(2, 1, 0)
+          assertEquals(lot.addCar(1), true);
+          assertEquals(lot.addCar(1), true);
+          assertEquals(lot.addCar(1), false);
+          assertEquals(lot.addCar(2), true);
+          assertEquals(lot.addCar(2), false);
+          assertEquals(lot.addCar(3), false);
+      - language: javascript
+        number: 2
+        code: |
+          var lot = new ParkingLot(0, 0, 0)
+          assertEquals(lot.addCar(1), false);
+          assertEquals(lot.addCar(2), false);
+          assertEquals(lot.addCar(3), false);
+        
+
+
