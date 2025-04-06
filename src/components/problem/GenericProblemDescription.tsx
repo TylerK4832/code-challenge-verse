@@ -2,10 +2,7 @@
 import { Badge } from '@/components/ui/badge';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { ReactNode } from 'react';
-
-// Import only the Parking Lot content component
-import ParkingLotContent from '@/components/problem-content/ParkingLotContent';
+import { ReactNode, Suspense, lazy } from 'react';
 
 interface ProblemDescriptionProps {
   problemId: string;
@@ -26,14 +23,14 @@ const GenericProblemDescription = ({ problemId }: ProblemDescriptionProps) => {
     }
   });
 
-  const getProblemContent = (): ReactNode => {
-    switch (problemId) {
-      case 'parking-lot':
-        return <ParkingLotContent />;
-      default:
-        return <div>Problem content not found</div>;
-    }
-  };
+  // Dynamically import the problem content component based on the problem ID
+  const DynamicProblemContent = lazy(() => {
+    return import(`@/components/problem-content/${problemId}-content`)
+      .catch(err => {
+        console.error(`Failed to load problem content for ${problemId}:`, err);
+        return import('@/components/problem-content/fallback-content');
+      });
+  });
 
   if (isLoading) {
     return (
@@ -56,7 +53,9 @@ const GenericProblemDescription = ({ problemId }: ProblemDescriptionProps) => {
         </Badge>
       </div>
 
-      {getProblemContent()}
+      <Suspense fallback={<div className="p-6 animate-pulse">Loading problem content...</div>}>
+        <DynamicProblemContent />
+      </Suspense>
     </div>
   );
 };
