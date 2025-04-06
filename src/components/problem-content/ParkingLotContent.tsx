@@ -6,8 +6,8 @@ const ParkingLotContent: React.FC = () => {
     <div className="prose prose-invert max-w-none">
       <div>
         <p className="text-muted-foreground">
-          Design a system for a parking lot with three types of parking spaces: big, medium, and small.
-          The system should efficiently manage a fixed number of slots for each size and handle parking requests based on vehicle size.
+          Design a Lot for a parking lot with three types of parking spaces: big, medium, and small.
+          The Lot should efficiently manage a fixed number of slots for each size and handle parking requests based on vehicle size.
         </p>
       </div>
 
@@ -15,15 +15,15 @@ const ParkingLotContent: React.FC = () => {
         <h3 className="text-lg font-semibold mb-4">Methods</h3>
         <div className="space-y-4 text-muted-foreground">
           <div>
-            <code className="text-sm">ParkingSystem(int big, int medium, int small)</code>
+            <code className="text-sm">ParkingLot(int big, int medium, int small)</code>
             <p className="mt-1">
-              Initializes object of the ParkingSystem class. The number of slots for each parking space are given as part of the constructor.
+              Initializes object of the ParkingLot class. The number of slots for each parking space are given as part of the constructor.
             </p>
           </div>
           <div>
             <code className="text-sm">bool addCar(int carType)</code>
             <p className="mt-1">
-              Checks whether there is a parking space of carType for the car that wants to get into the parking lot. carType can be of three kinds: big, medium, or small, which are represented by 1, 2, and 3 respectively. A car can only park in a parking space of its carType. If there is no space available, return false, else park the car in that size space and return true.
+              Checks whether there is a parking space of carType for the car that wants to enter the parking lot. carType can be of three kinds: big, medium, or small, which are represented by 1, 2, and 3 respectively. A car can only park in a parking space of its carType. If there is no space available, return false, else park the car in that size space and return true.
             </p>
           </div>
         </div>
@@ -33,16 +33,16 @@ const ParkingLotContent: React.FC = () => {
         <h3 className="text-lg font-semibold mb-4">Example</h3>
         <pre className="bg-secondary p-4 rounded-md whitespace-pre-wrap break-words overflow-x-auto">
           <code>
-{`// Initialize parking system with 2 big spots, 2 medium spots, and 1 small spot
-const parkingSystem = new ParkingSystem(2, 2, 1);
+{`// Initialize parking Lot with 2 big spots, 2 medium spots, and 1 small spot
+const parkingLot = new ParkingLot(2, 2, 1);
 
-parkingSystem.addCar(1);  // returns true (parks a big car)
-parkingSystem.addCar(2);  // returns true (parks a medium car)
-parkingSystem.addCar(3);  // returns true (parks a small car)
-parkingSystem.addCar(1);  // returns true (parks another big car)
-parkingSystem.addCar(3);  // returns false (no small spots left)
-parkingSystem.addCar(2);  // returns true (parks another medium car)
-parkingSystem.addCar(2);  // returns false (no medium spots left)`}
+parkingLot.addCar(1);  // returns true (parks a big car)
+parkingLot.addCar(2);  // returns true (parks a medium car)
+parkingLot.addCar(3);  // returns true (parks a small car)
+parkingLot.addCar(1);  // returns true (parks another big car)
+parkingLot.addCar(3);  // returns false (no small spots left)
+parkingLot.addCar(2);  // returns true (parks another medium car)
+parkingLot.addCar(2);  // returns false (no medium spots left)`}
           </code>
         </pre>
       </div>
