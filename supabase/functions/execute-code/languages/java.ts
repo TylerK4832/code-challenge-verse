@@ -11,7 +11,7 @@ function formatTestCodeList(testCodeList: string[]): string {
     return `        try {
             currentTestIndex = ${index};
             System.out.println("TEST_START " + currentTestIndex);
-            ${indentCode(testCode, 12)}
+${indentCode(testCode, 12)}
             Map<String, Object> result = new HashMap<>();
             result.put("passed", true);
             results.add(result);
@@ -28,9 +28,43 @@ function formatTestCodeList(testCodeList: string[]): string {
 
 export const javaWrapper: LanguageWrapper = {
   wrapCode: (userCode: string, testCodeList: string[]) => {
+    const defaultImports = new Set([
+      'java.util.*',
+      'java.io.*',
+    ]);
+
+    // Separate import statements and the rest of the code
+    const userLines = userCode.split('\n');
+    const importLines: string[] = [];
+    const codeLines: string[] = [];
+
+    for (const line of userLines) {
+      const trimmed = line.trim();
+      if (trimmed.startsWith('import ')) {
+        importLines.push(trimmed);
+      } else {
+        codeLines.push(line);
+      }
+    }
+
+    // Extract imported packages and deduplicate
+    const cleanedImports = new Set<string>();
+    for (const imp of importLines) {
+      const match = imp.match(/^import\s+([\w.*]+);$/);
+      if (match && !defaultImports.has(match[1])) {
+        cleanedImports.add(`import ${match[1]};`);
+      }
+    }
+
+    // Compose final import block
+    const finalImports = [
+      'import java.util.*;',
+      'import java.io.*;',
+      ...Array.from(cleanedImports)
+    ];
+
     return `
-import java.util.*;
-import java.io.*;
+${finalImports.join('\n')}
 
 class SimpleJsonUtil {
     public static String toJson(List<Map<String, Object>> data) {
@@ -82,11 +116,10 @@ class SimpleJsonUtil {
     }
 }
 
-${userCode}
+${codeLines.join('\n')}
 
 public class Main {
 
-    // Assertion utility
     public static void assertEquals(Object output, Object expected) {
         if (!java.util.Objects.equals(output, expected)) {
             throw new AssertionError("Expected " + expected + " but got " + output);
@@ -99,16 +132,13 @@ public class Main {
         List<Map<String, Object>> logs = new ArrayList<>();
         int currentTestIndex = -1;
 
-        // Create a custom PrintStream to capture System.out
         PrintStream originalOut = System.out;
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         PrintStream customOut = new PrintStream(outputStream);
         System.setOut(customOut);
 
-        // Run test cases
 ${formatTestCodeList(testCodeList)}
 
-        // Process captured output
         System.setOut(originalOut);
         String capturedOutput = outputStream.toString();
         String[] lines = capturedOutput.split("\\n");
@@ -132,7 +162,6 @@ ${formatTestCodeList(testCodeList)}
             }
         }
 
-        // Print results and logs with proper JSON escaping
         System.out.println("WRAPPER_RESULTS " + SimpleJsonUtil.toJson(results));
         System.out.println("WRAPPER_LOGS " + SimpleJsonUtil.toJson(logs));
     }
