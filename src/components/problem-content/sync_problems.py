@@ -20,14 +20,14 @@ def load_yaml_file(file_path):
     with open(file_path, 'r') as file:
         return yaml.safe_load(file)
 
-def get_existing_problems():
-    """Fetch all existing problems from Supabase"""
-    response = supabase.table('problems').select('title').execute()
+def get_existing_problem_ids():
+    """Fetch all existing problem IDs from Supabase"""
+    response = supabase.table('problems').select('id').execute()
     if hasattr(response, 'error') and response.error:
         print(f"Error fetching problems: {response.error}")
         sys.exit(1)
     
-    return {problem['title'] for problem in response.data}
+    return {problem['id'] for problem in response.data}
 
 def sync_problems():
     """Sync problems from YAML to Supabase"""
@@ -39,24 +39,22 @@ def sync_problems():
         print("No problems found in YAML file")
         return
     
-    # Get existing problems from Supabase
-    existing_problems = get_existing_problems()
+    # Get existing problem IDs from Supabase
+    existing_problem_ids = get_existing_problem_ids()
     
     # Process each problem
     for problem in yaml_data['problems']:
+        problem_id = problem['id']
         title = problem['title']
         
-        # Skip if problem already exists
-        if title in existing_problems:
-            print(f"Problem '{title}' already exists. Skipping.")
+        # Skip if problem ID already exists
+        if problem_id in existing_problem_ids:
+            print(f"Problem '{title}' with ID '{problem_id}' already exists. Skipping.")
             continue
         
-        print(f"Adding new problem: {title}")
+        print(f"Adding new problem: {title} with ID: {problem_id}")
         
-        # Generate a problem ID
-        problem_id = str(uuid.uuid4())
-        
-        # 1. Insert into problems table
+        # Insert into problems table
         problems_data = {
             'id': problem_id,
             'title': title,
@@ -75,7 +73,7 @@ def sync_problems():
             print(f"Exception inserting problem: {e}")
             continue
         
-        # 2. Insert placeholder code for each language
+        # Insert placeholder code for each language
         if 'placeholder-code' in problem:
             for lang_data in problem['placeholder-code']:
                 placeholder_data = {
@@ -93,7 +91,7 @@ def sync_problems():
                 except Exception as e:
                     print(f"Exception inserting placeholder code: {e}")
         
-        # 3. Insert test cases for each language
+        # Insert test cases for each language
         if 'test-cases' in problem:
             for test_case in problem['test-cases']:
                 test_case_data = {
