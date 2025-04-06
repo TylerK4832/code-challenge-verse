@@ -7,10 +7,13 @@ import json
 import sys
 import uuid
 from supabase import create_client, Client
+from dotenv import load_dotenv
 
 # Supabase configuration
-supabase_url = "https://iiutqsyiuvpnqytzswlg.supabase.co"
-supabase_key = input("Enter your Supabase service role key: ")
+load_dotenv()  # load variables from .env
+
+supabase_url = os.getenv("SUPABASE_URL")
+supabase_key = os.getenv("SUPABASE_SERVICE_ROLE_KEY")
 
 # Initialize Supabase client
 supabase: Client = create_client(supabase_url, supabase_key)
