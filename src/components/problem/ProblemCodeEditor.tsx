@@ -8,7 +8,7 @@ import { RunButton } from "./RunButton";
 import { useCodeExecution } from "./useCodeExecution";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 interface ProblemCodeEditorProps {
   code: string;
@@ -20,8 +20,9 @@ const ProblemCodeEditor = ({ code, onChange }: ProblemCodeEditorProps) => {
   const [selectedLanguage, setSelectedLanguage] = useState(LANGUAGES[0]);
   const { isRunning, executionResult, activeTab, setActiveTab, executeCode, resetExecution } = useCodeExecution();
   const { toast } = useToast();
+  const queryClient = useQueryClient();
 
-  // Fetch user's saved solution
+  // Fetch user's saved solution with the current language
   const { data: savedSolution, isLoading: isLoadingSolution } = useQuery({
     queryKey: ['userSolution', problemId, selectedLanguage.name],
     queryFn: async () => {
@@ -42,6 +43,26 @@ const ProblemCodeEditor = ({ code, onChange }: ProblemCodeEditorProps) => {
 
       return data;
     }
+  });
+
+  // Fetch placeholder code separately - this will run when language changes
+  const { data: placeholderCode, isLoading: isLoadingPlaceholder } = useQuery({
+    queryKey: ['placeholderCode', problemId, selectedLanguage.name],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('placeholder_code')
+        .select('code')
+        .eq('problem_id', problemId)
+        .eq('language', selectedLanguage.name)
+        .single();
+
+      if (error) {
+        console.error('Error fetching placeholder code:', error);
+        return null;
+      }
+      return data;
+    },
+    enabled: !!problemId && !!selectedLanguage
   });
 
   // Save solution mutation
@@ -75,44 +96,35 @@ const ProblemCodeEditor = ({ code, onChange }: ProblemCodeEditorProps) => {
     }
   });
 
-  // Load placeholder code when language changes
+  // Update code when saved solution or placeholder code changes
   useEffect(() => {
-    const fetchPlaceholderCode = async () => {
-      if (isLoadingSolution) return;
+    if (isLoadingSolution || isLoadingPlaceholder) return;
 
-      // If there's a saved solution, use it
-      if (savedSolution) {
-        onChange(savedSolution.code);
-        return;
-      }
+    // If user has a saved solution, use that
+    if (savedSolution) {
+      onChange(savedSolution.code);
+      return;
+    }
 
-      // Otherwise, fetch placeholder code
-      const { data, error } = await supabase
-        .from('placeholder_code')
-        .select('code')
-        .eq('problem_id', problemId)
-        .eq('language', selectedLanguage.name)
-        .single();
+    // Otherwise, use placeholder code if available
+    if (placeholderCode) {
+      onChange(placeholderCode.code);
+      return;
+    }
 
-      if (error) {
-        console.error('Error fetching placeholder code:', error);
-        toast({
-          variant: "destructive",
-          title: "Error",
-          description: "Failed to load placeholder code",
-        });
-        return;
-      }
+    // Fallback to a very basic default
+    onChange(`// Default code for problem ${problemId} in ${selectedLanguage.displayName}\n// Please start coding your solution here`);
+  }, [
+    problemId, 
+    selectedLanguage, 
+    onChange, 
+    savedSolution, 
+    isLoadingSolution,
+    placeholderCode,
+    isLoadingPlaceholder
+  ]);
 
-      if (data) {
-        onChange(data.code);
-      }
-    };
-
-    fetchPlaceholderCode();
-  }, [problemId, selectedLanguage, onChange, toast, savedSolution, isLoadingSolution]);
-
-  // Auto-save when code changes
+  // Auto-save when code changes (with debounce)
   useEffect(() => {
     const debounceTimer = setTimeout(() => {
       if (code && code.trim() !== '') {
@@ -136,7 +148,7 @@ const ProblemCodeEditor = ({ code, onChange }: ProblemCodeEditorProps) => {
     executeCode(code, selectedLanguage);
   };
 
-  if (isLoadingSolution) {
+  if (isLoadingSolution || isLoadingPlaceholder) {
     return (
       <div className="flex items-center justify-center h-full">
         <div className="animate-pulse text-muted-foreground">Loading...</div>

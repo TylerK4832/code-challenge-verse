@@ -1,47 +1,16 @@
 
 import { useParams } from 'react-router-dom';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/components/ui/resizable";
 import ProblemDescription from '@/components/problem/ProblemDescription';
 import ProblemCodeEditor from '@/components/problem/ProblemCodeEditor';
-import { useQuery } from '@tanstack/react-query';
-import { supabase } from '@/integrations/supabase/client';
 
 const Problem = () => {
   const { id } = useParams();
   const isMobile = useIsMobile();
   const [code, setCode] = useState('');
-
-  const { data: placeholderCode } = useQuery({
-    queryKey: ['placeholderCode', id],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('placeholder_code')
-        .select('code')
-        .eq('problem_id', id)
-        .eq('language', 'javascript')
-        .single();
-
-      if (error) {
-        console.error('Error fetching placeholder code:', error);
-        return null;
-      }
-      return data;
-    },
-    enabled: !!id
-  });
-
-  // Set code when placeholder code is loaded or changes
-  useEffect(() => {
-    if (placeholderCode?.code) {
-      setCode(placeholderCode.code);
-    } else {
-      // Fallback to default code
-      setCode(`// Default code for problem ${id}\n// Please start coding your solution here`);
-    }
-  }, [placeholderCode, id]);
 
   if (isMobile) {
     return (
