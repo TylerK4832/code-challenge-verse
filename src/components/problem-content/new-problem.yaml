@@ -1,0 +1,316 @@
+problems:
+  - title: "3. Movie Theater Booking System"
+    id: "movie-theater-booking"
+    difficulty: "Hard"
+    problem-content: "./MovieTheaterBookingContent.tsx"
+    placeholder-code:
+      - language: python
+        code: |
+          class MovieTheaterBooking:
+          
+              def __init__(self, rows: int, seatsPerRow: int):
+                  """
+                  Initializes the movie theater with a given number of rows and seats per row.
+                  All seats are initially available.
+                  """
+                  pass
+              
+              def bookSeat(self, row: int, seat: int) -> bool:
+                  """
+                  Books a specific seat if it is available.
+                  Returns True if the booking is successful, otherwise returns False.
+                  """
+                  pass
+              
+              def cancelBooking(self, row: int, seat: int) -> bool:
+                  """
+                  Cancels the booking for a specific seat.
+                  Returns True if the cancellation is successful, or False if the seat was not booked.
+                  """
+                  pass
+              
+              def bookAdjacentSeats(self, numSeats: int) -> list:
+                  """
+                  Attempts to book a contiguous block of adjacent seats in the same row.
+                  Returns a list of (row, seat) tuples representing the booked seats.
+                  If no such block is available, returns an empty list.
+                  """
+                  pass
+          
+          # Your MovieTheaterBooking object will be instantiated and called as such:
+          # obj = MovieTheaterBooking(rows, seatsPerRow)
+          # param = obj.bookSeat(row, seat)
+          # result = obj.bookAdjacentSeats(numSeats)
+      - language: cpp
+        code: |
+          class MovieTheaterBooking {
+          public:
+              MovieTheaterBooking(int rows, int seatsPerRow) {
+                  // Initializes the movie theater with the given rows and seats per row.
+                  // All seats are initially available.
+              }
+              
+              bool bookSeat(int row, int seat) {
+                  // Books a specific seat if available.
+                  // Returns true if booking is successful, otherwise false.
+              }
+              
+              bool cancelBooking(int row, int seat) {
+                  // Cancels the booking for the specified seat.
+                  // Returns true if cancellation is successful, or false if the seat was not booked.
+              }
+              
+              vector<pair<int, int>> bookAdjacentSeats(int numSeats) {
+                  // Attempts to book a contiguous block of adjacent seats in the same row.
+                  // Returns a vector of pairs representing the booked seats.
+                  // If no block of numSeats adjacent seats is available, returns an empty vector.
+              }
+          };
+
+          /**
+          * Your MovieTheaterBooking object will be instantiated and called as such:
+          * MovieTheaterBooking* obj = new MovieTheaterBooking(rows, seatsPerRow);
+          * bool param = obj->bookSeat(row, seat);
+          * auto result = obj->bookAdjacentSeats(numSeats);
+          */
+      - language: java
+        code: |
+          class MovieTheaterBooking {
+
+              public MovieTheaterBooking(int rows, int seatsPerRow) {
+                  // Initializes the movie theater with the given rows and seats per row.
+                  // All seats are initially available.
+              }
+              
+              public boolean bookSeat(int row, int seat) {
+                  // Books a specific seat if available.
+                  // Returns true if booking is successful, otherwise false.
+              }
+              
+              public boolean cancelBooking(int row, int seat) {
+                  // Cancels the booking for the specified seat.
+                  // Returns true if cancellation is successful, or false if the seat was not booked.
+              }
+              
+              public List<int[]> bookAdjacentSeats(int numSeats) {
+                  // Attempts to book a contiguous block of adjacent seats in the same row.
+                  // Returns a list of int arrays where each array is of the form [row, seat].
+                  // If no block of numSeats adjacent seats is available, returns an empty list.
+              }
+          }
+
+          /**
+          * Your MovieTheaterBooking object will be instantiated and called as such:
+          * MovieTheaterBooking obj = new MovieTheaterBooking(rows, seatsPerRow);
+          * boolean param = obj.bookSeat(row, seat);
+          * List<int[]> result = obj.bookAdjacentSeats(numSeats);
+          */
+      - language: javascript
+        code: |
+          /**
+          * @param {number} rows
+          * @param {number} seatsPerRow
+          */
+          var MovieTheaterBooking = function(rows, seatsPerRow) {
+              // Initializes the movie theater with the given rows and seats per row.
+              // All seats are initially available.
+          };
+
+          /**
+          * @param {number} row
+          * @param {number} seat
+          * @return {boolean}
+          */
+          MovieTheaterBooking.prototype.bookSeat = function(row, seat) {
+              // Books a specific seat if available.
+              // Returns true if booking is successful, otherwise false.
+          };
+
+          /**
+          * @param {number} row
+          * @param {number} seat
+          * @return {boolean}
+          */
+          MovieTheaterBooking.prototype.cancelBooking = function(row, seat) {
+              // Cancels the booking for the specified seat.
+              // Returns true if cancellation is successful, or false if the seat was not booked.
+          };
+
+          /**
+          * @param {number} numSeats
+          * @return {Array.<Array.<number>>}
+          */
+          MovieTheaterBooking.prototype.bookAdjacentSeats = function(numSeats) {
+              // Attempts to book a contiguous block of adjacent seats in the same row.
+              // Returns an array of [row, seat] pairs representing the booked seats.
+              // If no block of numSeats adjacent seats is available, returns an empty array.
+          };
+
+          /** 
+          * Your MovieTheaterBooking object will be instantiated and called as such:
+          * var obj = new MovieTheaterBooking(rows, seatsPerRow)
+          * var param = obj.bookSeat(row, seat)
+          * var result = obj.bookAdjacentSeats(numSeats)
+          */
+    test-cases:
+      - language: python
+        number: 1
+        code: |
+          theater = MovieTheaterBooking(3, 5)
+          # Book a seat that is available.
+          assertEquals(theater.bookSeat(1, 3), True)
+          # Try booking the same seat again.
+          assertEquals(theater.bookSeat(1, 3), False)
+          # Cancel the booking.
+          assertEquals(theater.cancelBooking(1, 3), True)
+          # Try canceling an unbooked seat.
+          assertEquals(theater.cancelBooking(1, 3), False)
+      - language: python
+        number: 2
+        code: |
+          theater = MovieTheaterBooking(2, 4)
+          # Book a block of 3 adjacent seats.
+          result = theater.bookAdjacentSeats(3)
+          # Verify that a contiguous block of 3 seats was booked.
+          assertEquals(len(result), 3)
+          if result:
+              row_num = result[0][0]
+              # Check that all seats are in the same row.
+              assert all(seat[0] == row_num for seat in result)
+      - language: python
+        number: 3
+        code: |
+          theater = MovieTheaterBooking(2, 3)
+          # Book a full row using adjacent booking.
+          result1 = theater.bookAdjacentSeats(3)
+          assertEquals(len(result1), 3)
+          # Now, try to book a block of 2 adjacent seats.
+          result2 = theater.bookAdjacentSeats(2)
+          # Depending on which row is available, result2 may be empty or contain 2 seats.
+          if result2:
+              assertEquals(len(result2), 2)
+          else:
+              assertEquals(result2, [])
+      - language: python
+        number: 4
+        code: |
+          theater = MovieTheaterBooking(1, 5)
+          # Manually book two seats and then attempt an adjacent booking.
+          assertEquals(theater.bookSeat(1, 2), True)
+          assertEquals(theater.bookSeat(1, 3), True)
+          result = theater.bookAdjacentSeats(2)
+          # The booking should find a block of 2 adjacent seats if available.
+          if result:
+              assertEquals(len(result), 2)
+          else:
+              assertEquals(result, [])
+      - language: cpp
+        number: 1
+        code: |
+          MovieTheaterBooking* theater = new MovieTheaterBooking(3, 5);
+          // Book a seat that is available.
+          Printer::assertEquals(theater->bookSeat(1, 3), true);
+          // Try booking the same seat again.
+          Printer::assertEquals(theater->bookSeat(1, 3), false);
+          // Cancel the booking.
+          Printer::assertEquals(theater->cancelBooking(1, 3), true);
+          // Try canceling an unbooked seat.
+          Printer::assertEquals(theater->cancelBooking(1, 3), false);
+      - language: cpp
+        number: 2
+        code: |
+          MovieTheaterBooking* theater = new MovieTheaterBooking(2, 4);
+          // Book a block of 3 adjacent seats.
+          auto result = theater->bookAdjacentSeats(3);
+          Printer::assertEquals(result.size(), 3);
+          if (!result.empty()) {
+              int row_num = result[0].first;
+              // Verify that all seats are in the same row.
+              Printer::assert(result[1].first == row_num);
+              Printer::assert(result[2].first == row_num);
+          }
+      - language: cpp
+        number: 3
+        code: |
+          MovieTheaterBooking* theater = new MovieTheaterBooking(2, 3);
+          auto result1 = theater->bookAdjacentSeats(3);
+          Printer::assertEquals(result1.size(), 3);
+          auto result2 = theater->bookAdjacentSeats(2);
+          if (!result2.empty()) {
+              Printer::assertEquals(result2.size(), 2);
+          } else {
+              Printer::assert(result2.empty());
+          }
+      - language: java
+        number: 1
+        code: |
+          MovieTheaterBooking theater = new MovieTheaterBooking(3, 5);
+          // Book a seat that is available.
+          assertEquals(theater.bookSeat(1, 3), true);
+          // Try booking the same seat again.
+          assertEquals(theater.bookSeat(1, 3), false);
+          // Cancel the booking.
+          assertEquals(theater.cancelBooking(1, 3), true);
+          // Try canceling an unbooked seat.
+          assertEquals(theater.cancelBooking(1, 3), false);
+      - language: java
+        number: 2
+        code: |
+          MovieTheaterBooking theater = new MovieTheaterBooking(2, 4);
+          List<int[]> result = theater.bookAdjacentSeats(3);
+          assertEquals(result.size(), 3);
+          if (!result.isEmpty()) {
+              int rowNum = result.get(0)[0];
+              // Verify that all seats in the result are in the same row.
+              for (int[] seat : result) {
+                  assertEquals(seat[0], rowNum);
+              }
+          }
+      - language: java
+        number: 3
+        code: |
+          MovieTheaterBooking theater = new MovieTheaterBooking(2, 3);
+          List<int[]> result1 = theater.bookAdjacentSeats(3);
+          assertEquals(result1.size(), 3);
+          List<int[]> result2 = theater.bookAdjacentSeats(2);
+          if (!result2.isEmpty()) {
+              assertEquals(result2.size(), 2);
+          } else {
+              assertEquals(result2.size(), 0);
+          }
+      - language: javascript
+        number: 1
+        code: |
+          var theater = new MovieTheaterBooking(3, 5);
+          // Book a seat that is available.
+          assertEquals(theater.bookSeat(1, 3), true);
+          // Try booking the same seat again.
+          assertEquals(theater.bookSeat(1, 3), false);
+          // Cancel the booking.
+          assertEquals(theater.cancelBooking(1, 3), true);
+          // Try canceling an unbooked seat.
+          assertEquals(theater.cancelBooking(1, 3), false);
+      - language: javascript
+        number: 2
+        code: |
+          var theater = new MovieTheaterBooking(2, 4);
+          var result = theater.bookAdjacentSeats(3);
+          assertEquals(result.length, 3);
+          if (result.length > 0) {
+              var rowNum = result[0][0];
+              // Verify that all booked seats are in the same row.
+              assertEquals(result[1][0], rowNum);
+              assertEquals(result[2][0], rowNum);
+          }
+      - language: javascript
+        number: 3
+        code: |
+          var theater = new MovieTheaterBooking(2, 3);
+          var result1 = theater.bookAdjacentSeats(3);
+          assertEquals(result1.length, 3);
+          var result2 = theater.bookAdjacentSeats(2);
+          if (result2.length > 0) {
+              assertEquals(result2.length, 2);
+          } else {
+              assertEquals(result2.length, 0);
+          }
