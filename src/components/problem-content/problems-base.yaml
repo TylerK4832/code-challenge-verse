@@ -96,6 +96,16 @@ problems:
           assertEquals(lot.addCar(1), False)
           assertEquals(lot.addCar(2), False)
           assertEquals(lot.addCar(3), False)
+      - language: python
+        number: 3
+        code: |
+          lot = ParkingLot(1, 2, 1)
+          assertEquals(lot.addCar(3), True)
+          assertEquals(lot.addCar(2), True)
+          assertEquals(lot.addCar(1), True)
+          assertEquals(lot.addCar(2), True)
+          assertEquals(lot.addCar(2), False)
+          assertEquals(lot.addCar(3), False)
       - language: cpp
         number: 1
         code: |
@@ -111,6 +121,16 @@ problems:
         code: |
           ParkingLot* lot = new ParkingLot(0, 0, 0);
           Printer::assertEquals(lot->addCar(1), false);
+          Printer::assertEquals(lot->addCar(2), false);
+          Printer::assertEquals(lot->addCar(3), false);
+      - language: cpp
+        number: 3
+        code: |
+          ParkingLot* lot = new ParkingLot(1, 2, 1);
+          Printer::assertEquals(lot->addCar(3), true);
+          Printer::assertEquals(lot->addCar(2), true);
+          Printer::assertEquals(lot->addCar(1), true);
+          Printer::assertEquals(lot->addCar(2), true);
           Printer::assertEquals(lot->addCar(2), false);
           Printer::assertEquals(lot->addCar(3), false);
       - language: java
@@ -130,6 +150,16 @@ problems:
           assertEquals(lot.addCar(1), false);
           assertEquals(lot.addCar(2), false);
           assertEquals(lot.addCar(3), false);
+      - language: java
+        number: 3
+        code: |
+          ParkingLot lot = new ParkingLot(1, 2, 1);
+          assertEquals(lot.addCar(3), true);
+          assertEquals(lot.addCar(2), true);
+          assertEquals(lot.addCar(1), true);
+          assertEquals(lot.addCar(2), true);
+          assertEquals(lot.addCar(2), false);
+          assertEquals(lot.addCar(3), false);
       - language: javascript
         number: 1
         code: |
@@ -147,6 +177,225 @@ problems:
           assertEquals(lot.addCar(1), false);
           assertEquals(lot.addCar(2), false);
           assertEquals(lot.addCar(3), false);
-        
+      - language: javascript
+        number: 3
+        code: |
+          var lot = new ParkingLot(1, 2, 1)
+          assertEquals(lot.addCar(3), true);
+          assertEquals(lot.addCar(2), true);
+          assertEquals(lot.addCar(1), true);
+          assertEquals(lot.addCar(2), true);
+          assertEquals(lot.addCar(2), false);
+          assertEquals(lot.addCar(3), false);
+  - title: "2. Call Center"
+    id: "call-center"
+    difficulty: "Medium"
+    problem-content: "./CallCenterContent.tsx"
+    placeholder-code:
+      - language: python
+        code: |
+          class CallCenter:
 
+              def __init__(self, numAgents: int):
+                  # Initialize your call center with numAgents agents.
+                  # Agents are numbered from 1 to numAgents.
+                  pass
 
+              def dispatchCall(self) -> int:
+                  # Dispatch a call to the available agent with the smallest id.
+                  # If an agent is available, mark them as busy and return their id.
+                  # If no agents are available, return -1.
+                  pass
+
+              def endCall(self, agentId: int) -> None:
+                  # Mark the agent with agentId as available.
+                  pass
+
+          # Your CallCenter object will be instantiated and called as such:
+          # obj = CallCenter(numAgents)
+          # param = obj.dispatchCall()
+          # obj.endCall(agentId)
+      - language: cpp
+        code: |
+          class CallCenter {
+          public:
+              CallCenter(int numAgents) {
+                  // Initialize your call center with numAgents agents.
+                  // Agents are numbered from 1 to numAgents.
+              }
+              
+              int dispatchCall() {
+                  // Dispatch a call to the available agent with the smallest id.
+                  // If an agent is available, mark them as busy and return their id.
+                  // If no agents are available, return -1.
+              }
+              
+              void endCall(int agentId) {
+                  // Mark the agent with agentId as available.
+              }
+          };
+
+          /**
+          * Your CallCenter object will be instantiated and called as such:
+          * CallCenter* obj = new CallCenter(numAgents);
+          * int param = obj->dispatchCall();
+          * obj->endCall(agentId);
+          */
+      - language: java
+        code: |
+          class CallCenter {
+
+              public CallCenter(int numAgents) {
+                  // Initialize your call center with numAgents agents.
+                  // Agents are numbered from 1 to numAgents.
+              }
+              
+              public int dispatchCall() {
+                  // Dispatch a call to the available agent with the smallest id.
+                  // If an agent is available, mark them as busy and return their id.
+                  // If no agents are available, return -1.
+              }
+              
+              public void endCall(int agentId) {
+                  // Mark the agent with agentId as available.
+              }
+          }
+
+          /**
+          * Your CallCenter object will be instantiated and called as such:
+          * CallCenter obj = new CallCenter(numAgents);
+          * int param = obj.dispatchCall();
+          * obj.endCall(agentId);
+          */
+      - language: javascript
+        code: |
+          /**
+          * @param {number} numAgents
+          */
+          var CallCenter = function(numAgents) {
+              // Initialize your call center with numAgents agents.
+              // Agents are numbered from 1 to numAgents.
+          };
+
+          /**
+          * @return {number}
+          */
+          CallCenter.prototype.dispatchCall = function() {
+              // Dispatch a call to the available agent with the smallest id.
+              // If an agent is available, mark them as busy and return their id.
+              // If no agents are available, return -1.
+          };
+
+          /**
+          * @param {number} agentId
+          */
+          CallCenter.prototype.endCall = function(agentId) {
+              // Mark the agent with agentId as available.
+          };
+
+          /** 
+          * Your CallCenter object will be instantiated and called as such:
+          * var obj = new CallCenter(numAgents)
+          * var param = obj.dispatchCall()
+          * obj.endCall(agentId)
+          */
+    test-cases:
+      - language: python
+        number: 1
+        code: |
+          center = CallCenter(2)
+          assertEquals(center.dispatchCall(), 1)
+          assertEquals(center.dispatchCall(), 2)
+          assertEquals(center.dispatchCall(), -1)
+          center.endCall(1)
+          assertEquals(center.dispatchCall(), 1)
+      - language: python
+        number: 2
+        code: |
+          center = CallCenter(1)
+          assertEquals(center.dispatchCall(), 1)
+          assertEquals(center.dispatchCall(), -1)
+          center.endCall(1)
+          assertEquals(center.dispatchCall(), 1)
+      - language: python
+        number: 3
+        code: |
+          center = CallCenter(3)
+          assertEquals(center.dispatchCall(), 1)
+          assertEquals(center.dispatchCall(), 2)
+          assertEquals(center.dispatchCall(), 3)
+          assertEquals(center.dispatchCall(), -1)
+          center.endCall(2)
+          assertEquals(center.dispatchCall(), 2)
+      - language: cpp
+        number: 1
+        code: |
+          CallCenter* center = new CallCenter(2);
+          Printer::assertEquals(center->dispatchCall(), 1);
+          Printer::assertEquals(center->dispatchCall(), 2);
+          Printer::assertEquals(center->dispatchCall(), -1);
+          center->endCall(1);
+          Printer::assertEquals(center->dispatchCall(), 1);
+      - language: cpp
+        number: 2
+        code: |
+          CallCenter* center = new CallCenter(0);
+          Printer::assertEquals(center->dispatchCall(), -1);
+      - language: cpp
+        number: 3
+        code: |
+          CallCenter* center = new CallCenter(3);
+          Printer::assertEquals(center->dispatchCall(), 1);
+          Printer::assertEquals(center->dispatchCall(), 2);
+          Printer::assertEquals(center->dispatchCall(), 3);
+          Printer::assertEquals(center->dispatchCall(), -1);
+          center->endCall(2);
+          Printer::assertEquals(center->dispatchCall(), 2);
+      - language: java
+        number: 1
+        code: |
+          CallCenter center = new CallCenter(2);
+          assertEquals(center.dispatchCall(), 1);
+          assertEquals(center.dispatchCall(), 2);
+          assertEquals(center.dispatchCall(), -1);
+          center.endCall(1);
+          assertEquals(center.dispatchCall(), 1);
+      - language: java
+        number: 2
+        code: |
+          CallCenter center = new CallCenter(0);
+          assertEquals(center.dispatchCall(), -1);
+      - language: java
+        number: 3
+        code: |
+          CallCenter center = new CallCenter(3);
+          assertEquals(center.dispatchCall(), 1);
+          assertEquals(center.dispatchCall(), 2);
+          assertEquals(center.dispatchCall(), 3);
+          assertEquals(center.dispatchCall(), -1);
+          center.endCall(2);
+          assertEquals(center.dispatchCall(), 2);
+      - language: javascript
+        number: 1
+        code: |
+          var center = new CallCenter(2)
+          assertEquals(center.dispatchCall(), 1);
+          assertEquals(center.dispatchCall(), 2);
+          assertEquals(center.dispatchCall(), -1);
+          center.endCall(1);
+          assertEquals(center.dispatchCall(), 1);
+      - language: javascript
+        number: 2
+        code: |
+          var center = new CallCenter(0)
+          assertEquals(center.dispatchCall(), -1);
+      - language: javascript
+        number: 3
+        code: |
+          var center = new CallCenter(3)
+          assertEquals(center.dispatchCall(), 1);
+          assertEquals(center.dispatchCall(), 2);
+          assertEquals(center.dispatchCall(), 3);
+          assertEquals(center.dispatchCall(), -1);
+          center.endCall(2);
+          assertEquals(center.dispatchCall(), 2);

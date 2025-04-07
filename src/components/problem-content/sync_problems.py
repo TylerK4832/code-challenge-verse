@@ -35,7 +35,7 @@ def get_existing_problem_ids():
 def sync_problems():
     """Sync problems from YAML to Supabase"""
     # Load problems from YAML
-    yaml_path = os.path.join(os.path.dirname(__file__), 'problems.yaml')
+    yaml_path = os.path.join(os.path.dirname(__file__), 'call-center.yaml')
     yaml_data = load_yaml_file(yaml_path)
     
     if 'problems' not in yaml_data:

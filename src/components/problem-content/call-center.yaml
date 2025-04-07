@@ -129,6 +129,16 @@ problems:
           assertEquals(center.dispatchCall(), -1)
           center.endCall(1)
           assertEquals(center.dispatchCall(), 1)
+      - language: python
+        number: 3
+        code: |
+          center = CallCenter(3)
+          assertEquals(center.dispatchCall(), 1)
+          assertEquals(center.dispatchCall(), 2)
+          assertEquals(center.dispatchCall(), 3)
+          assertEquals(center.dispatchCall(), -1)
+          center.endCall(2)
+          assertEquals(center.dispatchCall(), 2)
       - language: cpp
         number: 1
         code: |
@@ -143,6 +153,16 @@ problems:
         code: |
           CallCenter* center = new CallCenter(0);
           Printer::assertEquals(center->dispatchCall(), -1);
+      - language: cpp
+        number: 3
+        code: |
+          CallCenter* center = new CallCenter(3);
+          Printer::assertEquals(center->dispatchCall(), 1);
+          Printer::assertEquals(center->dispatchCall(), 2);
+          Printer::assertEquals(center->dispatchCall(), 3);
+          Printer::assertEquals(center->dispatchCall(), -1);
+          center->endCall(2);
+          Printer::assertEquals(center->dispatchCall(), 2);
       - language: java
         number: 1
         code: |
@@ -157,6 +177,16 @@ problems:
         code: |
           CallCenter center = new CallCenter(0);
           assertEquals(center.dispatchCall(), -1);
+      - language: java
+        number: 3
+        code: |
+          CallCenter center = new CallCenter(3);
+          assertEquals(center.dispatchCall(), 1);
+          assertEquals(center.dispatchCall(), 2);
+          assertEquals(center.dispatchCall(), 3);
+          assertEquals(center.dispatchCall(), -1);
+          center.endCall(2);
+          assertEquals(center.dispatchCall(), 2);
       - language: javascript
         number: 1
         code: |
@@ -171,3 +201,13 @@ problems:
         code: |
           var center = new CallCenter(0)
           assertEquals(center.dispatchCall(), -1);
+      - language: javascript
+        number: 3
+        code: |
+          var center = new CallCenter(3)
+          assertEquals(center.dispatchCall(), 1);
+          assertEquals(center.dispatchCall(), 2);
+          assertEquals(center.dispatchCall(), 3);
+          assertEquals(center.dispatchCall(), -1);
+          center.endCall(2);
+          assertEquals(center.dispatchCall(), 2);
