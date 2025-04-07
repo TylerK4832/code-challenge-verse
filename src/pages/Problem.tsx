@@ -14,7 +14,7 @@ const Problem = () => {
 
   if (isMobile) {
     return (
-      <div className="h-[100dvh] -mt-12 pt-12"> {/* Updated from -mt-16 pt-16 to -mt-12 pt-12 */}
+      <div className="h-[100dvh] -mt-16 pt-16">
         <Tabs defaultValue="description" className="h-full">
           <div className="border-b border-border">
             <TabsList className="w-full justify-start">
@@ -36,8 +36,8 @@ const Problem = () => {
   }
 
   return (
-    <div className="h-[100dvh] -mt-12 pt-12 relative"> {/* Updated from -mt-16 pt-16 to -mt-12 pt-12 */}
-      <div className="absolute inset-0 pt-12 z-0"> {/* Updated from pt-16 to pt-12 */}
+    <div className="h-[100dvh] -mt-16 pt-16 relative">
+      <div className="absolute inset-0 pt-16 z-0">
         <ResizablePanelGroup direction="horizontal" className="h-full">
           <ResizablePanel defaultSize={35} minSize={30}>
             <ProblemDescription problemId={id || ''} />
