@@ -2,7 +2,7 @@
 import { Badge } from '@/components/ui/badge';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { ReactNode, Suspense, lazy } from 'react';
+import { ReactNode, Suspense, lazy, useState, useEffect } from 'react';
 
 interface ProblemDescriptionProps {
   problemId: string;
@@ -23,22 +23,42 @@ const GenericProblemDescription = ({ problemId }: ProblemDescriptionProps) => {
     }
   });
 
-  // Dynamically import the problem content component based on the problem ID
-  const DynamicProblemContent = lazy(() => {
-    // Fix the import path by using the correct relative path
-    const contentPath = `../problem-content/${problemId}-content.tsx`;
-    
-    try {
-      return import(contentPath)
-        .catch(err => {
-          console.error(`Failed to load problem content for ${problemId}:`, err);
-          return import('../problem-content/fallback-content');
-        });
-    } catch (err) {
-      console.error(`Error importing problem content for ${problemId}:`, err);
-      return import('../problem-content/fallback-content');
-    }
-  });
+  const [ContentComponent, setContentComponent] = useState<React.ComponentType | null>(null);
+  const [isContentLoading, setIsContentLoading] = useState(true);
+
+  useEffect(() => {
+    const loadContent = async () => {
+      setIsContentLoading(true);
+      try {
+        // Map problem IDs to their content components
+        let component;
+        
+        switch (problemId) {
+          case 'parking-lot':
+            component = (await import('../problem-content/parking-lot-content')).default;
+            break;
+          case 'movie-theater-booking':
+            component = (await import('../problem-content/movie-theater-booking-content')).default;
+            break;
+          case 'call-center':
+            component = (await import('../problem-content/call-center-content')).default;
+            break;
+          default:
+            component = (await import('../problem-content/fallback-content')).default;
+        }
+        
+        setContentComponent(() => component);
+      } catch (err) {
+        console.error(`Error loading content for ${problemId}:`, err);
+        const FallbackComponent = (await import('../problem-content/fallback-content')).default;
+        setContentComponent(() => FallbackComponent);
+      } finally {
+        setIsContentLoading(false);
+      }
+    };
+
+    loadContent();
+  }, [problemId]);
 
   if (isLoading) {
     return (
@@ -61,9 +81,15 @@ const GenericProblemDescription = ({ problemId }: ProblemDescriptionProps) => {
         </Badge>
       </div>
 
-      <Suspense fallback={<div className="p-6 animate-pulse">Loading problem content...</div>}>
-        <DynamicProblemContent />
-      </Suspense>
+      {isContentLoading ? (
+        <div className="p-6 animate-pulse">Loading problem content...</div>
+      ) : ContentComponent ? (
+        <ContentComponent />
+      ) : (
+        <div className="p-6 text-red-500">
+          Failed to load problem content. Please try refreshing the page.
+        </div>
+      )}
     </div>
   );
 };
