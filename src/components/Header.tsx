@@ -3,7 +3,8 @@ import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { User, Code, Hexagon } from "lucide-react";
+import { User } from "lucide-react";
+import Logo from "./Logo";
 
 const Header = () => {
   const navigate = useNavigate();
@@ -31,11 +32,7 @@ const Header = () => {
             className="text-lg font-semibold no-underline hover:no-underline hover:bg-accent hover:text-accent-foreground rounded-md transition-colors px-2 py-1 flex items-center gap-2"
             onClick={() => navigate("/")}
           >
-            <div className="flex items-center text-primary">
-              <Hexagon className="h-5 w-5" strokeWidth={2.5}>
-                <Code className="h-3 w-3 absolute" strokeWidth={3} />
-              </Hexagon>
-            </div>
+            <Logo size="sm" />
             CodePrism
           </Button>
           <Button
