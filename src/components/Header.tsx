@@ -32,7 +32,7 @@ const Header = () => {
             className="text-lg font-semibold no-underline hover:no-underline hover:bg-accent hover:text-accent-foreground rounded-md transition-colors px-2 py-1 flex items-center gap-2"
             onClick={() => navigate("/")}
           >
-            <Logo size="sm" />
+            <Logo size="md" /> {/* Updated from size="sm" to size="md" */}
             CodePrism
           </Button>
           <Button

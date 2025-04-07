@@ -1,12 +1,9 @@
 
-import Logo from "./Logo";
-
 const Footer = () => {
   return (
     <footer className="mt-auto py-6 border-t">
       <div className="container flex flex-col items-center justify-center space-y-2 text-sm text-muted-foreground">
-        <div className="flex items-center gap-2">
-          <Logo size="sm" />
+        <div>
           <p>© {new Date().getFullYear()} CodePrism. All rights reserved.</p>
         </div>
         <div className="flex items-center space-x-4">
