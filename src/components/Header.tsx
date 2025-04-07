@@ -29,7 +29,7 @@ const Header = () => {
 
   return (
     <header className="border-b relative z-50">
-      <div className={`flex h-16 items-center justify-between ${isProblemPage ? 'px-0' : 'container'}`}>
+      <div className={`flex h-16 items-center justify-between ${isProblemPage ? 'px-4' : 'container'}`}>
         <div className="flex items-center gap-4">
           <Button
             variant="link"
