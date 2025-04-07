@@ -29,10 +29,10 @@ const Header = () => {
         <div className="flex items-center gap-4">
           <Button
             variant="link"
-            className="text-lg font-semibold no-underline hover:no-underline hover:bg-accent hover:text-accent-foreground rounded-md transition-colors px-2 py-1 flex items-center gap-2"
+            className="text-lg font-semibold no-underline hover:no-underline hover:bg-accent hover:text-accent-foreground rounded-md transition-colors px-2 py-1 flex items-center gap-1"
             onClick={() => navigate("/")}
           >
-            <Logo size="md" /> {/* Updated from size="sm" to size="md" */}
+            <Logo size="lg" /> {/* Updated from size="md" to size="lg" */}
             CodePrism
           </Button>
           <Button
