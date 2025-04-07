@@ -57,6 +57,7 @@ center.dispatchCall();  // returns 1 (agent 1 takes another call)`}
           <li>0 ≤ numAgents ≤ 1000</li>
           <li>1 ≤ agentId ≤ numAgents</li>
           <li>At most 1000 calls will be made to the CallCenter methods</li>
+          <li>Calls to endCall will only be made for agents who are currently on a call</li>
         </ul>
       </div>
     </div>
