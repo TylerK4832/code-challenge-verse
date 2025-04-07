@@ -32,8 +32,9 @@ const Header = () => {
             onClick={() => navigate("/")}
           >
             <div className="flex items-center text-primary">
-              <Hexagon className="h-5 w-5 mr-1" />
-              <Code className="h-5 w-5" />
+              <Hexagon className="h-5 w-5" strokeWidth={2.5}>
+                <Code className="h-3 w-3 absolute" strokeWidth={3} />
+              </Hexagon>
             </div>
             CodePrism
           </Button>

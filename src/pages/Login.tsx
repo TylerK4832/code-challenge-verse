@@ -66,8 +66,9 @@ const Login = () => {
         <div className="space-y-2 text-center">
           <div className="flex justify-center items-center mb-3">
             <div className="flex items-center text-primary bg-muted p-2 rounded-md">
-              <Hexagon className="h-8 w-8 mr-1" />
-              <Code className="h-8 w-8" />
+              <Hexagon className="h-8 w-8" strokeWidth={2.5}>
+                <Code className="h-5 w-5 absolute" strokeWidth={3} />
+              </Hexagon>
             </div>
           </div>
           <h1 className="text-3xl font-bold">Welcome to CodePrism</h1>

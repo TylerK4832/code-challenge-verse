@@ -7,8 +7,9 @@ const Footer = () => {
       <div className="container flex flex-col items-center justify-center space-y-2 text-sm text-muted-foreground">
         <div className="flex items-center gap-1">
           <div className="flex items-center text-primary">
-            <Hexagon className="h-4 w-4 mr-0.5" />
-            <Code className="h-4 w-4" />
+            <Hexagon className="h-4 w-4" strokeWidth={2.5}>
+              <Code className="h-2 w-2 absolute" strokeWidth={3} />
+            </Hexagon>
           </div>
           <p>© {new Date().getFullYear()} CodePrism. All rights reserved.</p>
         </div>
