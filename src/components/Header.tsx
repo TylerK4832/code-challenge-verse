@@ -1,8 +1,9 @@
+
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { User } from "lucide-react";
+import { User, Code, Prism } from "lucide-react";
 
 const Header = () => {
   const navigate = useNavigate();
@@ -27,10 +28,14 @@ const Header = () => {
         <div className="flex items-center gap-4">
           <Button
             variant="link"
-            className="text-lg font-semibold no-underline hover:no-underline hover:bg-accent hover:text-accent-foreground rounded-md transition-colors px-2 py-1"
+            className="text-lg font-semibold no-underline hover:no-underline hover:bg-accent hover:text-accent-foreground rounded-md transition-colors px-2 py-1 flex items-center gap-2"
             onClick={() => navigate("/")}
           >
-            CodeVerse
+            <div className="flex items-center text-primary">
+              <Prism className="h-5 w-5 mr-1" />
+              <Code className="h-5 w-5" />
+            </div>
+            CodePrism
           </Button>
           <Button
             variant="link"
