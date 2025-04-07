@@ -5,7 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import UsernameSetup from "@/components/UsernameSetup";
-import { Prism, Code } from "lucide-react";
+import { Code, Hexagon } from "lucide-react";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -66,7 +66,7 @@ const Login = () => {
         <div className="space-y-2 text-center">
           <div className="flex justify-center items-center mb-3">
             <div className="flex items-center text-primary bg-muted p-2 rounded-md">
-              <Prism className="h-8 w-8 mr-1" />
+              <Hexagon className="h-8 w-8 mr-1" />
               <Code className="h-8 w-8" />
             </div>
           </div>

@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { User, Code, Prism } from "lucide-react";
+import { User, Code, Hexagon } from "lucide-react";
 
 const Header = () => {
   const navigate = useNavigate();
@@ -32,7 +32,7 @@ const Header = () => {
             onClick={() => navigate("/")}
           >
             <div className="flex items-center text-primary">
-              <Prism className="h-5 w-5 mr-1" />
+              <Hexagon className="h-5 w-5 mr-1" />
               <Code className="h-5 w-5" />
             </div>
             CodePrism

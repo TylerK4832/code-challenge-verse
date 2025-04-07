@@ -1,5 +1,5 @@
 
-import { Prism, Code } from "lucide-react";
+import { Code, Hexagon } from "lucide-react";
 
 const Footer = () => {
   return (
@@ -7,7 +7,7 @@ const Footer = () => {
       <div className="container flex flex-col items-center justify-center space-y-2 text-sm text-muted-foreground">
         <div className="flex items-center gap-1">
           <div className="flex items-center text-primary">
-            <Prism className="h-4 w-4 mr-0.5" />
+            <Hexagon className="h-4 w-4 mr-0.5" />
             <Code className="h-4 w-4" />
           </div>
           <p>© {new Date().getFullYear()} CodePrism. All rights reserved.</p>
