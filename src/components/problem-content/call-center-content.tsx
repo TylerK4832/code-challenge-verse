@@ -1,3 +1,4 @@
+
 import React from 'react';
 
 const CallCenterContent: React.FC = () => {
@@ -5,10 +6,8 @@ const CallCenterContent: React.FC = () => {
     <div className="prose prose-invert max-w-none">
       <div>
         <p className="text-muted-foreground">
-          Implement a call center system that manages incoming calls using a fixed pool of agents.
-          Each agent is identified by a unique id starting from 1.
-          When a call arrives, assign it to the available agent with the smallest id.
-          If no agents are free, the call should be rejected.
+          Design a CallCenter class that can manage call dispatching with multiple agents. The system should efficiently 
+          assign calls to available agents and handle call completion.
         </p>
       </div>
 
@@ -18,22 +17,20 @@ const CallCenterContent: React.FC = () => {
           <div>
             <code className="text-sm">CallCenter(int numAgents)</code>
             <p className="mt-1">
-              Initializes the call center with the given number of agents.
-              Agents are assigned ids from 1 to numAgents.
+              Initializes the call center with numAgents agents. Agents are numbered from 1 to numAgents.
             </p>
           </div>
           <div>
             <code className="text-sm">int dispatchCall()</code>
             <p className="mt-1">
-              Dispatches an incoming call to the available agent with the smallest id.
-              If an agent is available, mark the agent as busy and return their id.
-              If no agents are available, return -1.
+              Dispatches a call to the available agent with the smallest ID. If an agent is available, mark them as busy 
+              and return their ID. If no agents are available, return -1.
             </p>
           </div>
           <div>
             <code className="text-sm">void endCall(int agentId)</code>
             <p className="mt-1">
-              Ends the call for the specified agent, marking them as available again.
+              Mark the agent with agentId as available, indicating they have completed their call.
             </p>
           </div>
         </div>
@@ -44,14 +41,12 @@ const CallCenterContent: React.FC = () => {
         <pre className="bg-secondary p-4 rounded-md whitespace-pre-wrap break-words overflow-x-auto">
           <code>
 {`// Initialize call center with 2 agents
-const callCenter = new CallCenter(2);
-
-callCenter.dispatchCall(); // returns 1, assigns to agent 1
-callCenter.dispatchCall(); // returns 2, assigns to agent 2
-callCenter.dispatchCall(); // returns -1, no agents available
-
-callCenter.endCall(1);     // ends call for agent 1
-callCenter.dispatchCall(); // returns 1, agent 1 is now available`}
+CallCenter center = new CallCenter(2);
+center.dispatchCall();  // returns 1 (agent 1 takes the call)
+center.dispatchCall();  // returns 2 (agent 2 takes the call)
+center.dispatchCall();  // returns -1 (no available agents)
+center.endCall(1);      // agent 1 becomes available
+center.dispatchCall();  // returns 1 (agent 1 takes another call)`}
           </code>
         </pre>
       </div>
@@ -60,8 +55,8 @@ callCenter.dispatchCall(); // returns 1, agent 1 is now available`}
         <h3 className="text-lg font-semibold mb-4">Constraints</h3>
         <ul className="space-y-2 text-muted-foreground list-disc pl-4">
           <li>0 ≤ numAgents ≤ 1000</li>
-          <li>At most 1000 calls to dispatchCall and endCall will be made.</li>
-          <li>It is guaranteed that endCall will be called with a valid agent id that is currently busy.</li>
+          <li>1 ≤ agentId ≤ numAgents</li>
+          <li>At most 1000 calls will be made to the CallCenter methods</li>
         </ul>
       </div>
     </div>
