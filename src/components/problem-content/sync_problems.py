@@ -50,31 +50,62 @@ def sync_problems():
         problem_id = problem['id']
         title = problem['title']
         
-        # Skip if problem ID already exists
+        # Check if problem ID already exists
         if problem_id in existing_problem_ids:
-            print(f"Problem '{title}' with ID '{problem_id}' already exists. Skipping.")
-            continue
-        
-        print(f"Adding new problem: {title} with ID: {problem_id}")
-        
-        # Insert into problems table
-        problems_data = {
-            'id': problem_id,
-            'title': title,
-            'difficulty': problem['difficulty'],
-            'category': 'Data Structures',  # Default category, modify as needed
-            'acceptance': '0%'  # Default acceptance rate
-        }
-        
-        try:
-            response = supabase.table('problems').insert(problems_data).execute()
-            if hasattr(response, 'error') and response.error:
-                print(f"Error inserting problem: {response.error}")
+            print(f"Problem '{title}' with ID '{problem_id}' already exists. Updating...")
+            
+            # Update the existing problem
+            problems_data = {
+                'title': title,
+                'difficulty': problem['difficulty'],
+                'category': 'Data Structures',  # Default category, modify as needed
+                'acceptance': '0%'  # Default acceptance rate
+            }
+            
+            try:
+                response = supabase.table('problems').update(problems_data).eq('id', problem_id).execute()
+                if hasattr(response, 'error') and response.error:
+                    print(f"Error updating problem: {response.error}")
+                    continue
+                print(f"Successfully updated problem '{title}' with ID: {problem_id}")
+            except Exception as e:
+                print(f"Exception updating problem: {e}")
                 continue
-            print(f"Successfully added problem '{title}' with ID: {problem_id}")
-        except Exception as e:
-            print(f"Exception inserting problem: {e}")
-            continue
+            
+            # Delete existing placeholder code for this problem
+            try:
+                supabase.table('placeholder_code').delete().eq('problem_id', problem_id).execute()
+                print(f"Deleted existing placeholder code for problem ID: {problem_id}")
+            except Exception as e:
+                print(f"Exception deleting placeholder code: {e}")
+            
+            # Delete existing test cases for this problem
+            try:
+                supabase.table('test_cases').delete().eq('problem_id', problem_id).execute()
+                print(f"Deleted existing test cases for problem ID: {problem_id}")
+            except Exception as e:
+                print(f"Exception deleting test cases: {e}")
+        else:
+            print(f"Adding new problem: {title} with ID: {problem_id}")
+            
+            # Insert into problems table
+            problems_data = {
+                'id': problem_id,
+                'title': title,
+                'difficulty': problem['difficulty'],
+                'category': 'Data Structures',  # Default category, modify as needed
+                'acceptance': '0%'  # Default acceptance rate
+            }
+            
+            try:
+                response = supabase.table('problems').insert(problems_data).execute()
+                if hasattr(response, 'error') and response.error:
+                    print(f"Error inserting problem: {response.error}")
+                    continue
+                print(f"Successfully added problem '{title}' with ID: {problem_id}")
+            except Exception as e:
+                print(f"Exception inserting problem: {e}")
+                continue
         
         # Insert placeholder code for each language
         if 'placeholder-code' in problem:
