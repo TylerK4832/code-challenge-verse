@@ -2,7 +2,7 @@
 import { Badge } from '@/components/ui/badge';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { ReactNode, Suspense, lazy, useState, useEffect } from 'react';
+import { ReactNode, useState, useEffect } from 'react';
 
 interface ProblemDescriptionProps {
   problemId: string;
@@ -30,25 +30,16 @@ const GenericProblemDescription = ({ problemId }: ProblemDescriptionProps) => {
     const loadContent = async () => {
       setIsContentLoading(true);
       try {
-        // Map problem IDs to their content components
-        let component;
-        
-        switch (problemId) {
-          case 'parking-lot':
-            component = (await import('../problem-content/parking-lot-content')).default;
-            break;
-          case 'call-center':
-            component = (await import('../problem-content/call-center-content')).default;
-            break;
-          default:
-            component = (await import('../problem-content/fallback-content')).default;
-        }
-        
-        setContentComponent(() => component);
+        // Dynamic import based on problem ID
+        const formattedProblemId = problemId.toLowerCase().replace(/[^\w-]+/g, '');
+        const ContentModule = await import(`../problem-content/${formattedProblemId}-content`).catch(() => 
+          import('../problem-content/fallback-content')
+        );
+        setContentComponent(() => ContentModule.default);
       } catch (err) {
         console.error(`Error loading content for ${problemId}:`, err);
-        const FallbackComponent = (await import('../problem-content/fallback-content')).default;
-        setContentComponent(() => FallbackComponent);
+        const FallbackModule = await import('../problem-content/fallback-content');
+        setContentComponent(() => FallbackModule.default);
       } finally {
         setIsContentLoading(false);
       }
