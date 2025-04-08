@@ -1,4 +1,4 @@
-```tsx
+
 import React from 'react';
 
 const LibrarySystemContent: React.FC = () => {
@@ -59,4 +59,3 @@ library.borrowBook('BookA'); // returns true`}
 };
 
 export default LibrarySystemContent;
-```
