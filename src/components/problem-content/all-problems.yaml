@@ -621,3 +621,207 @@ problems:
 
       '
     is_hidden: false
+- title: 3. Taxi Dispatch System
+  id: taxi-dispatch
+  difficulty: Medium
+  problem-content: ./taxi-dispatch-content.tsx
+  placeholder-code:
+  - language: python
+    code: "class TaxiDispatchSystem:\n    def __init__(self, n_taxis: int):\n    \
+      \    # Initialize system with n_taxi taxis, all initially available.\n     \
+      \   pass\n\n    def requestTaxi(self, location: str) -> int:\n        # Dispatch\
+      \ the nearest available taxi to the requested location.\n        # Return the\
+      \ ID of the taxi or -1 if none available.\n        pass\n\n    def finishRide(self,\
+      \ taxi_id: int):\n        # Mark the taxi with taxi_id as available.\n     \
+      \   pass\n# Your TaxiDispatchSystem object will be instantiated and called as\
+      \ such:\n# obj = TaxiDispatchSystem(n_taxis)\n# param = obj.requestTaxi(location)\n\
+      # obj.finishRide(taxi_id)\n"
+  - language: cpp
+    code: "class TaxiDispatchSystem {\n  public:\n    TaxiDispatchSystem(int n_taxis)\
+      \ {\n        // Initialize system with n_taxis taxis, all initially available.\n\
+      \    }\n\n    int requestTaxi(string location) {\n        // Dispatch the nearest\
+      \ available taxi to the requested location.\n        // Return the ID of the\
+      \ taxi or -1 if none available.\n    }\n\n    void finishRide(int taxi_id) {\n\
+      \        // Mark the taxi with taxi_id as available.\n    }\n};\n/**\n * Your\
+      \ TaxiDispatchSystem object will be instantiated and called as such:\n * TaxiDispatchSystem*\
+      \ obj = new TaxiDispatchSystem(n_taxis);\n * int param = obj->requestTaxi(location);\n\
+      \ * obj->finishRide(taxi_id);\n */\n"
+  - language: java
+    code: "class TaxiDispatchSystem {\n    public TaxiDispatchSystem(int n_taxis)\
+      \ {\n        // Initialize system with n_taxis taxis, all initially available.\n\
+      \    }\n\n    public int requestTaxi(String location) {\n        // Dispatch\
+      \ the nearest available taxi to the requested location.\n        // Return the\
+      \ ID of the taxi or -1 if none available.\n    }\n\n    public void finishRide(int\
+      \ taxi_id) {\n        // Mark the taxi with taxi_id as available.\n    }\n}\n\
+      /**\n * Your TaxiDispatchSystem object will be instantiated and called as such:\n\
+      \ * TaxiDispatchSystem obj = new TaxiDispatchSystem(n_taxis);\n * int param\
+      \ = obj.requestTaxi(location);\n * obj.finishRide(taxi_id);\n */\n"
+  - language: javascript
+    code: "/**\n * @param {number} n_taxis\n */\nvar TaxiDispatchSystem = function(n_taxis)\
+      \ {\n    // Initialize system with n_taxis taxis, all initially available.\n\
+      };\n\n/**\n * @param {string} location\n * @return {number}\n */\nTaxiDispatchSystem.prototype.requestTaxi\
+      \ = function(location) {\n    // Dispatch the nearest available taxi to the\
+      \ requested location.\n    // Return the ID of the taxi or -1 if none available.\n\
+      };\n\n/**\n * @param {number} taxi_id\n */\nTaxiDispatchSystem.prototype.finishRide\
+      \ = function(taxi_id) {\n    // Mark the taxi with taxi_id as available.\n};\n\
+      /**\n * Your TaxiDispatchSystem object will be instantiated and called as such:\n\
+      \ * var obj = new TaxiDispatchSystem(n_taxis)\n * var param = obj.requestTaxi(location)\n\
+      \ * obj.finishRide(taxi_id)\n */\n"
+  test-cases:
+  - language: python
+    number: 1
+    code: 'system = TaxiDispatchSystem(3)
+
+      assertEquals(system.requestTaxi("Downtown"), 1)
+
+      assertEquals(system.requestTaxi("Airport"), 2)
+
+      assertEquals(system.requestTaxi("Mall"), 3)
+
+      assertEquals(system.requestTaxi("Station"), -1)
+
+      system.finishRide(2)
+
+      assertEquals(system.requestTaxi("Beach"), 2)
+
+      '
+    is_hidden: false
+  - language: cpp
+    number: 1
+    code: 'TaxiDispatchSystem* system = new TaxiDispatchSystem(3);
+
+      Printer::assertEquals(system->requestTaxi("Downtown"), 1);
+
+      Printer::assertEquals(system->requestTaxi("Airport"), 2);
+
+      Printer::assertEquals(system->requestTaxi("Mall"), 3);
+
+      Printer::assertEquals(system->requestTaxi("Station"), -1);
+
+      system->finishRide(2);
+
+      Printer::assertEquals(system->requestTaxi("Beach"), 2);
+
+      '
+    is_hidden: false
+  - language: java
+    number: 1
+    code: 'TaxiDispatchSystem system = new TaxiDispatchSystem(3);
+
+      assertEquals(system.requestTaxi("Downtown"), 1);
+
+      assertEquals(system.requestTaxi("Airport"), 2);
+
+      assertEquals(system.requestTaxi("Mall"), 3);
+
+      assertEquals(system.requestTaxi("Station"), -1);
+
+      system.finishRide(2);
+
+      assertEquals(system.requestTaxi("Beach"), 2);
+
+      '
+    is_hidden: false
+  - language: javascript
+    number: 1
+    code: 'var system = new TaxiDispatchSystem(3);
+
+      assertEquals(system.requestTaxi("Downtown"), 1);
+
+      assertEquals(system.requestTaxi("Airport"), 2);
+
+      assertEquals(system.requestTaxi("Mall"), 3);
+
+      assertEquals(system.requestTaxi("Station"), -1);
+
+      system.finishRide(2);
+
+      assertEquals(system.requestTaxi("Beach"), 2);
+
+      '
+    is_hidden: false
+  - language: python
+    number: 2
+    code: 'system = TaxiDispatchSystem(1)
+
+      assertEquals(system.requestTaxi("Museum"), 1)
+
+      assertEquals(system.requestTaxi("Park"), -1)
+
+      system.finishRide(1)
+
+      assertEquals(system.requestTaxi("Stadium"), 1)
+
+      '
+    is_hidden: false
+  - language: cpp
+    number: 2
+    code: 'TaxiDispatchSystem* system = new TaxiDispatchSystem(1);
+
+      Printer::assertEquals(system->requestTaxi("Museum"), 1);
+
+      Printer::assertEquals(system->requestTaxi("Park"), -1);
+
+      system->finishRide(1);
+
+      Printer::assertEquals(system->requestTaxi("Stadium"), 1);
+
+      '
+    is_hidden: false
+  - language: java
+    number: 2
+    code: 'TaxiDispatchSystem system = new TaxiDispatchSystem(1);
+
+      assertEquals(system.requestTaxi("Museum"), 1);
+
+      assertEquals(system.requestTaxi("Park"), -1);
+
+      system.finishRide(1);
+
+      assertEquals(system.requestTaxi("Stadium"), 1);
+
+      '
+    is_hidden: false
+  - language: javascript
+    number: 2
+    code: 'var system = new TaxiDispatchSystem(1);
+
+      assertEquals(system.requestTaxi("Museum"), 1);
+
+      assertEquals(system.requestTaxi("Park"), -1);
+
+      system.finishRide(1);
+
+      assertEquals(system.requestTaxi("Stadium"), 1);
+
+      '
+    is_hidden: false
+  - language: python
+    number: 3
+    code: "system = TaxiDispatchSystem(2)\nassertEquals(system.requestTaxi(\"University\"\
+      ), 1)\nassertEquals(system.requestTaxi(\"Hospital\"), 2)\nsystem.finishRide(1)\n\
+      assertEquals(system.requestTaxi(\"Library\"), 1)\nsystem.finishRide(2)\nassertEquals(system.requestTaxi(\"\
+      Caf\xE9\"), 2)\n"
+    is_hidden: false
+  - language: cpp
+    number: 3
+    code: "TaxiDispatchSystem* system = new TaxiDispatchSystem(2);\nPrinter::assertEquals(system->requestTaxi(\"\
+      University\"), 1);\nPrinter::assertEquals(system->requestTaxi(\"Hospital\"),\
+      \ 2);\nsystem->finishRide(1);\nPrinter::assertEquals(system->requestTaxi(\"\
+      Library\"), 1);\nsystem->finishRide(2);\nPrinter::assertEquals(system->requestTaxi(\"\
+      Caf\xE9\"), 2);\n"
+    is_hidden: false
+  - language: java
+    number: 3
+    code: "TaxiDispatchSystem system = new TaxiDispatchSystem(2);\nassertEquals(system.requestTaxi(\"\
+      University\"), 1);\nassertEquals(system.requestTaxi(\"Hospital\"), 2);\nsystem.finishRide(1);\n\
+      assertEquals(system.requestTaxi(\"Library\"), 1);\nsystem.finishRide(2);\nassertEquals(system.requestTaxi(\"\
+      Caf\xE9\"), 2);\n"
+    is_hidden: false
+  - language: javascript
+    number: 3
+    code: "var system = new TaxiDispatchSystem(2);\nassertEquals(system.requestTaxi(\"\
+      University\"), 1);\nassertEquals(system.requestTaxi(\"Hospital\"), 2);\nsystem.finishRide(1);\n\
+      assertEquals(system.requestTaxi(\"Library\"), 1);\nsystem.finishRide(2);\nassertEquals(system.requestTaxi(\"\
+      Caf\xE9\"), 2);"
+    is_hidden: false

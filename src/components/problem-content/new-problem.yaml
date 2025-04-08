@@ -1,177 +1,213 @@
 problems:
-  - title: "3. Warehouse Inventory Management"
-    id: "warehouse-inventory"
+  - title: "3. Taxi Dispatch System"
+    id: "taxi-dispatch"
     difficulty: "Medium"
-    problem-content: "./warehouse-inventory-content.tsx"
+    problem-content: "./taxi-dispatch-content.tsx"
     placeholder-code:
       - language: python
         code: |
-          class Warehouse:
-              def __init__(self):
+          class TaxiDispatchSystem:
+              def __init__(self, n_taxis: int):
+                  # Initialize system with n_taxi taxis, all initially available.
                   pass
 
-              def addItem(self, itemType: str, quantity: int) -> bool:
+              def requestTaxi(self, location: str) -> int:
+                  # Dispatch the nearest available taxi to the requested location.
+                  # Return the ID of the taxi or -1 if none available.
                   pass
 
-              def removeItem(self, itemType: str, quantity: int) -> bool:
+              def finishRide(self, taxi_id: int):
+                  # Mark the taxi with taxi_id as available.
                   pass
-
-              def getInventory(self) -> dict:
-                  pass
-
-          # Your Warehouse object will be instantiated and called as such:
-          # obj = Warehouse()
-          # param_1 = obj.addItem(itemType, quantity)
-          # param_2 = obj.removeItem(itemType, quantity)
-          # param_3 = obj.getInventory()
+          # Your TaxiDispatchSystem object will be instantiated and called as such:
+          # obj = TaxiDispatchSystem(n_taxis)
+          # param = obj.requestTaxi(location)
+          # obj.finishRide(taxi_id)
       - language: cpp
         code: |
-          #include <string>
-          #include <map>
+          class TaxiDispatchSystem {
+            public:
+              TaxiDispatchSystem(int n_taxis) {
+                  // Initialize system with n_taxis taxis, all initially available.
+              }
 
-          class Warehouse {
-          public:
-              Warehouse() {}
+              int requestTaxi(string location) {
+                  // Dispatch the nearest available taxi to the requested location.
+                  // Return the ID of the taxi or -1 if none available.
+              }
 
-              bool addItem(const std::string &itemType, int quantity) {}
-
-              bool removeItem(const std::string &itemType, int quantity) {}
-
-              std::map<std::string, int> getInventory() {}
+              void finishRide(int taxi_id) {
+                  // Mark the taxi with taxi_id as available.
+              }
           };
-
           /**
-           * Your Warehouse object will be instantiated and called as such:
-           * Warehouse* obj = new Warehouse();
-           * bool param_1 = obj->addItem(itemType, quantity);
-           * bool param_2 = obj->removeItem(itemType, quantity);
-           * std::map<std::string, int> param_3 = obj->getInventory();
+           * Your TaxiDispatchSystem object will be instantiated and called as such:
+           * TaxiDispatchSystem* obj = new TaxiDispatchSystem(n_taxis);
+           * int param = obj->requestTaxi(location);
+           * obj->finishRide(taxi_id);
            */
       - language: java
         code: |
-          import java.util.HashMap;
-          import java.util.Map;
+          class TaxiDispatchSystem {
+              public TaxiDispatchSystem(int n_taxis) {
+                  // Initialize system with n_taxis taxis, all initially available.
+              }
 
-          class Warehouse {
-              public Warehouse() {}
+              public int requestTaxi(String location) {
+                  // Dispatch the nearest available taxi to the requested location.
+                  // Return the ID of the taxi or -1 if none available.
+              }
 
-              public boolean addItem(String itemType, int quantity) {}
-
-              public boolean removeItem(String itemType, int quantity) {}
-
-              public Map<String, Integer> getInventory() {}
+              public void finishRide(int taxi_id) {
+                  // Mark the taxi with taxi_id as available.
+              }
           }
-
           /**
-           * Your Warehouse object will be instantiated and called as such:
-           * Warehouse obj = new Warehouse();
-           * boolean param_1 = obj.addItem(itemType, quantity);
-           * boolean param_2 = obj.removeItem(itemType, quantity);
-           * Map<String, Integer> param_3 = obj.getInventory();
+           * Your TaxiDispatchSystem object will be instantiated and called as such:
+           * TaxiDispatchSystem obj = new TaxiDispatchSystem(n_taxis);
+           * int param = obj.requestTaxi(location);
+           * obj.finishRide(taxi_id);
            */
       - language: javascript
         code: |
-          var Warehouse = function() {};
-
-          Warehouse.prototype.addItem = function(itemType, quantity) {};
-
-          Warehouse.prototype.removeItem = function(itemType, quantity) {};
-
-          Warehouse.prototype.getInventory = function() {};
+          /**
+           * @param {number} n_taxis
+           */
+          var TaxiDispatchSystem = function(n_taxis) {
+              // Initialize system with n_taxis taxis, all initially available.
+          };
 
           /**
-           * Your Warehouse object will be instantiated and called as such:
-           * var obj = new Warehouse();
-           * var param_1 = obj.addItem(itemType, quantity);
-           * var param_2 = obj.removeItem(itemType, quantity);
-           * var param_3 = obj.getInventory();
+           * @param {string} location
+           * @return {number}
+           */
+          TaxiDispatchSystem.prototype.requestTaxi = function(location) {
+              // Dispatch the nearest available taxi to the requested location.
+              // Return the ID of the taxi or -1 if none available.
+          };
+
+          /**
+           * @param {number} taxi_id
+           */
+          TaxiDispatchSystem.prototype.finishRide = function(taxi_id) {
+              // Mark the taxi with taxi_id as available.
+          };
+          /**
+           * Your TaxiDispatchSystem object will be instantiated and called as such:
+           * var obj = new TaxiDispatchSystem(n_taxis)
+           * var param = obj.requestTaxi(location)
+           * obj.finishRide(taxi_id)
            */
     test-cases:
       - language: python
         number: 1
         code: |
-          warehouse = Warehouse()
-          assertEquals(warehouse.addItem("apple", 10), True)
-          assertEquals(warehouse.removeItem("apple", 5), True)
-          assertEquals(warehouse.getInventory(), {"apple": 5})
+          system = TaxiDispatchSystem(3)
+          assertEquals(system.requestTaxi("Downtown"), 1)
+          assertEquals(system.requestTaxi("Airport"), 2)
+          assertEquals(system.requestTaxi("Mall"), 3)
+          assertEquals(system.requestTaxi("Station"), -1)
+          system.finishRide(2)
+          assertEquals(system.requestTaxi("Beach"), 2)
       - language: python
         number: 2
         code: |
-          warehouse = Warehouse()
-          assertEquals(warehouse.removeItem("banana", 1), False)
-          assertEquals(warehouse.getInventory(), {})
+          system = TaxiDispatchSystem(1)
+          assertEquals(system.requestTaxi("Museum"), 1)
+          assertEquals(system.requestTaxi("Park"), -1)
+          system.finishRide(1)
+          assertEquals(system.requestTaxi("Stadium"), 1)
       - language: python
         number: 3
         code: |
-          warehouse = Warehouse()
-          assertEquals(warehouse.addItem("apple", 10), True)
-          assertEquals(warehouse.addItem("banana", 5), True)
-          assertEquals(warehouse.removeItem("apple", 3), True)
-          assertEquals(warehouse.removeItem("banana", 1), True)
-          assertEquals(warehouse.getInventory(), {"apple": 7, "banana": 4})
+          system = TaxiDispatchSystem(2)
+          assertEquals(system.requestTaxi("University"), 1)
+          assertEquals(system.requestTaxi("Hospital"), 2)
+          system.finishRide(1)
+          assertEquals(system.requestTaxi("Library"), 1)
+          system.finishRide(2)
+          assertEquals(system.requestTaxi("Café"), 2)
       - language: cpp
         number: 1
         code: |
-          Warehouse* warehouse = new Warehouse();
-          Printer::assertEquals(warehouse->addItem("apple", 10), true);
-          Printer::assertEquals(warehouse->removeItem("apple", 5), true);
-          Printer::assertEquals(warehouse->getInventory(), {{"apple", 5}});
+          TaxiDispatchSystem* system = new TaxiDispatchSystem(3);
+          Printer::assertEquals(system->requestTaxi("Downtown"), 1);
+          Printer::assertEquals(system->requestTaxi("Airport"), 2);
+          Printer::assertEquals(system->requestTaxi("Mall"), 3);
+          Printer::assertEquals(system->requestTaxi("Station"), -1);
+          system->finishRide(2);
+          Printer::assertEquals(system->requestTaxi("Beach"), 2);
       - language: cpp
         number: 2
         code: |
-          Warehouse* warehouse = new Warehouse();
-          Printer::assertEquals(warehouse->removeItem("banana", 1), false);
-          Printer::assertEquals(warehouse->getInventory(), {});
+          TaxiDispatchSystem* system = new TaxiDispatchSystem(1);
+          Printer::assertEquals(system->requestTaxi("Museum"), 1);
+          Printer::assertEquals(system->requestTaxi("Park"), -1);
+          system->finishRide(1);
+          Printer::assertEquals(system->requestTaxi("Stadium"), 1);
       - language: cpp
         number: 3
         code: |
-          Warehouse* warehouse = new Warehouse();
-          Printer::assertEquals(warehouse->addItem("apple", 10), true);
-          Printer::assertEquals(warehouse->addItem("banana", 5), true);
-          Printer::assertEquals(warehouse->removeItem("apple", 3), true);
-          Printer::assertEquals(warehouse->removeItem("banana", 1), true);
-          Printer::assertEquals(warehouse->getInventory(), {{"apple", 7}, {"banana", 4}});
+          TaxiDispatchSystem* system = new TaxiDispatchSystem(2);
+          Printer::assertEquals(system->requestTaxi("University"), 1);
+          Printer::assertEquals(system->requestTaxi("Hospital"), 2);
+          system->finishRide(1);
+          Printer::assertEquals(system->requestTaxi("Library"), 1);
+          system->finishRide(2);
+          Printer::assertEquals(system->requestTaxi("Café"), 2);
       - language: java
         number: 1
         code: |
-          Warehouse warehouse = new Warehouse();
-          assertEquals(warehouse.addItem("apple", 10), true);
-          assertEquals(warehouse.removeItem("apple", 5), true);
-          assertEquals(warehouse.getInventory(), Map.of("apple", 5));
+          TaxiDispatchSystem system = new TaxiDispatchSystem(3);
+          assertEquals(system.requestTaxi("Downtown"), 1);
+          assertEquals(system.requestTaxi("Airport"), 2);
+          assertEquals(system.requestTaxi("Mall"), 3);
+          assertEquals(system.requestTaxi("Station"), -1);
+          system.finishRide(2);
+          assertEquals(system.requestTaxi("Beach"), 2);
       - language: java
         number: 2
         code: |
-          Warehouse warehouse = new Warehouse();
-          assertEquals(warehouse.removeItem("banana", 1), false);
-          assertEquals(warehouse.getInventory(), Map.of());
+          TaxiDispatchSystem system = new TaxiDispatchSystem(1);
+          assertEquals(system.requestTaxi("Museum"), 1);
+          assertEquals(system.requestTaxi("Park"), -1);
+          system.finishRide(1);
+          assertEquals(system.requestTaxi("Stadium"), 1);
       - language: java
         number: 3
         code: |
-          Warehouse warehouse = new Warehouse();
-          assertEquals(warehouse.addItem("apple", 10), true);
-          assertEquals(warehouse.addItem("banana", 5), true);
-          assertEquals(warehouse.removeItem("apple", 3), true);
-          assertEquals(warehouse.removeItem("banana", 1), true);
-          assertEquals(warehouse.getInventory(), Map.of("apple", 7, "banana", 4));
+          TaxiDispatchSystem system = new TaxiDispatchSystem(2);
+          assertEquals(system.requestTaxi("University"), 1);
+          assertEquals(system.requestTaxi("Hospital"), 2);
+          system.finishRide(1);
+          assertEquals(system.requestTaxi("Library"), 1);
+          system.finishRide(2);
+          assertEquals(system.requestTaxi("Café"), 2);
       - language: javascript
         number: 1
         code: |
-          var warehouse = new Warehouse();
-          assertEquals(warehouse.addItem("apple", 10), true);
-          assertEquals(warehouse.removeItem("apple", 5), true);
-          assertEquals(warehouse.getInventory(), {"apple": 5});
+          var system = new TaxiDispatchSystem(3);
+          assertEquals(system.requestTaxi("Downtown"), 1);
+          assertEquals(system.requestTaxi("Airport"), 2);
+          assertEquals(system.requestTaxi("Mall"), 3);
+          assertEquals(system.requestTaxi("Station"), -1);
+          system.finishRide(2);
+          assertEquals(system.requestTaxi("Beach"), 2);
       - language: javascript
         number: 2
         code: |
-          var warehouse = new Warehouse();
-          assertEquals(warehouse.removeItem("banana", 1), false);
-          assertEquals(warehouse.getInventory(), {});
+          var system = new TaxiDispatchSystem(1);
+          assertEquals(system.requestTaxi("Museum"), 1);
+          assertEquals(system.requestTaxi("Park"), -1);
+          system.finishRide(1);
+          assertEquals(system.requestTaxi("Stadium"), 1);
       - language: javascript
         number: 3
         code: |
-          var warehouse = new Warehouse();
-          assertEquals(warehouse.addItem("apple", 10), true);
-          assertEquals(warehouse.addItem("banana", 5), true);
-          assertEquals(warehouse.removeItem("apple", 3), true);
-          assertEquals(warehouse.removeItem("banana", 1), true);
-          assertEquals(warehouse.getInventory(), {"apple": 7, "banana": 4});
+          var system = new TaxiDispatchSystem(2);
+          assertEquals(system.requestTaxi("University"), 1);
+          assertEquals(system.requestTaxi("Hospital"), 2);
+          system.finishRide(1);
+          assertEquals(system.requestTaxi("Library"), 1);
+          system.finishRide(2);
+          assertEquals(system.requestTaxi("Café"), 2);

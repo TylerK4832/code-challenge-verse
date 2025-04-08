@@ -21,6 +21,8 @@ Do not copy these example questions verbatim, this new question should be unique
 Make sure the problem mimics real-world coding interview questions of the desired style, and allows the user to practice useful skills.
 Ensure the problem is unique and creative! At the end of this prompt, there is a list of current problem summaries. Any new problem should be DIFFERENT from these problems both in theme and technical implementation.
 The problem should be EXTREMELY SPECIFIC about specified behavior and problem details.
+Go beyond systems that simply add, remove and get items at a high level. Be creative!
+Randomly select easy, medium, or hard difficulty problems.
 Follow the expected output PRECISELY - do not generate any extra text.
 
    Expected output:
