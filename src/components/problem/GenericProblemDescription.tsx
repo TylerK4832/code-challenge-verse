@@ -37,9 +37,6 @@ const GenericProblemDescription = ({ problemId }: ProblemDescriptionProps) => {
           case 'parking-lot':
             component = (await import('../problem-content/parking-lot-content')).default;
             break;
-          case 'movie-theater-booking':
-            component = (await import('../problem-content/movie-theater-booking-content')).default;
-            break;
           case 'call-center':
             component = (await import('../problem-content/call-center-content')).default;
             break;
