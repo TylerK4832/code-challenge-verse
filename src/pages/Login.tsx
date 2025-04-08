@@ -1,9 +1,11 @@
+
 import { Auth } from "@supabase/auth-ui-react";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
 import { supabase } from "@/integrations/supabase/client";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import UsernameSetup from "@/components/UsernameSetup";
+import Logo from "@/components/Logo";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -62,7 +64,12 @@ const Login = () => {
     <div className="container max-w-lg py-8">
       <div className="space-y-6">
         <div className="space-y-2 text-center">
-          <h1 className="text-3xl font-bold">Welcome to CodeVerse</h1>
+          <div className="flex justify-center items-center mb-3">
+            <div className="flex items-center bg-muted p-3 rounded-md">
+              <Logo size="lg" />
+            </div>
+          </div>
+          <h1 className="text-3xl font-bold">Welcome to CodePrism</h1>
           <p className="text-muted-foreground">Sign in to continue to the platform</p>
         </div>
         <div className="border rounded-lg p-6 bg-card">
