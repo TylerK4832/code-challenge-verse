@@ -433,136 +433,191 @@ problems:
 
       '
     is_hidden: false
-- title: 3. Restaurant Reservation System
-  id: restaurant-reservation-system
+- title: 3. Warehouse Inventory Management
+  id: warehouse-inventory
   difficulty: Medium
-  problem-content: ./restaurant-reservation-system-content.tsx
+  problem-content: ./warehouse-inventory-content.tsx
   placeholder-code:
   - language: python
-    code: "class RestaurantReservation:\n    def __init__(self):\n        # Initialize\
-      \ the system with no reservations\n        pass\n\n    def makeReservation(self,\
-      \ tableId: int, name: str) -> bool:\n        # Attempt to make a reservation\
-      \ for a table with the given tableId\n        pass\n\n    def cancelReservation(self,\
-      \ tableId: int) -> bool:\n        # Cancel the reservation for the given tableId\n\
-      \        pass\n\n    def checkAvailability(self, tableId: int) -> bool:\n  \
-      \      # Check if the table with tableId is available or reserved\n        pass\n\
-      \n# Your RestaurantReservation object will be instantiated and called as such:\n\
-      # obj = RestaurantReservation()\n# param_1 = obj.makeReservation(tableId, name)\n\
-      # param_2 = obj.cancelReservation(tableId)\n# param_3 = obj.checkAvailability(tableId)\n"
+    code: "class Warehouse:\n    def __init__(self):\n        pass\n\n    def addItem(self,\
+      \ itemType: str, quantity: int) -> bool:\n        pass\n\n    def removeItem(self,\
+      \ itemType: str, quantity: int) -> bool:\n        pass\n\n    def getInventory(self)\
+      \ -> dict:\n        pass\n\n# Your Warehouse object will be instantiated and\
+      \ called as such:\n# obj = Warehouse()\n# param_1 = obj.addItem(itemType, quantity)\n\
+      # param_2 = obj.removeItem(itemType, quantity)\n# param_3 = obj.getInventory()\n"
   - language: cpp
-    code: "class RestaurantReservation {\npublic:\n    RestaurantReservation() {\n\
-      \        // Initialize the system with no reservations\n    }\n\n    bool makeReservation(int\
-      \ tableId, std::string name) {\n        // Attempt to make a reservation for\
-      \ a table with the given tableId\n    }\n\n    bool cancelReservation(int tableId)\
-      \ {\n        // Cancel the reservation for the given tableId\n    }\n\n    bool\
-      \ checkAvailability(int tableId) {\n        // Check if the table with tableId\
-      \ is available or reserved\n    }\n};\n\n/**\n * Your RestaurantReservation\
-      \ object will be instantiated and called as such:\n * RestaurantReservation*\
-      \ obj = new RestaurantReservation();\n * bool param_1 = obj->makeReservation(tableId,\
-      \ name);\n * bool param_2 = obj->cancelReservation(tableId);\n * bool param_3\
-      \ = obj->checkAvailability(tableId);\n */\n"
-  - language: java
-    code: "class RestaurantReservation {\n    public RestaurantReservation() {\n \
-      \       // Initialize the system with no reservations\n    }\n\n    public boolean\
-      \ makeReservation(int tableId, String name) {\n        // Attempt to make a\
-      \ reservation for a table with the given tableId\n    }\n\n    public boolean\
-      \ cancelReservation(int tableId) {\n        // Cancel the reservation for the\
-      \ given tableId\n    }\n\n    public boolean checkAvailability(int tableId)\
-      \ {\n        // Check if the table with tableId is available or reserved\n \
-      \   }\n}\n\n/**\n * Your RestaurantReservation object will be instantiated and\
-      \ called as such:\n * RestaurantReservation obj = new RestaurantReservation();\n\
-      \ * boolean param_1 = obj.makeReservation(tableId, name);\n * boolean param_2\
-      \ = obj.cancelReservation(tableId);\n * boolean param_3 = obj.checkAvailability(tableId);\n\
+    code: "#include <string>\n#include <map>\n\nclass Warehouse {\npublic:\n    Warehouse()\
+      \ {}\n\n    bool addItem(const std::string &itemType, int quantity) {}\n\n \
+      \   bool removeItem(const std::string &itemType, int quantity) {}\n\n    std::map<std::string,\
+      \ int> getInventory() {}\n};\n\n/**\n * Your Warehouse object will be instantiated\
+      \ and called as such:\n * Warehouse* obj = new Warehouse();\n * bool param_1\
+      \ = obj->addItem(itemType, quantity);\n * bool param_2 = obj->removeItem(itemType,\
+      \ quantity);\n * std::map<std::string, int> param_3 = obj->getInventory();\n\
       \ */\n"
+  - language: java
+    code: "import java.util.HashMap;\nimport java.util.Map;\n\nclass Warehouse {\n\
+      \    public Warehouse() {}\n\n    public boolean addItem(String itemType, int\
+      \ quantity) {}\n\n    public boolean removeItem(String itemType, int quantity)\
+      \ {}\n\n    public Map<String, Integer> getInventory() {}\n}\n\n/**\n * Your\
+      \ Warehouse object will be instantiated and called as such:\n * Warehouse obj\
+      \ = new Warehouse();\n * boolean param_1 = obj.addItem(itemType, quantity);\n\
+      \ * boolean param_2 = obj.removeItem(itemType, quantity);\n * Map<String, Integer>\
+      \ param_3 = obj.getInventory();\n */\n"
   - language: javascript
-    code: "class RestaurantReservation {\n    constructor() {\n        // Initialize\
-      \ the system with no reservations\n    }\n\n    makeReservation(tableId, name)\
-      \ {\n        // Attempt to make a reservation for a table with the given tableId\n\
-      \    }\n\n    cancelReservation(tableId) {\n        // Cancel the reservation\
-      \ for the given tableId\n    }\n\n    checkAvailability(tableId) {\n       \
-      \ // Check if the table with tableId is available or reserved\n    }\n}\n\n\
-      /**\n * Your RestaurantReservation object will be instantiated and called as\
-      \ such:\n * var obj = new RestaurantReservation();\n * var param_1 = obj.makeReservation(tableId,\
-      \ name);\n * var param_2 = obj.cancelReservation(tableId);\n * var param_3 =\
-      \ obj.checkAvailability(tableId);\n */\n"
+    code: "var Warehouse = function() {};\n\nWarehouse.prototype.addItem = function(itemType,\
+      \ quantity) {};\n\nWarehouse.prototype.removeItem = function(itemType, quantity)\
+      \ {};\n\nWarehouse.prototype.getInventory = function() {};\n\n/**\n * Your Warehouse\
+      \ object will be instantiated and called as such:\n * var obj = new Warehouse();\n\
+      \ * var param_1 = obj.addItem(itemType, quantity);\n * var param_2 = obj.removeItem(itemType,\
+      \ quantity);\n * var param_3 = obj.getInventory();\n */\n"
   test-cases:
   - language: python
-    number: 1
-    code: 'restaurant = RestaurantReservation()
+    number: 2
+    code: 'warehouse = Warehouse()
 
-      assertEquals(restaurant.makeReservation(1, "John"), True)
+      assertEquals(warehouse.removeItem("banana", 1), False)
 
-      assertEquals(restaurant.checkAvailability(1), False)
+      assertEquals(warehouse.getInventory(), {})
 
-      assertEquals(restaurant.cancelReservation(1), True)
+      '
+    is_hidden: false
+  - language: cpp
+    number: 2
+    code: 'Warehouse* warehouse = new Warehouse();
 
-      assertEquals(restaurant.checkAvailability(1), True)
+      Printer::assertEquals(warehouse->removeItem("banana", 1), false);
+
+      Printer::assertEquals(warehouse->getInventory(), {});
+
+      '
+    is_hidden: false
+  - language: java
+    number: 2
+    code: 'Warehouse warehouse = new Warehouse();
+
+      assertEquals(warehouse.removeItem("banana", 1), false);
+
+      assertEquals(warehouse.getInventory(), Map.of());
+
+      '
+    is_hidden: false
+  - language: javascript
+    number: 2
+    code: 'var warehouse = new Warehouse();
+
+      assertEquals(warehouse.removeItem("banana", 1), false);
+
+      assertEquals(warehouse.getInventory(), {});
 
       '
     is_hidden: false
   - language: python
     number: 3
-    code: 'restaurant = RestaurantReservation()
+    code: 'warehouse = Warehouse()
 
-      assertEquals(restaurant.cancelReservation(3), False)
+      assertEquals(warehouse.addItem("apple", 10), True)
 
-      assertEquals(restaurant.makeReservation(3, "Charlie"), True)
+      assertEquals(warehouse.addItem("banana", 5), True)
 
-      assertEquals(restaurant.cancelReservation(3), True)
+      assertEquals(warehouse.removeItem("apple", 3), True)
 
-      assertEquals(restaurant.checkAvailability(3), True)
+      assertEquals(warehouse.removeItem("banana", 1), True)
+
+      assertEquals(warehouse.getInventory(), {"apple": 7, "banana": 4})
 
       '
     is_hidden: false
-  - language: javascript
-    number: 1
-    code: 'var restaurant = new RestaurantReservation();
+  - language: cpp
+    number: 3
+    code: 'Warehouse* warehouse = new Warehouse();
 
-      assertEquals(restaurant.makeReservation(1, "John"), true);
+      Printer::assertEquals(warehouse->addItem("apple", 10), true);
 
-      assertEquals(restaurant.checkAvailability(1), false);
+      Printer::assertEquals(warehouse->addItem("banana", 5), true);
 
-      assertEquals(restaurant.cancelReservation(1), true);
+      Printer::assertEquals(warehouse->removeItem("apple", 3), true);
 
-      assertEquals(restaurant.checkAvailability(1), true);'
-    is_hidden: false
-  - language: python
-    number: 2
-    code: 'restaurant = RestaurantReservation()
+      Printer::assertEquals(warehouse->removeItem("banana", 1), true);
 
-      assertEquals(restaurant.checkAvailability(2), True)
-
-      assertEquals(restaurant.makeReservation(2, "Alice"), True)
-
-      assertEquals(restaurant.makeReservation(2, "Bob"), False)
+      Printer::assertEquals(warehouse->getInventory(), {{"apple", 7}, {"banana", 4}});
 
       '
     is_hidden: false
   - language: java
+    number: 3
+    code: 'Warehouse warehouse = new Warehouse();
+
+      assertEquals(warehouse.addItem("apple", 10), true);
+
+      assertEquals(warehouse.addItem("banana", 5), true);
+
+      assertEquals(warehouse.removeItem("apple", 3), true);
+
+      assertEquals(warehouse.removeItem("banana", 1), true);
+
+      assertEquals(warehouse.getInventory(), Map.of("apple", 7, "banana", 4));
+
+      '
+    is_hidden: false
+  - language: javascript
+    number: 3
+    code: 'var warehouse = new Warehouse();
+
+      assertEquals(warehouse.addItem("apple", 10), true);
+
+      assertEquals(warehouse.addItem("banana", 5), true);
+
+      assertEquals(warehouse.removeItem("apple", 3), true);
+
+      assertEquals(warehouse.removeItem("banana", 1), true);
+
+      assertEquals(warehouse.getInventory(), {"apple": 7, "banana": 4});'
+    is_hidden: false
+  - language: python
     number: 1
-    code: 'RestaurantReservation restaurant = new RestaurantReservation();
+    code: 'warehouse = Warehouse()
 
-      assertEquals(restaurant.makeReservation(1, "John"), true);
+      assertEquals(warehouse.addItem("apple", 10), True)
 
-      assertEquals(restaurant.checkAvailability(1), false);
+      assertEquals(warehouse.removeItem("apple", 5), True)
 
-      assertEquals(restaurant.cancelReservation(1), true);
-
-      assertEquals(restaurant.checkAvailability(1), true);
+      assertEquals(warehouse.getInventory(), {"apple": 5})
 
       '
     is_hidden: false
   - language: cpp
     number: 1
-    code: 'RestaurantReservation* restaurant = new RestaurantReservation();
+    code: 'Warehouse* warehouse = new Warehouse();
 
-      Printer::assertEquals(restaurant->makeReservation(1, "John"), true);
+      Printer::assertEquals(warehouse->addItem("apple", 10), true);
 
-      Printer::assertEquals(restaurant->checkAvailability(1), false);
+      Printer::assertEquals(warehouse->removeItem("apple", 5), true);
 
-      Printer::assertEquals(restaurant->cancelReservation(1), true);
+      Printer::assertEquals(warehouse->getInventory(), {{"apple", 5}});
 
-      Printer::assertEquals(restaurant->checkAvailability(1), true);
+      '
+    is_hidden: false
+  - language: java
+    number: 1
+    code: 'Warehouse warehouse = new Warehouse();
+
+      assertEquals(warehouse.addItem("apple", 10), true);
+
+      assertEquals(warehouse.removeItem("apple", 5), true);
+
+      assertEquals(warehouse.getInventory(), Map.of("apple", 5));
+
+      '
+    is_hidden: false
+  - language: javascript
+    number: 1
+    code: 'var warehouse = new Warehouse();
+
+      assertEquals(warehouse.addItem("apple", 10), true);
+
+      assertEquals(warehouse.removeItem("apple", 5), true);
+
+      assertEquals(warehouse.getInventory(), {"apple": 5});
 
       '
     is_hidden: false

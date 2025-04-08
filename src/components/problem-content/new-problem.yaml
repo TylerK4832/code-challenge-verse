@@ -1,169 +1,177 @@
 problems:
-  - title: "3. Restaurant Reservation System"
-    id: "restaurant-reservation-system"
+  - title: "3. Warehouse Inventory Management"
+    id: "warehouse-inventory"
     difficulty: "Medium"
-    problem-content: "./RestaurantReservationContent.tsx"
+    problem-content: "./warehouse-inventory-content.tsx"
     placeholder-code:
       - language: python
         code: |
-          class RestaurantReservation:
+          class Warehouse:
               def __init__(self):
-                  # Initialize the system with no reservations
                   pass
 
-              def makeReservation(self, tableId: int, name: str) -> bool:
-                  # Attempt to make a reservation for a table with the given tableId
+              def addItem(self, itemType: str, quantity: int) -> bool:
                   pass
 
-              def cancelReservation(self, tableId: int) -> bool:
-                  # Cancel the reservation for the given tableId
+              def removeItem(self, itemType: str, quantity: int) -> bool:
                   pass
 
-              def checkAvailability(self, tableId: int) -> bool:
-                  # Check if the table with tableId is available or reserved
+              def getInventory(self) -> dict:
                   pass
 
-          # Your RestaurantReservation object will be instantiated and called as such:
-          # obj = RestaurantReservation()
-          # param_1 = obj.makeReservation(tableId, name)
-          # param_2 = obj.cancelReservation(tableId)
-          # param_3 = obj.checkAvailability(tableId)
-
+          # Your Warehouse object will be instantiated and called as such:
+          # obj = Warehouse()
+          # param_1 = obj.addItem(itemType, quantity)
+          # param_2 = obj.removeItem(itemType, quantity)
+          # param_3 = obj.getInventory()
       - language: cpp
         code: |
-          class RestaurantReservation {
+          #include <string>
+          #include <map>
+
+          class Warehouse {
           public:
-              RestaurantReservation() {
-                  // Initialize the system with no reservations
-              }
+              Warehouse() {}
 
-              bool makeReservation(int tableId, std::string name) {
-                  // Attempt to make a reservation for a table with the given tableId
-              }
+              bool addItem(const std::string &itemType, int quantity) {}
 
-              bool cancelReservation(int tableId) {
-                  // Cancel the reservation for the given tableId
-              }
+              bool removeItem(const std::string &itemType, int quantity) {}
 
-              bool checkAvailability(int tableId) {
-                  // Check if the table with tableId is available or reserved
-              }
+              std::map<std::string, int> getInventory() {}
           };
 
           /**
-           * Your RestaurantReservation object will be instantiated and called as such:
-           * RestaurantReservation* obj = new RestaurantReservation();
-           * bool param_1 = obj->makeReservation(tableId, name);
-           * bool param_2 = obj->cancelReservation(tableId);
-           * bool param_3 = obj->checkAvailability(tableId);
+           * Your Warehouse object will be instantiated and called as such:
+           * Warehouse* obj = new Warehouse();
+           * bool param_1 = obj->addItem(itemType, quantity);
+           * bool param_2 = obj->removeItem(itemType, quantity);
+           * std::map<std::string, int> param_3 = obj->getInventory();
            */
-
       - language: java
         code: |
-          class RestaurantReservation {
-              public RestaurantReservation() {
-                  // Initialize the system with no reservations
-              }
+          import java.util.HashMap;
+          import java.util.Map;
 
-              public boolean makeReservation(int tableId, String name) {
-                  // Attempt to make a reservation for a table with the given tableId
-              }
+          class Warehouse {
+              public Warehouse() {}
 
-              public boolean cancelReservation(int tableId) {
-                  // Cancel the reservation for the given tableId
-              }
+              public boolean addItem(String itemType, int quantity) {}
 
-              public boolean checkAvailability(int tableId) {
-                  // Check if the table with tableId is available or reserved
-              }
+              public boolean removeItem(String itemType, int quantity) {}
+
+              public Map<String, Integer> getInventory() {}
           }
 
           /**
-           * Your RestaurantReservation object will be instantiated and called as such:
-           * RestaurantReservation obj = new RestaurantReservation();
-           * boolean param_1 = obj.makeReservation(tableId, name);
-           * boolean param_2 = obj.cancelReservation(tableId);
-           * boolean param_3 = obj.checkAvailability(tableId);
+           * Your Warehouse object will be instantiated and called as such:
+           * Warehouse obj = new Warehouse();
+           * boolean param_1 = obj.addItem(itemType, quantity);
+           * boolean param_2 = obj.removeItem(itemType, quantity);
+           * Map<String, Integer> param_3 = obj.getInventory();
            */
-
       - language: javascript
         code: |
-          class RestaurantReservation {
-              constructor() {
-                  // Initialize the system with no reservations
-              }
+          var Warehouse = function() {};
 
-              makeReservation(tableId, name) {
-                  // Attempt to make a reservation for a table with the given tableId
-              }
+          Warehouse.prototype.addItem = function(itemType, quantity) {};
 
-              cancelReservation(tableId) {
-                  // Cancel the reservation for the given tableId
-              }
+          Warehouse.prototype.removeItem = function(itemType, quantity) {};
 
-              checkAvailability(tableId) {
-                  // Check if the table with tableId is available or reserved
-              }
-          }
+          Warehouse.prototype.getInventory = function() {};
 
           /**
-           * Your RestaurantReservation object will be instantiated and called as such:
-           * var obj = new RestaurantReservation();
-           * var param_1 = obj.makeReservation(tableId, name);
-           * var param_2 = obj.cancelReservation(tableId);
-           * var param_3 = obj.checkAvailability(tableId);
+           * Your Warehouse object will be instantiated and called as such:
+           * var obj = new Warehouse();
+           * var param_1 = obj.addItem(itemType, quantity);
+           * var param_2 = obj.removeItem(itemType, quantity);
+           * var param_3 = obj.getInventory();
            */
-
     test-cases:
       - language: python
         number: 1
         code: |
-          restaurant = RestaurantReservation()
-          assertEquals(restaurant.makeReservation(1, "John"), True)
-          assertEquals(restaurant.checkAvailability(1), False)
-          assertEquals(restaurant.cancelReservation(1), True)
-          assertEquals(restaurant.checkAvailability(1), True)
-
+          warehouse = Warehouse()
+          assertEquals(warehouse.addItem("apple", 10), True)
+          assertEquals(warehouse.removeItem("apple", 5), True)
+          assertEquals(warehouse.getInventory(), {"apple": 5})
       - language: python
         number: 2
         code: |
-          restaurant = RestaurantReservation()
-          assertEquals(restaurant.checkAvailability(2), True)
-          assertEquals(restaurant.makeReservation(2, "Alice"), True)
-          assertEquals(restaurant.makeReservation(2, "Bob"), False)
-
+          warehouse = Warehouse()
+          assertEquals(warehouse.removeItem("banana", 1), False)
+          assertEquals(warehouse.getInventory(), {})
       - language: python
         number: 3
         code: |
-          restaurant = RestaurantReservation()
-          assertEquals(restaurant.cancelReservation(3), False)
-          assertEquals(restaurant.makeReservation(3, "Charlie"), True)
-          assertEquals(restaurant.cancelReservation(3), True)
-          assertEquals(restaurant.checkAvailability(3), True)
-
+          warehouse = Warehouse()
+          assertEquals(warehouse.addItem("apple", 10), True)
+          assertEquals(warehouse.addItem("banana", 5), True)
+          assertEquals(warehouse.removeItem("apple", 3), True)
+          assertEquals(warehouse.removeItem("banana", 1), True)
+          assertEquals(warehouse.getInventory(), {"apple": 7, "banana": 4})
       - language: cpp
         number: 1
         code: |
-          RestaurantReservation* restaurant = new RestaurantReservation();
-          Printer::assertEquals(restaurant->makeReservation(1, "John"), true);
-          Printer::assertEquals(restaurant->checkAvailability(1), false);
-          Printer::assertEquals(restaurant->cancelReservation(1), true);
-          Printer::assertEquals(restaurant->checkAvailability(1), true);
-
+          Warehouse* warehouse = new Warehouse();
+          Printer::assertEquals(warehouse->addItem("apple", 10), true);
+          Printer::assertEquals(warehouse->removeItem("apple", 5), true);
+          Printer::assertEquals(warehouse->getInventory(), {{"apple", 5}});
+      - language: cpp
+        number: 2
+        code: |
+          Warehouse* warehouse = new Warehouse();
+          Printer::assertEquals(warehouse->removeItem("banana", 1), false);
+          Printer::assertEquals(warehouse->getInventory(), {});
+      - language: cpp
+        number: 3
+        code: |
+          Warehouse* warehouse = new Warehouse();
+          Printer::assertEquals(warehouse->addItem("apple", 10), true);
+          Printer::assertEquals(warehouse->addItem("banana", 5), true);
+          Printer::assertEquals(warehouse->removeItem("apple", 3), true);
+          Printer::assertEquals(warehouse->removeItem("banana", 1), true);
+          Printer::assertEquals(warehouse->getInventory(), {{"apple", 7}, {"banana", 4}});
       - language: java
         number: 1
         code: |
-          RestaurantReservation restaurant = new RestaurantReservation();
-          assertEquals(restaurant.makeReservation(1, "John"), true);
-          assertEquals(restaurant.checkAvailability(1), false);
-          assertEquals(restaurant.cancelReservation(1), true);
-          assertEquals(restaurant.checkAvailability(1), true);
-
+          Warehouse warehouse = new Warehouse();
+          assertEquals(warehouse.addItem("apple", 10), true);
+          assertEquals(warehouse.removeItem("apple", 5), true);
+          assertEquals(warehouse.getInventory(), Map.of("apple", 5));
+      - language: java
+        number: 2
+        code: |
+          Warehouse warehouse = new Warehouse();
+          assertEquals(warehouse.removeItem("banana", 1), false);
+          assertEquals(warehouse.getInventory(), Map.of());
+      - language: java
+        number: 3
+        code: |
+          Warehouse warehouse = new Warehouse();
+          assertEquals(warehouse.addItem("apple", 10), true);
+          assertEquals(warehouse.addItem("banana", 5), true);
+          assertEquals(warehouse.removeItem("apple", 3), true);
+          assertEquals(warehouse.removeItem("banana", 1), true);
+          assertEquals(warehouse.getInventory(), Map.of("apple", 7, "banana", 4));
       - language: javascript
         number: 1
         code: |
-          var restaurant = new RestaurantReservation();
-          assertEquals(restaurant.makeReservation(1, "John"), true);
-          assertEquals(restaurant.checkAvailability(1), false);
-          assertEquals(restaurant.cancelReservation(1), true);
-          assertEquals(restaurant.checkAvailability(1), true);
+          var warehouse = new Warehouse();
+          assertEquals(warehouse.addItem("apple", 10), true);
+          assertEquals(warehouse.removeItem("apple", 5), true);
+          assertEquals(warehouse.getInventory(), {"apple": 5});
+      - language: javascript
+        number: 2
+        code: |
+          var warehouse = new Warehouse();
+          assertEquals(warehouse.removeItem("banana", 1), false);
+          assertEquals(warehouse.getInventory(), {});
+      - language: javascript
+        number: 3
+        code: |
+          var warehouse = new Warehouse();
+          assertEquals(warehouse.addItem("apple", 10), true);
+          assertEquals(warehouse.addItem("banana", 5), true);
+          assertEquals(warehouse.removeItem("apple", 3), true);
+          assertEquals(warehouse.removeItem("banana", 1), true);
+          assertEquals(warehouse.getInventory(), {"apple": 7, "banana": 4});
