@@ -25,21 +25,38 @@ const GenericProblemDescription = ({ problemId }: ProblemDescriptionProps) => {
 
   const [ContentComponent, setContentComponent] = useState<React.ComponentType | null>(null);
   const [isContentLoading, setIsContentLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
 
   useEffect(() => {
     const loadContent = async () => {
       setIsContentLoading(true);
+      setLoadError(null);
+      
       try {
-        // Dynamic import based on problem ID
+        // Format the problem ID for file path construction
         const formattedProblemId = problemId.toLowerCase().replace(/[^\w-]+/g, '');
-        const ContentModule = await import(`../problem-content/${formattedProblemId}-content`).catch(() => 
-          import('../problem-content/fallback-content')
-        );
+        console.log(`Attempting to load content for problem: ${formattedProblemId}`);
+        
+        // Try to import the content component
+        const ContentModule = await import(`../problem-content/${formattedProblemId}-content.tsx`)
+          .catch(async (err) => {
+            console.error(`Error importing ${formattedProblemId}-content.tsx:`, err);
+            // Try fallback
+            return import('../problem-content/fallback-content');
+          });
+          
         setContentComponent(() => ContentModule.default);
       } catch (err) {
-        console.error(`Error loading content for ${problemId}:`, err);
-        const FallbackModule = await import('../problem-content/fallback-content');
-        setContentComponent(() => FallbackModule.default);
+        console.error(`Failed to load content for ${problemId}:`, err);
+        setLoadError(`Could not load problem description for ${problemId}`);
+        
+        // Set fallback content
+        try {
+          const FallbackModule = await import('../problem-content/fallback-content');
+          setContentComponent(() => FallbackModule.default);
+        } catch (fallbackErr) {
+          console.error("Failed to load even the fallback content:", fallbackErr);
+        }
       } finally {
         setIsContentLoading(false);
       }
@@ -71,6 +88,10 @@ const GenericProblemDescription = ({ problemId }: ProblemDescriptionProps) => {
 
       {isContentLoading ? (
         <div className="p-6 animate-pulse">Loading problem content...</div>
+      ) : loadError ? (
+        <div className="p-6 text-red-500">
+          {loadError}
+        </div>
       ) : ContentComponent ? (
         <ContentComponent />
       ) : (
