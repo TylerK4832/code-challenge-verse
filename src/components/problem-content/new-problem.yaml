@@ -1,154 +1,169 @@
 problems:
-  - title: "3. Library System"
-    id: "library-system"
+  - title: "3. Restaurant Reservation System"
+    id: "restaurant-reservation-system"
     difficulty: "Medium"
-    problem-content: "./LibrarySystemContent.tsx"
+    problem-content: "./RestaurantReservationContent.tsx"
     placeholder-code:
       - language: python
         code: |
-          class LibrarySystem:
-              def __init__(self, books: dict):
-                  # Initialize the library with a dictionary of books and their quantities.
+          class RestaurantReservation:
+              def __init__(self):
+                  # Initialize the system with no reservations
                   pass
 
-              def borrowBook(self, bookTitle: str) -> bool:
-                  # Attempt to borrow a book. Return True if successful, False if not available.
+              def makeReservation(self, tableId: int, name: str) -> bool:
+                  # Attempt to make a reservation for a table with the given tableId
                   pass
 
-              def returnBook(self, bookTitle: str) -> None:
-                  # Return a book to the library, increasing its quantity.
+              def cancelReservation(self, tableId: int) -> bool:
+                  # Cancel the reservation for the given tableId
                   pass
 
-          # Your LibrarySystem object will be instantiated and called as such:
-          # obj = LibrarySystem(books)
-          # param_1 = obj.borrowBook(bookTitle)
-          # obj.returnBook(bookTitle)
+              def checkAvailability(self, tableId: int) -> bool:
+                  # Check if the table with tableId is available or reserved
+                  pass
+
+          # Your RestaurantReservation object will be instantiated and called as such:
+          # obj = RestaurantReservation()
+          # param_1 = obj.makeReservation(tableId, name)
+          # param_2 = obj.cancelReservation(tableId)
+          # param_3 = obj.checkAvailability(tableId)
+
       - language: cpp
         code: |
-          class LibrarySystem {
-            public:
-              LibrarySystem(unordered_map<string, int> books) {
-                  // Initialize the library with books and their quantities.
+          class RestaurantReservation {
+          public:
+              RestaurantReservation() {
+                  // Initialize the system with no reservations
               }
 
-              bool borrowBook(string bookTitle) {
-                  // Attempt to borrow a book. Return true if successful, false if not available.
+              bool makeReservation(int tableId, std::string name) {
+                  // Attempt to make a reservation for a table with the given tableId
               }
 
-              void returnBook(string bookTitle) {
-                  // Return a book to the library, increasing its quantity.
+              bool cancelReservation(int tableId) {
+                  // Cancel the reservation for the given tableId
+              }
+
+              bool checkAvailability(int tableId) {
+                  // Check if the table with tableId is available or reserved
               }
           };
 
           /**
-           * Your LibrarySystem object will be instantiated and called as such:
-           * LibrarySystem* obj = new LibrarySystem(books);
-           * bool param_1 = obj->borrowBook(bookTitle);
-           * obj->returnBook(bookTitle);
+           * Your RestaurantReservation object will be instantiated and called as such:
+           * RestaurantReservation* obj = new RestaurantReservation();
+           * bool param_1 = obj->makeReservation(tableId, name);
+           * bool param_2 = obj->cancelReservation(tableId);
+           * bool param_3 = obj->checkAvailability(tableId);
            */
+
       - language: java
         code: |
-          class LibrarySystem {
+          class RestaurantReservation {
+              public RestaurantReservation() {
+                  // Initialize the system with no reservations
+              }
 
-            public LibrarySystem(Map<String, Integer> books) {
-                // Initialize the library with books and their quantities.
-            }
+              public boolean makeReservation(int tableId, String name) {
+                  // Attempt to make a reservation for a table with the given tableId
+              }
 
-            public boolean borrowBook(String bookTitle) {
-                // Attempt to borrow a book. Return true if successful, false if not available.
-            }
+              public boolean cancelReservation(int tableId) {
+                  // Cancel the reservation for the given tableId
+              }
 
-            public void returnBook(String bookTitle) {
-                // Return a book to the library, increasing its quantity.
-            }
+              public boolean checkAvailability(int tableId) {
+                  // Check if the table with tableId is available or reserved
+              }
           }
 
           /**
-           * Your LibrarySystem object will be instantiated and called as such:
-           * LibrarySystem obj = new LibrarySystem(books);
-           * boolean param_1 = obj.borrowBook(bookTitle);
-           * obj.returnBook(bookTitle);
+           * Your RestaurantReservation object will be instantiated and called as such:
+           * RestaurantReservation obj = new RestaurantReservation();
+           * boolean param_1 = obj.makeReservation(tableId, name);
+           * boolean param_2 = obj.cancelReservation(tableId);
+           * boolean param_3 = obj.checkAvailability(tableId);
            */
+
       - language: javascript
         code: |
-          /**
-           * @param {Object} books
-           */
-          var LibrarySystem = function(books) {
-            // Initialize the library with books and their quantities.
-          };
+          class RestaurantReservation {
+              constructor() {
+                  // Initialize the system with no reservations
+              }
+
+              makeReservation(tableId, name) {
+                  // Attempt to make a reservation for a table with the given tableId
+              }
+
+              cancelReservation(tableId) {
+                  // Cancel the reservation for the given tableId
+              }
+
+              checkAvailability(tableId) {
+                  // Check if the table with tableId is available or reserved
+              }
+          }
 
           /**
-           * @param {string} bookTitle
-           * @return {boolean}
+           * Your RestaurantReservation object will be instantiated and called as such:
+           * var obj = new RestaurantReservation();
+           * var param_1 = obj.makeReservation(tableId, name);
+           * var param_2 = obj.cancelReservation(tableId);
+           * var param_3 = obj.checkAvailability(tableId);
            */
-          LibrarySystem.prototype.borrowBook = function(bookTitle) {
-            // Attempt to borrow a book. Return true if successful, false if not available.
-          };
 
-          /**
-           * @param {string} bookTitle
-           */
-          LibrarySystem.prototype.returnBook = function(bookTitle) {
-            // Return a book to the library, increasing its quantity.
-          };
-
-          /**
-           * Your LibrarySystem object will be instantiated and called as such:
-           * var obj = new LibrarySystem(books)
-           * var param_1 = obj.borrowBook(bookTitle)
-           * obj.returnBook(bookTitle)
-           */
     test-cases:
       - language: python
         number: 1
         code: |
-          library = LibrarySystem({"BookA": 2, "BookB": 1})
-          assertEquals(library.borrowBook("BookA"), True)
-          assertEquals(library.borrowBook("BookA"), True)
-          assertEquals(library.borrowBook("BookA"), False)
-          assertEquals(library.borrowBook("BookB"), True)
-          library.returnBook("BookA")
-          assertEquals(library.borrowBook("BookA"), True)
+          restaurant = RestaurantReservation()
+          assertEquals(restaurant.makeReservation(1, "John"), True)
+          assertEquals(restaurant.checkAvailability(1), False)
+          assertEquals(restaurant.cancelReservation(1), True)
+          assertEquals(restaurant.checkAvailability(1), True)
+
       - language: python
         number: 2
         code: |
-          library = LibrarySystem({"BookC": 0, "BookD": 1})
-          assertEquals(library.borrowBook("BookC"), False)
-          assertEquals(library.borrowBook("BookD"), True)
-          assertEquals(library.borrowBook("BookD"), False)
-          library.returnBook("BookD")
-          assertEquals(library.borrowBook("BookD"), True)
+          restaurant = RestaurantReservation()
+          assertEquals(restaurant.checkAvailability(2), True)
+          assertEquals(restaurant.makeReservation(2, "Alice"), True)
+          assertEquals(restaurant.makeReservation(2, "Bob"), False)
+
+      - language: python
+        number: 3
+        code: |
+          restaurant = RestaurantReservation()
+          assertEquals(restaurant.cancelReservation(3), False)
+          assertEquals(restaurant.makeReservation(3, "Charlie"), True)
+          assertEquals(restaurant.cancelReservation(3), True)
+          assertEquals(restaurant.checkAvailability(3), True)
+
       - language: cpp
         number: 1
         code: |
-          unordered_map<string, int> books = {{"BookA", 2}, {"BookB", 1}};
-          LibrarySystem* library = new LibrarySystem(books);
-          Printer::assertEquals(library->borrowBook("BookA"), true);
-          Printer::assertEquals(library->borrowBook("BookA"), true);
-          Printer::assertEquals(library->borrowBook("BookA"), false);
-          Printer::assertEquals(library->borrowBook("BookB"), true);
-          library->returnBook("BookA");
-          Printer::assertEquals(library->borrowBook("BookA"), true);
+          RestaurantReservation* restaurant = new RestaurantReservation();
+          Printer::assertEquals(restaurant->makeReservation(1, "John"), true);
+          Printer::assertEquals(restaurant->checkAvailability(1), false);
+          Printer::assertEquals(restaurant->cancelReservation(1), true);
+          Printer::assertEquals(restaurant->checkAvailability(1), true);
+
       - language: java
         number: 1
         code: |
-          Map<String, Integer> books = Map.of("BookA", 2, "BookB", 1);
-          LibrarySystem library = new LibrarySystem(books);
-          assertEquals(library.borrowBook("BookA"), true);
-          assertEquals(library.borrowBook("BookA"), true);
-          assertEquals(library.borrowBook("BookA"), false);
-          assertEquals(library.borrowBook("BookB"), true);
-          library.returnBook("BookA");
-          assertEquals(library.borrowBook("BookA"), true);
+          RestaurantReservation restaurant = new RestaurantReservation();
+          assertEquals(restaurant.makeReservation(1, "John"), true);
+          assertEquals(restaurant.checkAvailability(1), false);
+          assertEquals(restaurant.cancelReservation(1), true);
+          assertEquals(restaurant.checkAvailability(1), true);
+
       - language: javascript
         number: 1
         code: |
-          var books = { "BookA": 2, "BookB": 1 };
-          var library = new LibrarySystem(books);
-          assertEquals(library.borrowBook("BookA"), true);
-          assertEquals(library.borrowBook("BookA"), true);
-          assertEquals(library.borrowBook("BookA"), false);
-          assertEquals(library.borrowBook("BookB"), true);
-          library.returnBook("BookA");
-          assertEquals(library.borrowBook("BookA"), true);
+          var restaurant = new RestaurantReservation();
+          assertEquals(restaurant.makeReservation(1, "John"), true);
+          assertEquals(restaurant.checkAvailability(1), false);
+          assertEquals(restaurant.cancelReservation(1), true);
+          assertEquals(restaurant.checkAvailability(1), true);

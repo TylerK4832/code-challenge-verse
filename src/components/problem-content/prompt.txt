@@ -14,12 +14,18 @@ The question should have 4-5 test cases that should test basic, complex, and edg
 The test cases should not include comments.
 The test cases should be deterministic, i.e., no if–else blocks.
 The new problem data should be output in a .yaml file formatted EXACTLY like the .yaml file above. 
-The new problem description should be output in a .tsx file formatted EXACTLY like the .tsxl file above. 
+The new problem description content should be output in a .tsx file formatted EXACTLY like the .tsxl file above.
+Please also include a brief (3-4 sentence) written summary of the problem in text form.
 Do not copy these example questions verbatim, this new question should be unique.
 Make sure the problem mimics real-world coding interview questions of the desired style, and allows the user to practice useful skills.
-Ensure the problem is unique and creative!
+Ensure the problem is unique and creative! At the end of this prompt, there is a list of current problem summaries. Any new problem should be DIFFERENT from these problems both in theme and technical implementation.
+Follow the expected output PRECISELY - do not generate any extra text.
 
    Expected output:
     [YAML content...]
     ### Problem TSX File
     [TSX file content...]
+    ### Problem Description
+    [Text description]
+
+Existing problem summaries:

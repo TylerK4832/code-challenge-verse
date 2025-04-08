@@ -147,12 +147,15 @@ def sync_problems():
 
 def generate_problem_files():
     """
-    Generates new-problem.yaml and a TSX file by invoking the OpenAI o3-mini API.
+    Generates new-problem.yaml, a TSX file, and appends the problem description
+    to descriptions.txt by invoking the OpenAI o3-mini API.
     
     Expected output from OpenAI:
     [YAML content...]
     ### Problem TSX File
     [TSX file content...]
+    ### Problem Description
+    [Text description]
     """
     spec_path = os.path.join(os.path.dirname(__file__), 'prompt.txt')
     try:
@@ -161,6 +164,16 @@ def generate_problem_files():
     except FileNotFoundError:
         print("prompt.txt not found in the current directory.")
         sys.exit(1)
+    
+    # Append contents of descriptions.txt to the end of the prompt, if it exists.
+    descriptions_path = os.path.join(os.path.dirname(__file__), 'descriptions.txt')
+    if os.path.exists(descriptions_path):
+        try:
+            with open(descriptions_path, 'r') as f:
+                descriptions_text = f.read()
+            prompt_text += "\n" + descriptions_text
+        except Exception as e:
+            print(f"Error reading descriptions.txt: {e}")
     
     # Set up your OpenAI API key (ensure OPENAI_API_KEY is set in your .env file)
     openai.api_key = os.getenv("OPENAI_API_KEY")
@@ -172,7 +185,7 @@ def generate_problem_files():
         response = openai.responses.create(
             model="gpt-4o",
             input=prompt_text,
-            max_output_tokens=2048,
+            max_output_tokens=10000,
         )
     except Exception as e:
         print(f"Error invoking OpenAI API: {e}")
@@ -181,28 +194,40 @@ def generate_problem_files():
     # Get the text output from the response
     output_text = response.output[0].content[0].text.strip()
     
-    # Split the output into two sections using a delimiter.
-    # Here we assume the delimiter "### Problem TSX File" separates the YAML and TSX parts.
-    delimiter = "### Problem TSX File"
-    if delimiter not in output_text:
-        print(f"Delimiter '{delimiter}' not found in OpenAI output.")
+    # Define delimiters for splitting the output.
+    delimiter_tsx = "### Problem TSX File"
+    delimiter_desc = "### Problem Description"
+    
+    if delimiter_tsx not in output_text:
+        print(f"Delimiter '{delimiter_tsx}' not found in OpenAI output.")
         sys.exit(1)
     
-    raw_yaml_content, tsx_content = output_text.split(delimiter, 1)
-
-    # Remove problematic lines (like markdown code fences and header lines) from the YAML content.
+    raw_parts = output_text.split(delimiter_tsx, 1)
+    raw_yaml_content = raw_parts[0]
+    remaining = raw_parts[1].strip()
+    
+    if delimiter_desc not in remaining:
+        print(f"Delimiter '{delimiter_desc}' not found in OpenAI output.")
+        sys.exit(1)
+    
+    raw_tsx_content, raw_desc_content = remaining.split(delimiter_desc, 1)
+    
+    # Remove problematic lines (like markdown code fences and header lines) from YAML and TSX parts.
     def remove_problematic_lines(content):
         lines = content.splitlines()
         filtered_lines = []
         for line in lines:
             stripped = line.strip()
-            # Skip lines that exactly match problematic markers.
-            if stripped in ("# YAML Content", "```yaml", "```"):
+            if stripped in ("# YAML Content", "```yaml", "```", "```tsx"):
                 continue
             filtered_lines.append(line)
         return "\n".join(filtered_lines)
-
+    
     yaml_content = remove_problematic_lines(raw_yaml_content)
+    tsx_content = remove_problematic_lines(raw_tsx_content)
+    
+    # Trim the description content.
+    desc_content = raw_desc_content.strip()
     
     # Save the YAML content to new-problem.yaml
     yaml_file_path = os.path.join(os.path.dirname(__file__), 'new-problem.yaml')
@@ -237,6 +262,16 @@ def generate_problem_files():
         print(f"Generated TSX file at {tsx_file_path}")
     except Exception as e:
         print(f"Error writing TSX file: {e}")
+        sys.exit(1)
+    
+    # Append the description to descriptions.txt with a newline after each description.
+    descriptions_file_path = os.path.join(os.path.dirname(__file__), 'descriptions.txt')
+    try:
+        with open(descriptions_file_path, 'a') as f:
+            f.write(desc_content + "\n")
+        print(f"Appended problem description to {descriptions_file_path}")
+    except Exception as e:
+        print(f"Error writing to descriptions.txt: {e}")
         sys.exit(1)
 
 def export_all_problems():
@@ -326,7 +361,7 @@ def export_all_problems():
 
 if __name__ == "__main__":
     print("Starting problem generation step...")
-    generate_problem_files()  # Generate new-problem.yaml and TSX file first
+    generate_problem_files()  # Generate new-problem.yaml, TSX file, and add description to descriptions.txt
     print("Problem generation complete!")
     
     print("Starting problem synchronization...")
