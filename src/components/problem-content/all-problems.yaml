@@ -1,0 +1,572 @@
+problems:
+- title: 1. Parking Lot
+  id: parking-lot
+  difficulty: Easy
+  problem-content: ./parking-lot-content.tsx
+  placeholder-code:
+  - language: python
+    code: "class ParkingLot:\n\n    def __init__(self, big: int, medium: int, small:\
+      \ int):\n        \n\n    def addCar(self, carType: int) -> bool:\n        \n\
+      \n\n# Your ParkingLot object will be instantiated and called as such:\n# obj\
+      \ = ParkingLot(big, medium, small)\n# param_1 = obj.addCar(carType)\n"
+  - language: cpp
+    code: "class ParkingLot {\n    public:\n        ParkingLot(int big, int medium,\
+      \ int small) {\n            \n        }\n        \n        bool addCar(int carType)\
+      \ {\n            \n        }\n    };\n\n/**\n* Your ParkingLot object will be\
+      \ instantiated and called as such:\n* ParkingLot* obj = new ParkingLot(big,\
+      \ medium, small);\n* bool param_1 = obj->addCar(carType);\n*/\n"
+  - language: java
+    code: "class ParkingLot {\n\n    public ParkingLot(int big, int medium, int small)\
+      \ {\n        \n    }\n    \n    public boolean addCar(int carType) {\n     \
+      \   \n    }\n}\n\n/**\n* Your ParkingLot object will be instantiated and called\
+      \ as such:\n* ParkingLot obj = new ParkingLot(big, medium, small);\n* boolean\
+      \ param_1 = obj.addCar(carType);\n*/\n"
+  - language: javascript
+    code: "/**\n* @param {number} big\n* @param {number} medium\n* @param {number}\
+      \ small\n*/\nvar ParkingLot = function(big, medium, small) {\n    \n};\n\n/**\
+      \ \n* @param {number} carType\n* @return {boolean}\n*/\nParkingLot.prototype.addCar\
+      \ = function(carType) {\n    \n};\n\n/** \n* Your ParkingLot object will be\
+      \ instantiated and called as such:\n* var obj = new ParkingLot(big, medium,\
+      \ small)\n* var param_1 = obj.addCar(carType)\n*/\n"
+  test-cases:
+  - language: python
+    number: 1
+    code: 'lot = ParkingLot(2, 1, 0)
+
+      assertEquals(lot.addCar(1), True)
+
+      assertEquals(lot.addCar(1), True)
+
+      assertEquals(lot.addCar(1), False)
+
+      assertEquals(lot.addCar(2), True)
+
+      assertEquals(lot.addCar(2), False)
+
+      assertEquals(lot.addCar(3), False)
+
+      '
+    is_hidden: false
+  - language: python
+    number: 2
+    code: 'lot = ParkingLot(0, 0, 0)
+
+      assertEquals(lot.addCar(1), False)
+
+      assertEquals(lot.addCar(2), False)
+
+      assertEquals(lot.addCar(3), False)
+
+      '
+    is_hidden: false
+  - language: python
+    number: 3
+    code: 'lot = ParkingLot(1, 2, 1)
+
+      assertEquals(lot.addCar(3), True)
+
+      assertEquals(lot.addCar(2), True)
+
+      assertEquals(lot.addCar(1), True)
+
+      assertEquals(lot.addCar(2), True)
+
+      assertEquals(lot.addCar(2), False)
+
+      assertEquals(lot.addCar(3), False)
+
+      '
+    is_hidden: false
+  - language: cpp
+    number: 1
+    code: 'ParkingLot* lot = new ParkingLot(2, 1, 0);
+
+      Printer::assertEquals(lot->addCar(1), true);
+
+      Printer::assertEquals(lot->addCar(1), true);
+
+      Printer::assertEquals(lot->addCar(1), false);
+
+      Printer::assertEquals(lot->addCar(2), true);
+
+      Printer::assertEquals(lot->addCar(2), false);
+
+      Printer::assertEquals(lot->addCar(3), false);
+
+      '
+    is_hidden: false
+  - language: cpp
+    number: 2
+    code: 'ParkingLot* lot = new ParkingLot(0, 0, 0);
+
+      Printer::assertEquals(lot->addCar(1), false);
+
+      Printer::assertEquals(lot->addCar(2), false);
+
+      Printer::assertEquals(lot->addCar(3), false);
+
+      '
+    is_hidden: false
+  - language: cpp
+    number: 3
+    code: 'ParkingLot* lot = new ParkingLot(1, 2, 1);
+
+      Printer::assertEquals(lot->addCar(3), true);
+
+      Printer::assertEquals(lot->addCar(2), true);
+
+      Printer::assertEquals(lot->addCar(1), true);
+
+      Printer::assertEquals(lot->addCar(2), true);
+
+      Printer::assertEquals(lot->addCar(2), false);
+
+      Printer::assertEquals(lot->addCar(3), false);
+
+      '
+    is_hidden: false
+  - language: java
+    number: 1
+    code: "ParkingLot lot = new ParkingLot(2, 1, 0);\nassertEquals(lot.addCar(1),\
+      \ true);\nassertEquals(lot.addCar(1), true);\nassertEquals(lot.addCar(1), false);\n\
+      assertEquals(lot.addCar(2), true);\nassertEquals(lot.addCar(2), false);\nassertEquals(lot.addCar(3),\
+      \ false);        \n"
+    is_hidden: false
+  - language: java
+    number: 2
+    code: 'ParkingLot lot = new ParkingLot(0, 0, 0);
+
+      assertEquals(lot.addCar(1), false);
+
+      assertEquals(lot.addCar(2), false);
+
+      assertEquals(lot.addCar(3), false);
+
+      '
+    is_hidden: false
+  - language: java
+    number: 3
+    code: 'ParkingLot lot = new ParkingLot(1, 2, 1);
+
+      assertEquals(lot.addCar(3), true);
+
+      assertEquals(lot.addCar(2), true);
+
+      assertEquals(lot.addCar(1), true);
+
+      assertEquals(lot.addCar(2), true);
+
+      assertEquals(lot.addCar(2), false);
+
+      assertEquals(lot.addCar(3), false);
+
+      '
+    is_hidden: false
+  - language: javascript
+    number: 1
+    code: 'var lot = new ParkingLot(2, 1, 0)
+
+      assertEquals(lot.addCar(1), true);
+
+      assertEquals(lot.addCar(1), true);
+
+      assertEquals(lot.addCar(1), false);
+
+      assertEquals(lot.addCar(2), true);
+
+      assertEquals(lot.addCar(2), false);
+
+      assertEquals(lot.addCar(3), false);
+
+      '
+    is_hidden: false
+  - language: javascript
+    number: 2
+    code: 'var lot = new ParkingLot(0, 0, 0)
+
+      assertEquals(lot.addCar(1), false);
+
+      assertEquals(lot.addCar(2), false);
+
+      assertEquals(lot.addCar(3), false);
+
+      '
+    is_hidden: false
+  - language: javascript
+    number: 3
+    code: 'var lot = new ParkingLot(1, 2, 1)
+
+      assertEquals(lot.addCar(3), true);
+
+      assertEquals(lot.addCar(2), true);
+
+      assertEquals(lot.addCar(1), true);
+
+      assertEquals(lot.addCar(2), true);
+
+      assertEquals(lot.addCar(2), false);
+
+      assertEquals(lot.addCar(3), false);
+
+      '
+    is_hidden: false
+- title: 2. Call Center
+  id: call-center
+  difficulty: Medium
+  problem-content: ./call-center-content.tsx
+  placeholder-code:
+  - language: python
+    code: "class CallCenter:\n\n    def __init__(self, numAgents: int):\n        #\
+      \ Initialize your call center with numAgents agents.\n        # Agents are numbered\
+      \ from 1 to numAgents.\n        pass\n\n    def dispatchCall(self) -> int:\n\
+      \        # Dispatch a call to the available agent with the smallest id.\n  \
+      \      # If an agent is available, mark them as busy and return their id.\n\
+      \        # If no agents are available, return -1.\n        pass\n\n    def endCall(self,\
+      \ agentId: int) -> None:\n        # Mark the agent with agentId as available.\n\
+      \        pass\n\n# Your CallCenter object will be instantiated and called as\
+      \ such:\n# obj = CallCenter(numAgents)\n# param = obj.dispatchCall()\n# obj.endCall(agentId)\n"
+  - language: cpp
+    code: "class CallCenter {\npublic:\n    CallCenter(int numAgents) {\n        //\
+      \ Initialize your call center with numAgents agents.\n        // Agents are\
+      \ numbered from 1 to numAgents.\n    }\n    \n    int dispatchCall() {\n   \
+      \     // Dispatch a call to the available agent with the smallest id.\n    \
+      \    // If an agent is available, mark them as busy and return their id.\n \
+      \       // If no agents are available, return -1.\n    }\n    \n    void endCall(int\
+      \ agentId) {\n        // Mark the agent with agentId as available.\n    }\n\
+      };\n\n/**\n* Your CallCenter object will be instantiated and called as such:\n\
+      * CallCenter* obj = new CallCenter(numAgents);\n* int param = obj->dispatchCall();\n\
+      * obj->endCall(agentId);\n*/\n"
+  - language: java
+    code: "class CallCenter {\n\n    public CallCenter(int numAgents) {\n        //\
+      \ Initialize your call center with numAgents agents.\n        // Agents are\
+      \ numbered from 1 to numAgents.\n    }\n    \n    public int dispatchCall()\
+      \ {\n        // Dispatch a call to the available agent with the smallest id.\n\
+      \        // If an agent is available, mark them as busy and return their id.\n\
+      \        // If no agents are available, return -1.\n    }\n    \n    public\
+      \ void endCall(int agentId) {\n        // Mark the agent with agentId as available.\n\
+      \    }\n}\n\n/**\n* Your CallCenter object will be instantiated and called as\
+      \ such:\n* CallCenter obj = new CallCenter(numAgents);\n* int param = obj.dispatchCall();\n\
+      * obj.endCall(agentId);\n*/\n"
+  - language: javascript
+    code: "/**\n* @param {number} numAgents\n*/\nvar CallCenter = function(numAgents)\
+      \ {\n    // Initialize your call center with numAgents agents.\n    // Agents\
+      \ are numbered from 1 to numAgents.\n};\n\n/**\n* @return {number}\n*/\nCallCenter.prototype.dispatchCall\
+      \ = function() {\n    // Dispatch a call to the available agent with the smallest\
+      \ id.\n    // If an agent is available, mark them as busy and return their id.\n\
+      \    // If no agents are available, return -1.\n};\n\n/**\n* @param {number}\
+      \ agentId\n*/\nCallCenter.prototype.endCall = function(agentId) {\n    // Mark\
+      \ the agent with agentId as available.\n};\n\n/** \n* Your CallCenter object\
+      \ will be instantiated and called as such:\n* var obj = new CallCenter(numAgents)\n\
+      * var param = obj.dispatchCall()\n* obj.endCall(agentId)\n*/\n"
+  test-cases:
+  - language: python
+    number: 1
+    code: 'center = CallCenter(2)
+
+      assertEquals(center.dispatchCall(), 1)
+
+      assertEquals(center.dispatchCall(), 2)
+
+      assertEquals(center.dispatchCall(), -1)
+
+      center.endCall(1)
+
+      assertEquals(center.dispatchCall(), 1)
+
+      '
+    is_hidden: false
+  - language: python
+    number: 2
+    code: 'center = CallCenter(1)
+
+      assertEquals(center.dispatchCall(), 1)
+
+      assertEquals(center.dispatchCall(), -1)
+
+      center.endCall(1)
+
+      assertEquals(center.dispatchCall(), 1)
+
+      '
+    is_hidden: false
+  - language: python
+    number: 3
+    code: 'center = CallCenter(3)
+
+      assertEquals(center.dispatchCall(), 1)
+
+      assertEquals(center.dispatchCall(), 2)
+
+      assertEquals(center.dispatchCall(), 3)
+
+      assertEquals(center.dispatchCall(), -1)
+
+      center.endCall(2)
+
+      assertEquals(center.dispatchCall(), 2)
+
+      '
+    is_hidden: false
+  - language: cpp
+    number: 1
+    code: 'CallCenter* center = new CallCenter(2);
+
+      Printer::assertEquals(center->dispatchCall(), 1);
+
+      Printer::assertEquals(center->dispatchCall(), 2);
+
+      Printer::assertEquals(center->dispatchCall(), -1);
+
+      center->endCall(1);
+
+      Printer::assertEquals(center->dispatchCall(), 1);
+
+      '
+    is_hidden: false
+  - language: cpp
+    number: 2
+    code: 'CallCenter* center = new CallCenter(0);
+
+      Printer::assertEquals(center->dispatchCall(), -1);
+
+      '
+    is_hidden: false
+  - language: cpp
+    number: 3
+    code: 'CallCenter* center = new CallCenter(3);
+
+      Printer::assertEquals(center->dispatchCall(), 1);
+
+      Printer::assertEquals(center->dispatchCall(), 2);
+
+      Printer::assertEquals(center->dispatchCall(), 3);
+
+      Printer::assertEquals(center->dispatchCall(), -1);
+
+      center->endCall(2);
+
+      Printer::assertEquals(center->dispatchCall(), 2);
+
+      '
+    is_hidden: false
+  - language: java
+    number: 1
+    code: 'CallCenter center = new CallCenter(2);
+
+      assertEquals(center.dispatchCall(), 1);
+
+      assertEquals(center.dispatchCall(), 2);
+
+      assertEquals(center.dispatchCall(), -1);
+
+      center.endCall(1);
+
+      assertEquals(center.dispatchCall(), 1);
+
+      '
+    is_hidden: false
+  - language: java
+    number: 2
+    code: 'CallCenter center = new CallCenter(0);
+
+      assertEquals(center.dispatchCall(), -1);
+
+      '
+    is_hidden: false
+  - language: java
+    number: 3
+    code: 'CallCenter center = new CallCenter(3);
+
+      assertEquals(center.dispatchCall(), 1);
+
+      assertEquals(center.dispatchCall(), 2);
+
+      assertEquals(center.dispatchCall(), 3);
+
+      assertEquals(center.dispatchCall(), -1);
+
+      center.endCall(2);
+
+      assertEquals(center.dispatchCall(), 2);
+
+      '
+    is_hidden: false
+  - language: javascript
+    number: 1
+    code: 'var center = new CallCenter(2)
+
+      assertEquals(center.dispatchCall(), 1);
+
+      assertEquals(center.dispatchCall(), 2);
+
+      assertEquals(center.dispatchCall(), -1);
+
+      center.endCall(1);
+
+      assertEquals(center.dispatchCall(), 1);
+
+      '
+    is_hidden: false
+  - language: javascript
+    number: 2
+    code: 'var center = new CallCenter(0)
+
+      assertEquals(center.dispatchCall(), -1);
+
+      '
+    is_hidden: false
+  - language: javascript
+    number: 3
+    code: 'var center = new CallCenter(3)
+
+      assertEquals(center.dispatchCall(), 1);
+
+      assertEquals(center.dispatchCall(), 2);
+
+      assertEquals(center.dispatchCall(), 3);
+
+      assertEquals(center.dispatchCall(), -1);
+
+      center.endCall(2);
+
+      assertEquals(center.dispatchCall(), 2);
+
+      '
+    is_hidden: false
+- title: 3. Library System
+  id: library-system
+  difficulty: Medium
+  problem-content: ./library-system-content.tsx
+  placeholder-code:
+  - language: python
+    code: "class LibrarySystem:\n    def __init__(self, books: dict):\n        # Initialize\
+      \ the library with a dictionary of books and their quantities.\n        pass\n\
+      \n    def borrowBook(self, bookTitle: str) -> bool:\n        # Attempt to borrow\
+      \ a book. Return True if successful, False if not available.\n        pass\n\
+      \n    def returnBook(self, bookTitle: str) -> None:\n        # Return a book\
+      \ to the library, increasing its quantity.\n        pass\n\n# Your LibrarySystem\
+      \ object will be instantiated and called as such:\n# obj = LibrarySystem(books)\n\
+      # param_1 = obj.borrowBook(bookTitle)\n# obj.returnBook(bookTitle)\n"
+  - language: cpp
+    code: "class LibrarySystem {\n  public:\n    LibrarySystem(unordered_map<string,\
+      \ int> books) {\n        // Initialize the library with books and their quantities.\n\
+      \    }\n\n    bool borrowBook(string bookTitle) {\n        // Attempt to borrow\
+      \ a book. Return true if successful, false if not available.\n    }\n\n    void\
+      \ returnBook(string bookTitle) {\n        // Return a book to the library, increasing\
+      \ its quantity.\n    }\n};\n\n/**\n * Your LibrarySystem object will be instantiated\
+      \ and called as such:\n * LibrarySystem* obj = new LibrarySystem(books);\n *\
+      \ bool param_1 = obj->borrowBook(bookTitle);\n * obj->returnBook(bookTitle);\n\
+      \ */\n"
+  - language: java
+    code: "class LibrarySystem {\n\n  public LibrarySystem(Map<String, Integer> books)\
+      \ {\n      // Initialize the library with books and their quantities.\n  }\n\
+      \n  public boolean borrowBook(String bookTitle) {\n      // Attempt to borrow\
+      \ a book. Return true if successful, false if not available.\n  }\n\n  public\
+      \ void returnBook(String bookTitle) {\n      // Return a book to the library,\
+      \ increasing its quantity.\n  }\n}\n\n/**\n * Your LibrarySystem object will\
+      \ be instantiated and called as such:\n * LibrarySystem obj = new LibrarySystem(books);\n\
+      \ * boolean param_1 = obj.borrowBook(bookTitle);\n * obj.returnBook(bookTitle);\n\
+      \ */\n"
+  - language: javascript
+    code: "/**\n * @param {Object} books\n */\nvar LibrarySystem = function(books)\
+      \ {\n  // Initialize the library with books and their quantities.\n};\n\n/**\n\
+      \ * @param {string} bookTitle\n * @return {boolean}\n */\nLibrarySystem.prototype.borrowBook\
+      \ = function(bookTitle) {\n  // Attempt to borrow a book. Return true if successful,\
+      \ false if not available.\n};\n\n/**\n * @param {string} bookTitle\n */\nLibrarySystem.prototype.returnBook\
+      \ = function(bookTitle) {\n  // Return a book to the library, increasing its\
+      \ quantity.\n};\n\n/**\n * Your LibrarySystem object will be instantiated and\
+      \ called as such:\n * var obj = new LibrarySystem(books)\n * var param_1 = obj.borrowBook(bookTitle)\n\
+      \ * obj.returnBook(bookTitle)\n */\n"
+  test-cases:
+  - language: python
+    number: 1
+    code: 'library = LibrarySystem({"BookA": 2, "BookB": 1})
+
+      assertEquals(library.borrowBook("BookA"), True)
+
+      assertEquals(library.borrowBook("BookA"), True)
+
+      assertEquals(library.borrowBook("BookA"), False)
+
+      assertEquals(library.borrowBook("BookB"), True)
+
+      library.returnBook("BookA")
+
+      assertEquals(library.borrowBook("BookA"), True)
+
+      '
+    is_hidden: false
+  - language: python
+    number: 2
+    code: 'library = LibrarySystem({"BookC": 0, "BookD": 1})
+
+      assertEquals(library.borrowBook("BookC"), False)
+
+      assertEquals(library.borrowBook("BookD"), True)
+
+      assertEquals(library.borrowBook("BookD"), False)
+
+      library.returnBook("BookD")
+
+      assertEquals(library.borrowBook("BookD"), True)
+
+      '
+    is_hidden: false
+  - language: java
+    number: 1
+    code: 'Map<String, Integer> books = Map.of("BookA", 2, "BookB", 1);
+
+      LibrarySystem library = new LibrarySystem(books);
+
+      assertEquals(library.borrowBook("BookA"), true);
+
+      assertEquals(library.borrowBook("BookA"), true);
+
+      assertEquals(library.borrowBook("BookA"), false);
+
+      assertEquals(library.borrowBook("BookB"), true);
+
+      library.returnBook("BookA");
+
+      assertEquals(library.borrowBook("BookA"), true);
+
+      '
+    is_hidden: false
+  - language: cpp
+    number: 1
+    code: 'unordered_map<string, int> books = {{"BookA", 2}, {"BookB", 1}};
+
+      LibrarySystem* library = new LibrarySystem(books);
+
+      Printer::assertEquals(library->borrowBook("BookA"), true);
+
+      Printer::assertEquals(library->borrowBook("BookA"), true);
+
+      Printer::assertEquals(library->borrowBook("BookA"), false);
+
+      Printer::assertEquals(library->borrowBook("BookB"), true);
+
+      library->returnBook("BookA");
+
+      Printer::assertEquals(library->borrowBook("BookA"), true);
+
+      '
+    is_hidden: false
+  - language: javascript
+    number: 1
+    code: 'var books = { "BookA": 2, "BookB": 1 };
+
+      var library = new LibrarySystem(books);
+
+      assertEquals(library.borrowBook("BookA"), true);
+
+      assertEquals(library.borrowBook("BookA"), true);
+
+      assertEquals(library.borrowBook("BookA"), false);
+
+      assertEquals(library.borrowBook("BookB"), true);
+
+      library.returnBook("BookA");
+
+      assertEquals(library.borrowBook("BookA"), true);'
+    is_hidden: false
