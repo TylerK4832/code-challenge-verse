@@ -1,4 +1,4 @@
-```typescript
+
 import React from 'react';
 
 const TaxiDispatchContent: React.FC = () => {
