@@ -23,7 +23,7 @@ const ParkingLotContent: React.FC = () => {
           <div>
             <code className="text-sm">bool addCar(int carType)</code>
             <p className="mt-1">
-              Checks whether there is a parking space of carType for the car that wants to enter the parking lot. carType can be of three kinds: big, medium, or small, which are represented by 1, 2, and 3 respectively. A car can only park in a parking space of its carType. If there is no space available, return false, else park the car in that size space and return true.
+              Checks whether there is a parking space of carType for the car that wants to enter the parking lot. carType can be of three kinds: big, medium, or small, which are represented by 1, 2, and 3 respectively. A car can only park in a parking space of its carType. If there is no space available, return false, else park the car in a space of the corresponding size and return true.
             </p>
           </div>
         </div>
