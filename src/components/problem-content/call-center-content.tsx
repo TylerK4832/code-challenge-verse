@@ -33,7 +33,7 @@ const CallCenterContent: React.FC = () => {
             <code className="text-sm">void endCall(int agentLabel)</code>
             <p className="mt-1">
               Marks the agent with agentLabel as available. 
-              It is guaranteed that when this method is called, the agent was previously busy with a call.
+              If the agent is already available (not currently in a call), do nothing.
             </p>
           </div>
         </div>
@@ -61,7 +61,6 @@ center.dispatchCall();  // returns 1, agent 1 takes a new call`}
           <li>0 ≤ k ≤ 1000</li>
           <li>At most 1000 calls will be made to dispatchCall and endCall.</li>
           <li>1 ≤ agentLabel ≤ k</li>
-          <li>If endCall(agentLabel) is called, agentLabel is guaranteed to be busy.</li>
         </ul>
       </div>
     </div>
